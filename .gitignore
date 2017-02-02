@@ -159,3 +159,40 @@ com_crashlytics_export_strings.xml
 crashlytics.properties
 crashlytics-build.properties
 fabric.properties
+
+#==============================================================================#
+#   Core latex/pdflatex auxiliary files
+#==============================================================================#
+*.aux
+*.lof
+*.log
+*.lot
+*.fls
+*.out
+*.toc
+*.pdf
+*.synctex.gz
+#==============================================================================#
+#   Intermediate documents
+#==============================================================================#
+*.dvi
+*-converted-to.*
+# these rules might exclude image files for figures etc.
+# *.ps
+# *.eps
+# *.pdf
+#==============================================================================#
+#   Bibliography auxiliary files
+#==============================================================================#
+*.bbl
+*.bcf
+*.blg
+*-blx.aux
+*-blx.bib
+*.brf
+*.run.xml
+#==============================================================================#
+#   Build tool auxiliary files
+#==============================================================================#
+*.fdb_latexmk
+*.synctex
