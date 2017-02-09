@@ -1,0 +1,8 @@
+{
+  "propertyBoolean": true,
+  "propertyString": "Custom",
+  "propertyObject": {
+    "a": 100,
+    "b": "HOURS"
+  }
+}

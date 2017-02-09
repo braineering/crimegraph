@@ -1,0 +1,8 @@
+{
+  "propertyBoolean": false,
+  "propertyString": "Default",
+  "propertyObject": {
+    "a": 10,
+    "b": "SECONDS"
+  }
+}
