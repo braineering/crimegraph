@@ -29,21 +29,22 @@ package com.acmutv.crimegraph.config;
 /**
  * This class encapsulates app details.
  * @author Giacomo Marciani {@literal <gmarciani@acm.org>}
+ * @author Michele Porretta {@literal <mporretta@acm.org>}
  * @since 1.0
  */
 public class AppManifest {
 
   /**
    * The app name.
-   * APP
+   * CRIMEGRAPH
    */
-  public static final String APP_NAME = "APP";
+  public static final String APP_NAME = "CRIMEGRAPH";
 
   /**
    * The app version.
-   * 1.0-SNAPSHOT
+   * 1.0
    */
-  public static final String APP_VERSION = "1.0-SNAPSHOT";
+  public static final String APP_VERSION = "1.0";
 
   /**
    * The app description.
@@ -58,13 +59,13 @@ public class AppManifest {
 
   /**
    * The app team name.
-   * GMarciani Inc.
+   * ACM Rome Tor Vergata
    */
-  public static final String APP_TEAM_NAME = "GMarciani Inc.";
+  public static final String APP_TEAM_NAME = "ACM Rome Tor Vergata";
 
   /**
    * The app team website.
-   * http://gmarciani.com
+   * http://acm.uniroma2.it
    */
-  public static final String APP_TEAM_URL = "http://gmarciani.com";
+  public static final String APP_TEAM_URL = "http://acm.uniroma2.it";
 }

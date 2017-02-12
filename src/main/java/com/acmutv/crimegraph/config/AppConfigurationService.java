@@ -31,8 +31,8 @@ import com.acmutv.crimegraph.tool.io.IOManager;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
 import com.acmutv.crimegraph.config.serial.AppConfigurationJsonMapper;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -40,12 +40,13 @@ import java.io.InputStream;
 /**
  * This class realizes the app configuration services.
  * @author Giacomo Marciani {@literal <gmarciani@acm.org>}
+ * @author Michele Porretta {@literal <mporretta@acm.org>}
  * @since 1.0
  * @see AppConfiguration
  */
 public class AppConfigurationService {
 
-  private static final Logger LOGGER = LogManager.getLogger(AppConfigurationService.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger(AppConfigurationService.class);
 
   /**
    * The default configuration filename.
@@ -76,9 +77,7 @@ public class AppConfigurationService {
    * Returns the default configuration.
    */
   public static AppConfiguration fromDefault() {
-    LOGGER.traceEntry();
-    final AppConfiguration config = new AppConfiguration();
-    return LOGGER.traceExit(config);
+    return new AppConfiguration();
   }
 
   /**
@@ -88,10 +87,8 @@ public class AppConfigurationService {
    * @throws IOException if {@link AppConfiguration} cannot be deserialized.
    */
   public static AppConfiguration fromJson(final InputStream in) throws IOException {
-    LOGGER.traceEntry("in={}", in);
     final ObjectMapper mapper = new AppConfigurationJsonMapper();
-    final AppConfiguration config = mapper.readValue(in, AppConfiguration.class);
-    return LOGGER.traceExit(config);
+    return mapper.readValue(in, AppConfiguration.class);
   }
 
   /**
@@ -101,12 +98,12 @@ public class AppConfigurationService {
    * @throws IOException if {@link AppConfiguration} cannot be deserialized.
    */
   public static AppConfiguration fromJsonResource(final String resource) throws IOException {
-    LOGGER.traceEntry("resource={}", resource);
+    LOGGER.trace("resource={}", resource);
     AppConfiguration config;
     try (final InputStream in = IOManager.getInputStream(resource)) {
       config = fromJson(in);
     }
-    return LOGGER.traceExit(config);
+    return config;
   }
 
   /**
@@ -116,10 +113,8 @@ public class AppConfigurationService {
    * @throws IOException if {@link AppConfiguration} cannot be deserialized.
    */
   public static AppConfiguration fromYaml(final InputStream in) throws IOException {
-    LOGGER.traceEntry("in={}", in);
     final YAMLMapper mapper = new AppConfigurationYamlMapper();
-    final AppConfiguration config = mapper.readValue(in, AppConfiguration.class);
-    return LOGGER.traceExit(config);
+    return mapper.readValue(in, AppConfiguration.class);
   }
 
   /**
@@ -129,19 +124,18 @@ public class AppConfigurationService {
    * @throws IOException if {@link AppConfiguration} cannot be deserialized.
    */
   public static AppConfiguration fromYamlResource(final String resource) throws IOException {
-    LOGGER.traceEntry("resource={}", resource);
+    LOGGER.trace("resource={}", resource);
     AppConfiguration config;
     try (final InputStream in = IOManager.getInputStream(resource)) {
       config = fromYaml(in);
     }
-    return LOGGER.traceExit(config);
+    return config;
   }
 
   /**
    * Loads the default configuration.
    */
   public static void loadDefault() {
-    LOGGER.traceEntry();
     getConfigurations().toDefault();
   }
 
@@ -151,7 +145,6 @@ public class AppConfigurationService {
    * @throws IOException if {@link AppConfiguration} cannot be deserialized.
    */
   public static void loadJson(final InputStream in) throws IOException {
-    LOGGER.traceEntry("in={}", in);
     final AppConfiguration config = fromJson(in);
     getConfigurations().copy(config);
   }
@@ -159,11 +152,10 @@ public class AppConfigurationService {
   /**
    * Loads {@link AppConfiguration} from a resource providing a JSON.
    * @param resource the resource providing a JSON.
-   * @return the deserialized configuration.
    * @throws IOException if {@link AppConfiguration} cannot be deserialized.
    */
   public static void loadJsonResource(final String resource) throws IOException {
-    LOGGER.traceEntry("resources={}", resource);
+    LOGGER.trace("resources={}", resource);
     final AppConfiguration config = fromJsonResource(resource);
     getConfigurations().copy(config);
   }
@@ -174,7 +166,6 @@ public class AppConfigurationService {
    * @throws IOException if {@link AppConfiguration} cannot be deserialized.
    */
   public static void loadYaml(final InputStream in) throws IOException {
-    LOGGER.traceEntry("in={}", in);
     final AppConfiguration config = fromYaml(in);
     getConfigurations().copy(config);
   }
@@ -182,11 +173,10 @@ public class AppConfigurationService {
   /**
    * Loads {@link AppConfiguration} from a resource providing a YAML.
    * @param resource the resource providing a YAML.
-   * @return the deserialized configuration.
    * @throws IOException if {@link AppConfiguration} cannot be deserialized.
    */
   public static void loadYamlResource(final String resource) throws IOException {
-    LOGGER.traceEntry("resources={}", resource);
+    LOGGER.trace("resources={}", resource);
     final AppConfiguration config = fromYamlResource(resource);
     getConfigurations().copy(config);
   }

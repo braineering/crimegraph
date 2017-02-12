@@ -26,7 +26,6 @@
 
 package com.acmutv.crimegraph.tool.io;
 
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 
 import java.io.IOException;
@@ -39,6 +38,7 @@ import java.nio.file.*;
 /**
  * This class realizes I/O services.
  * @author Giacomo Marciani {@literal <gmarciani@acm.org>}
+ * @author Michele Porretta {@literal <mporretta@acm.org>}
  * @since 1.0
  */
 public class IOManager {

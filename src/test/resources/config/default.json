@@ -1,8 +1,6 @@
 {
-  "propertyBoolean": false,
-  "propertyString": "Default",
-  "propertyObject": {
-    "a": 10,
-    "b": "SECONDS"
-  }
+  "dataHostname": "127.0.0.1",
+  "dataPort": 9000,
+  "elasticHostname": "127.0.0.1",
+  "elasticPort": 9200
 }

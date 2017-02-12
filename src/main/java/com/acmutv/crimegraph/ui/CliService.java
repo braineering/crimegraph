@@ -30,11 +30,8 @@ import com.acmutv.crimegraph.config.AppConfiguration;
 import com.acmutv.crimegraph.config.AppManifest;
 import com.acmutv.crimegraph.config.AppConfigurationService;
 import org.apache.commons.cli.*;
-import org.apache.logging.log4j.Level;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.core.LoggerContext;
-import org.apache.logging.log4j.core.config.LoggerConfig;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -45,11 +42,12 @@ import java.util.List;
 /**
  * This class realizes the Command Line Interface services.
  * @author Giacomo Marciani {@literal <gmarciani@acm.org>}
+ * @author Michele Porretta {@literal <mporretta@acm.org>}
  * @since 1.0
  */
 public class CliService {
 
-  private static final Logger LOGGER = LogManager.getLogger(CliService.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger(CliService.class);
 
   /**
    * Handles the command line arguments passed to the main method, according to {@link BaseOptions}.
@@ -60,20 +58,8 @@ public class CliService {
    * @see AppConfiguration
    */
   public static List<String> handleArguments(String[] argv) {
-    LOGGER.traceEntry("argv={}", Arrays.asList(argv));
+    LOGGER.trace("argv={}", Arrays.asList(argv));
     CommandLine cmd = getCommandLine(argv);
-
-    /* OPTION: silent */
-    if (cmd.hasOption("silent")) {
-      LOGGER.trace("Detected option SILENT");
-      activateSilent();
-    }
-
-    /* OPTION: trace */
-    if (cmd.hasOption("trace")) {
-      LOGGER.trace("Detected option TRACE");
-      activateTrace();
-    }
 
     /* OPTION: version */
     if (cmd.hasOption("version")) {
@@ -123,7 +109,7 @@ public class CliService {
     LOGGER.trace("Configuration loaded: {}",
         AppConfigurationService.getConfigurations());
 
-    return LOGGER.traceExit(cmd.getArgList());
+    return cmd.getArgList();
   }
 
   /**
@@ -161,7 +147,7 @@ public class CliService {
    * @see Option
    * @see Options
    */
-  private static void printHelp() {
+  public static void printHelp() {
     System.out.format("%s version %s\nTeam: %s (%s)\n\n%s\n\n",
         AppManifest.APP_NAME,
         AppManifest.APP_VERSION,
@@ -173,23 +159,13 @@ public class CliService {
   }
 
   /**
-   * Activates the app silent mode.
+   * Print the splash message to {@code stdout}.
    */
-  private static void activateSilent() {
-    LoggerContext ctx = (LoggerContext) LogManager.getContext(false);
-    LoggerConfig loggerConfig = ctx.getConfiguration().getLoggerConfig(LogManager.ROOT_LOGGER_NAME);
-    loggerConfig.setLevel(Level.OFF);
-    ctx.updateLoggers();
-  }
-
-  /**
-   * Activates the app trace mode.
-   */
-  private static void activateTrace() {
-    LoggerContext ctx = (LoggerContext) LogManager.getContext(false);
-    LoggerConfig loggerConfig = ctx.getConfiguration().getLoggerConfig(LogManager.ROOT_LOGGER_NAME);
-    loggerConfig.setLevel(Level.ALL);
-    ctx.updateLoggers();
+  public static void printSplash() {
+    System.out.println();
+    System.out.println("#=========================================================================");
+    System.out.println("# CRIMEGRAPH                                                              ");
+    System.out.println("#=========================================================================");
   }
 
   /**

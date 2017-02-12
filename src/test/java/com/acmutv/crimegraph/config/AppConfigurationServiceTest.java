@@ -26,12 +26,10 @@
 
 package com.acmutv.crimegraph.config;
 
-import com.acmutv.crimegraph.core.CustomObject;
 import org.junit.Assert;
 import org.junit.Test;
 
 import java.io.*;
-import java.util.concurrent.TimeUnit;
 
 /**
  * This class realizes JUnit tests for {@link AppConfigurationService}.
@@ -64,47 +62,10 @@ public class AppConfigurationServiceTest {
     AppConfiguration actualjson = AppConfigurationService.fromJson(injson);
     AppConfiguration actualyaml = AppConfigurationService.fromYaml(inyaml);
     AppConfiguration expected = new AppConfiguration();
-    expected.setPropertyBoolean(true);
-    expected.setPropertyString("Custom");
-    expected.setPropertyObject(new CustomObject(100, TimeUnit.HOURS));
-    Assert.assertEquals(expected, actualjson);
-    Assert.assertEquals(expected, actualyaml);
-  }
-
-  /**
-   * Tests the app configuration parsing from an external JSON/YAML file.
-   * In this test the configuration file provides with complete custom settings.
-   * The configuration file has null values and template string (${PWD}).
-   */
-  @Test
-  public void test_fromJsonYaml_custom2() throws IOException {
-    InputStream injson = AppConfigurationServiceTest.class.getResourceAsStream("/config/custom2.json");
-    InputStream inyaml = AppConfigurationServiceTest.class.getResourceAsStream("/config/custom2.yaml");
-    AppConfiguration actualjson = AppConfigurationService.fromJson(injson);
-    AppConfiguration actualyaml = AppConfigurationService.fromYaml(inyaml);
-    AppConfiguration expected = new AppConfiguration();
-    expected.setPropertyBoolean(true);
-    expected.setPropertyString(null);
-    expected.setPropertyObject(new CustomObject(100, TimeUnit.HOURS));
-    Assert.assertEquals(expected, actualjson);
-    Assert.assertEquals(expected, actualyaml);
-  }
-
-  /**
-   * Tests the app configuration parsing from an external YAML/JSON file.
-   * In this test the configuration file provides with complete custom settings.
-   * The configuration file has null values and no template string.
-   */
-  @Test
-  public void test_fromJson_custom3() throws IOException {
-    InputStream injson = AppConfigurationServiceTest.class.getResourceAsStream("/config/custom3.json");
-    InputStream inyaml = AppConfigurationServiceTest.class.getResourceAsStream("/config/custom3.yaml");
-    AppConfiguration actualjson = AppConfigurationService.fromJson(injson);
-    AppConfiguration actualyaml = AppConfigurationService.fromYaml(inyaml);
-    AppConfiguration expected = new AppConfiguration();
-    expected.setPropertyBoolean(true);
-    expected.setPropertyString(null);
-    expected.setPropertyObject(new CustomObject(100, TimeUnit.HOURS));
+    expected.setDataHostname("Custom");
+    expected.setDataPort(3333);
+    expected.setElasticHostname("Custom");
+    expected.setElasticPort(4444);
     Assert.assertEquals(expected, actualjson);
     Assert.assertEquals(expected, actualyaml);
   }
@@ -150,7 +111,7 @@ public class AppConfigurationServiceTest {
     AppConfiguration actualjson = AppConfigurationService.fromJson(injson);
     AppConfiguration actualyaml = AppConfigurationService.fromYaml(inyaml);
     AppConfiguration expected = new AppConfiguration();
-    expected.setPropertyBoolean(true);
+    expected.setDataHostname("Custom");
     Assert.assertEquals(expected, actualjson);
     Assert.assertEquals(expected, actualyaml);
   }

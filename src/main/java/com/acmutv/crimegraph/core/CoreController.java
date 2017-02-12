@@ -26,17 +26,18 @@
 
 package com.acmutv.crimegraph.core;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * This class realizes the core business logic.
  * @author Giacomo Marciani {@literal <gmarciani@acm.org>}
+ * @author Michele Porretta {@literal <mporretta@acm.org>}
  * @since 1.0
  */
 public class CoreController {
 
-  private static final Logger LOGGER = LogManager.getLogger(CoreController.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger(CoreController.class);
 
   /**
    * The core main method.
@@ -44,7 +45,6 @@ public class CoreController {
    * @param message the splash message.
    */
   public static void splash(final String message) {
-    LOGGER.traceEntry("message={}", message);
     LOGGER.info("Printing splash message");
     System.out.println(message);
   }

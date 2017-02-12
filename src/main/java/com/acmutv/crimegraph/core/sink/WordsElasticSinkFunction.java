@@ -1,7 +1,7 @@
 /*
   The MIT License (MIT)
 
-  Copyright (c) 2016 Giacomo Marciani and Michele Porretta
+  Copyright (c) 2017 Giacomo Marciani and Michele Porretta
 
   Permission is hereby granted, free of charge, to any person obtaining a copy
   of this software and associated documentation files (the "Software"), to deal
@@ -24,30 +24,43 @@
   THE SOFTWARE.
  */
 
-package com.acmutv.crimegraph.config.serial;
+package com.acmutv.crimegraph.core.sink;
 
-import com.acmutv.crimegraph.config.AppConfiguration;
-import com.fasterxml.jackson.databind.module.SimpleModule;
-import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
-import lombok.EqualsAndHashCode;
+import com.acmutv.crimegraph.core.tuple.WordCount;
+import org.apache.flink.api.common.functions.RuntimeContext;
+import org.apache.flink.streaming.connectors.elasticsearch2.ElasticsearchSinkFunction;
+import org.apache.flink.streaming.connectors.elasticsearch2.RequestIndexer;
+import org.elasticsearch.action.index.IndexRequest;
+import org.elasticsearch.client.Requests;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
- * This class realizes the YAML constructor for {@link AppConfiguration}.
+ * A simple sink function based on ElasticSearch.
  * @author Giacomo Marciani {@literal <gmarciani@acm.org>}
  * @author Michele Porretta {@literal <mporretta@acm.org>}
  * @since 1.0
- * @see AppConfiguration
  */
-@EqualsAndHashCode(callSuper = true)
-public class AppConfigurationYamlMapper extends YAMLMapper {
+public class WordsElasticSinkFunction implements ElasticsearchSinkFunction<WordCount> {
 
-  /**
-   * Initializes the JSON constructor.
-   */
-  public AppConfigurationYamlMapper() {
-    super();
-    SimpleModule module = new SimpleModule();
-    module.addDeserializer(AppConfiguration.class, AppConfigurationDeserializer.getInstance());
-    super.registerModule(module);
+  private static final String INDEX = "words";
+
+  private static final String MAPPING = "words-counter";
+
+  @Override
+  public void process(WordCount element, RuntimeContext ctx, RequestIndexer indexer) {
+    indexer.add(createIndexRequest(element));
+  }
+
+  public IndexRequest createIndexRequest(WordCount element) {
+    Map<String, String> json = new HashMap<>();
+    json.put("entry", element.getEntry());
+    json.put("count", element.getCount().toString());
+
+    return Requests.indexRequest()
+        .index(INDEX)
+        .type(MAPPING)
+        .source(json);
   }
 }

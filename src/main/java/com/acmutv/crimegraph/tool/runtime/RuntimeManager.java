@@ -27,8 +27,8 @@
 package com.acmutv.crimegraph.tool.runtime;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.lang.management.ManagementFactory;
@@ -42,11 +42,12 @@ import java.util.concurrent.TimeUnit;
 /**
  * This class realizes the app lifecycle services.
  * @author Giacomo Marciani {@literal <gmarciani@acm.org>}
+ * @author Michele Porretta {@literal <mporretta@acm.org>}
  * @since 1.0
  */
 public class RuntimeManager {
 
-  private static final Logger LOGGER = LogManager.getLogger(RuntimeManager.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger(RuntimeManager.class);
 
   /**
    * Registers atexit runnables as JVM shutdown hooks.
@@ -89,7 +90,7 @@ public class RuntimeManager {
    * @throws IOException when error in process generation or output.
    */
   public static String run(String ...command) throws IOException {
-    LOGGER.traceEntry("command={}", Arrays.asList(command));
+    LOGGER.trace("command={}", Arrays.asList(command));
     ProcessBuilder pb = new ProcessBuilder(command);
     Process p = pb.start();
     String out = IOUtils.toString(p.getInputStream(), Charset.defaultCharset());

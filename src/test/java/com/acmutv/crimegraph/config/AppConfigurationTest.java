@@ -44,7 +44,7 @@ public class AppConfigurationTest {
   @Test
   public void test_toDefault() {
     AppConfiguration actual = new AppConfiguration();
-    actual.setPropertyBoolean(true);
+    actual.setDataHostname("Custom");
     actual.toDefault();
     final AppConfiguration expected = new AppConfiguration();
     Assert.assertEquals(expected, actual);

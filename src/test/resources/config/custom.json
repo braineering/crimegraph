@@ -1,8 +1,6 @@
 {
-  "propertyBoolean": true,
-  "propertyString": "Custom",
-  "propertyObject": {
-    "a": 100,
-    "b": "HOURS"
-  }
+  "dataHostname": "Custom",
+  "dataPort": 3333,
+  "elasticHostname": "Custom",
+  "elasticPort": 4444
 }

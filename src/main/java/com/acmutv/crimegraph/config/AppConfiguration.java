@@ -26,19 +26,17 @@
 
 package com.acmutv.crimegraph.config;
 
-import com.acmutv.crimegraph.core.CustomObject;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.yaml.snakeyaml.Yaml;
 
-import java.util.concurrent.TimeUnit;
-
 /**
- * This class realizes the app configuration model.
+ * The app configuration model.
  * @author Giacomo Marciani {@literal <gmarciani@acm.org>}
+ * @author Michele Porretta {@literal <mporretta@acm.org>}
  * @since 1.0
  * @see Yaml
  */
@@ -47,40 +45,51 @@ import java.util.concurrent.TimeUnit;
 @NoArgsConstructor
 public class AppConfiguration {
 
-  private static final Logger LOGGER = LogManager.getLogger(AppConfiguration.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger(AppConfiguration.class);
 
   /**
-   * Default value for property [property name].
+   * Default value for property {@code dataHostname}.
    */
-  public static final Boolean PROPERTY_BOOLEAN = false;
+  public static final String DATA_HOSTNAME = "127.0.0.1";
 
   /**
-   * Default value for property [property name].
+   * Default value for property {@code dataPort}.
    */
-  public static final String PROPERTY_STRING = "Default";
+  public static final int DATA_PORT = 9000;
 
   /**
-   * Default value for property [property name].
+   * Default value for property {@code elasticHostname}.
    */
-  public static final CustomObject PROPERTY_OBJECT = new CustomObject(10, TimeUnit.SECONDS);
+  public static final String ELASTIC_HOSTNAME = "127.0.0.1";
 
   /**
-   * Property description.
-   * Default is: default value.
+   * Default value for property {@code elasticPort}.
    */
-  private Boolean propertyBoolean = PROPERTY_BOOLEAN;
+  public static final int ELASTIC_PORT = 9300;
 
   /**
-   * Property description.
-   * Default is: default value.
+   * The hostname of the data stream socket.
+   * Default is: {@code 127.0.0.1}.
    */
-  private String propertyString = PROPERTY_STRING;
+  private String dataHostname = DATA_HOSTNAME;
 
   /**
-   * Property description.
-   * Default is: default value.
+   * The port number of the data stream socket.
+   * Default is: {@code 9000}.
    */
-  private CustomObject propertyObject = PROPERTY_OBJECT;
+  private int dataPort = DATA_PORT;
+
+  /**
+   * The hostname of the ElasticSearch instance.
+   * Default is: {@code 127.0.0.1}.
+   */
+  private String elasticHostname = ELASTIC_HOSTNAME;
+
+  /**
+   * The port number of the ElasticSearch instance.
+   * Default is: {@code 9200}.
+   */
+  private int elasticPort = ELASTIC_PORT;
 
   /**
    * Constructs a configuration as a copy of the one specified.
@@ -95,18 +104,20 @@ public class AppConfiguration {
    * @param other the configuration to copy.
    */
   public void copy(AppConfiguration other) {
-    this.propertyBoolean = other.propertyBoolean;
-    this.propertyString = other.propertyString;
-    this.propertyObject = other.propertyObject;
+    this.dataHostname = other.dataHostname;
+    this.dataPort = other.dataPort;
+    this.elasticHostname = other.elasticHostname;
+    this.elasticPort = other.elasticPort;
   }
 
   /**
    * Restores the default configuration settings.
    */
   public void toDefault() {
-    this.propertyBoolean = PROPERTY_BOOLEAN;
-    this.propertyString = PROPERTY_STRING;
-    this.propertyObject = PROPERTY_OBJECT;
+    this.dataHostname = DATA_HOSTNAME;
+    this.dataPort = DATA_PORT;
+    this.elasticHostname = ELASTIC_HOSTNAME;
+    this.elasticPort = ELASTIC_PORT;
   }
 
 }

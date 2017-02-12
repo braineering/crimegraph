@@ -79,6 +79,7 @@ public class IOManagerTest {
    * Tests the {@link OutputStream} creation from a local resource.
    * @throws IOException when {@link OutputStream} cannot be opened.
    */
+  @SuppressWarnings("EmptyTryBlock")
   @Test
   public void test_getOutputStream_local() throws IOException {
     String resource = IOManagerTest.class.getResource("/tool/sample-write.txt").getPath();
@@ -90,6 +91,7 @@ public class IOManagerTest {
   /**
    * Tests the {@link OutputStream} creation from a remote resource.
    */
+  @SuppressWarnings("EmptyTryBlock")
   @Test
   public void test_getOutputStream_remote() {
     String resource = "http://www.google.com/robots.txt";

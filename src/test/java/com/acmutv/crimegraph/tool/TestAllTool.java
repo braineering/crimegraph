@@ -27,9 +27,7 @@
 package com.acmutv.crimegraph.tool;
 
 import com.acmutv.crimegraph.tool.io.TestAllToolIO;
-import com.acmutv.crimegraph.tool.reflection.TestAllToolReflection;
 import com.acmutv.crimegraph.tool.runtime.TestAllToolRuntime;
-import com.acmutv.crimegraph.tool.string.TestAllToolString;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
@@ -38,16 +36,12 @@ import org.junit.runners.Suite;
  * @author Giacomo Marciani {@literal <gmarciani@acm.org>}
  * @since 1.0
  * @see TestAllToolIO
- * @see TestAllToolReflection
  * @see TestAllToolRuntime
- * @see TestAllToolString
  */
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
     TestAllToolIO.class,
-    TestAllToolReflection.class,
-    TestAllToolRuntime.class,
-    TestAllToolString.class
+    TestAllToolRuntime.class
 })
 public class TestAllTool {
 

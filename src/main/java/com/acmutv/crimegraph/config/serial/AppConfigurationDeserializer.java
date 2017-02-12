@@ -31,22 +31,21 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
-import com.acmutv.crimegraph.core.CustomObject;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.util.concurrent.TimeUnit;
 
 /**
  * This class realizes the JSON deserializer for {@link AppConfiguration}.
  * @author Giacomo Marciani {@literal <gmarciani@acm.org>}
+ * @author Michele Porretta {@literal <mporretta@acm.org>}
  * @since 1.0
  * @see AppConfiguration
  */
 public class AppConfigurationDeserializer extends StdDeserializer<AppConfiguration> {
 
-  private static final Logger LOGGER = LogManager.getLogger(AppConfigurationDeserializer.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger(AppConfigurationDeserializer.class);
 
   /**
    * The singleton of {@link AppConfigurationDeserializer}.
@@ -73,37 +72,29 @@ public class AppConfigurationDeserializer extends StdDeserializer<AppConfigurati
 
   @Override
   public AppConfiguration deserialize(JsonParser parser, DeserializationContext ctx) throws IOException {
-    LOGGER.traceEntry();
     AppConfiguration config = new AppConfiguration();
     JsonNode node = parser.getCodec().readTree(parser);
-    LOGGER.trace("node={}", node);
 
-    if (node.has("propertyBoolean")) {
-      final boolean propertyBoolean = node.get("propertyBoolean").asBoolean();
-      config.setPropertyBoolean(propertyBoolean);
+    if (node.hasNonNull("dataHostname")) {
+      final String dataHostname = node.get("dataHostname").asText();
+      config.setDataHostname(dataHostname);
     }
 
-    if (node.has("propertyString")) {
-      final String propertyString = node.get("propertyString").asText(null);
-      config.setPropertyString(propertyString);
+    if (node.hasNonNull("dataPort")) {
+      final int dataPort = node.get("dataPort").asInt();
+      config.setDataPort(dataPort);
     }
 
-    if (node.has("propertyObject")) {
-      CustomObject propertyObject = new CustomObject();
-      JsonNode customObjectNode = node.get("propertyObject");
-      if (customObjectNode.has("a")) {
-        final long a = customObjectNode.get("a").asLong();
-        propertyObject.setA(a);
-      }
-
-      if (customObjectNode.has("b")) {
-        final TimeUnit b = TimeUnit.valueOf(customObjectNode.get("b").asText());
-        propertyObject.setB(b);
-      }
-
-      config.setPropertyObject(propertyObject);
+    if (node.hasNonNull("elasticHostname")) {
+      final String elasticHostname = node.get("elasticHostname").asText();
+      config.setElasticHostname(elasticHostname);
     }
 
-    return LOGGER.traceExit(config);
+    if (node.hasNonNull("elasticPort")) {
+      final int elasticPort = node.get("elasticPort").asInt();
+      config.setElasticPort(elasticPort);
+    }
+
+    return config;
   }
 }

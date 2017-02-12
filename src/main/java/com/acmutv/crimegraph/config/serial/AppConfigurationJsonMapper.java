@@ -34,6 +34,7 @@ import lombok.EqualsAndHashCode;
 /**
  * This class realizes the JSON constructor for {@link AppConfiguration}.
  * @author Giacomo Marciani {@literal <gmarciani@acm.org>}
+ * @author Michele Porretta {@literal <mporretta@acm.org>}
  * @since 1.0
  * @see AppConfiguration
  */

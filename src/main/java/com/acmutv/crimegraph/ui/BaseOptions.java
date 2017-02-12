@@ -33,6 +33,7 @@ import org.apache.commons.cli.Options;
  * This class realizes the command line interface options of the whole application.
  * The class is implemented as a singleton.
  * @author Giacomo Marciani {@literal <gmarciani@acm.org>}
+ * @author Michele Porretta {@literal <mporretta@acm.org>}
  * @since 1.0
  * @see Option
  */
@@ -49,16 +50,6 @@ public class BaseOptions extends Options {
    * The CLI description for the option `help`.
    */
   private static final String DESCRIPTION_HELP = "Show app helper.";
-
-  /**
-   * The CLI description for the option `silent`.
-   */
-  private static final String DESCRIPTION_SILENT = "Activate silent mode.";
-
-  /**
-   * The CLI description for the option `trace`.
-   */
-  private static final String DESCRIPTION_TRACE = "Activate trace mode.";
 
   /**
    * The CLI description for the option `config`.
@@ -87,14 +78,10 @@ public class BaseOptions extends Options {
   private BaseOptions() {
     Option version = this.optVersion();
     Option help = this.optHelp();
-    Option silent = this.optSilent();
-    Option trace = this.optTrace();
     Option config = this.optConfig();
 
     super.addOption(version);
     super.addOption(help);
-    super.addOption(silent);
-    super.addOption(trace);
     super.addOption(config);
   }
 
@@ -119,32 +106,6 @@ public class BaseOptions extends Options {
     return Option.builder("h")
         .longOpt("help")
         .desc(DESCRIPTION_HELP)
-        .required(false)
-        .hasArg(false)
-        .build();
-  }
-
-  /**
-   * Builds the option `silent`.
-   * @return the option.
-   */
-  private Option optSilent() {
-    return Option.builder("s")
-        .longOpt("silent")
-        .desc(DESCRIPTION_SILENT)
-        .required(false)
-        .hasArg(false)
-        .build();
-  }
-
-  /**
-   * Builds the option `trace`.
-   * @return the option.
-   */
-  private Option optTrace() {
-    return Option.builder("t")
-        .longOpt("trace")
-        .desc(DESCRIPTION_TRACE)
         .required(false)
         .hasArg(false)
         .build();

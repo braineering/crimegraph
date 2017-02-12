@@ -1,7 +1,7 @@
 /*
   The MIT License (MIT)
 
-  Copyright (c) 2016 Giacomo Marciani and Michele Porretta and Michele Porretta
+  Copyright (c) 2017 Giacomo Marciani and Michele Porretta
 
   Permission is hereby granted, free of charge, to any person obtaining a copy
   of this software and associated documentation files (the "Software"), to deal
@@ -24,21 +24,28 @@
   THE SOFTWARE.
  */
 
-package com.acmutv.crimegraph.tool.string;
+package com.acmutv.crimegraph.core.tuple;
 
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
+import lombok.Data;
+import lombok.NonNull;
 
 /**
- * This class realizes JUnit test suite for all tools related to string management.
+ * The tuple representing the a word counter.
  * @author Giacomo Marciani {@literal <gmarciani@acm.org>}
+ * @author Michele Porretta {@literal <mporretta@acm.org>}
  * @since 1.0
- * @see TemplateEngineTest
  */
-@RunWith(Suite.class)
-@Suite.SuiteClasses({
-    TemplateEngineTest.class
-})
-public class TestAllToolString {
+@Data
+public class WordCount {
 
+  @NonNull
+  private String entry;
+
+  @NonNull
+  private Integer count;
+
+  @Override
+  public String toString() {
+    return String.format("(%s,%d)", this.getEntry(), this.getCount());
+  }
 }

@@ -31,7 +31,7 @@ import org.junit.Test;
 import java.io.*;
 
 /**
- * This class realizes miscellanea JUnit tests (for personal use only)
+ * Miscellanea JUnit tests (for personal use only)
  * @author Giacomo Marciani {@literal <gmarciani@acm.org>}
  * @since 1.0
  */

@@ -35,6 +35,7 @@ import java.util.concurrent.TimeUnit;
 /**
  * This class realizes a core object.
  * @author Giacomo Marciani {@literal <gmarciani@acm.org>}
+ * @author Michele Porretta {@literal <mporretta@acm.org>}
  * @since 1.0
  */
 @Data

@@ -26,17 +26,18 @@
 
 package com.acmutv.crimegraph.tool.runtime;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * This class realizes a simple app shutdown hook.
  * @author Giacomo Marciani {@literal <gmarciani@acm.org>}
+ * @author Michele Porretta {@literal <mporretta@acm.org>}
  * @since 1.0
  */
 public class ShutdownHook implements Runnable {
 
-  private static final Logger LOGGER = LogManager.getLogger(ShutdownHook.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger(ShutdownHook.class);
 
   @Override
   public void run() {
@@ -49,8 +50,6 @@ public class ShutdownHook implements Runnable {
    */
   @SuppressWarnings("SameParameterValue")
   private void splash(final String message) {
-    LOGGER.traceEntry(message);
-
     System.out.println(message);
 
     try {
