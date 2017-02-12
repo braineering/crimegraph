@@ -1,6 +1,7 @@
 {
   "dataHostname": "127.0.0.1",
   "dataPort": 9000,
+  "elasticClusterName": "elasticsearch",
   "elasticHostname": "127.0.0.1",
-  "elasticPort": 9200
+  "elasticPort": 9300
 }

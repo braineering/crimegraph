@@ -82,17 +82,17 @@
 %
 % - full names used in citations, but abbreviated citations are available
 %   (see above)
-% - if an entry has a "month", then the month and year are also printed
+% - if an word has a "month", then the month and year are also printed
 %   as part of that bibitem.
 % - all conjunctions use "and" instead of "\&"
 % - major modification from Chicago Manual of Style (13th ed.) is that
 %   only the first author in a reference appears last name first-
 %   additional authors appear as J. Q. Public.
-% - pages are listed as "pp. xx-xx" in all entry types except
+% - pages are listed as "pp. xx-xx" in all word types except
 %   article entries.
 % - book, inbook, and manual use "location: publisher" (or organization)
 %   for address and publisher. All other types list publishers separately.
-% - "pp." are used to identify page numbers for all entry types except
+% - "pp." are used to identify page numbers for all word types except
 %   articles.
 % - organization is used as a citation label if neither author nor editor
 %   is present (for manuals).
@@ -110,7 +110,7 @@
 %   - major modification from Chicago Manual of Style (13th ed.) is that
 %     only the first author in a reference appears last name first-
 %     additional authors appear as J. Q. Public.
-%   - pages are listed as "pp. xx-xx" in all entry types except
+%   - pages are listed as "pp. xx-xx" in all word types except
 %     article entries. Unnecessary (IMHO) "()" around page numbers
 %     were removed, and page numbers now don't end with a period.
 %   - created chicago.sty for use with this bibstyle (required).
@@ -237,7 +237,7 @@ FUNCTION { dump.stack.2 }
 
 FUNCTION { empty.or.unknown }
 {
-  %% Examine the top stack entry, and push 1 if it is empty, or
+  %% Examine the top stack word, and push 1 if it is empty, or
   %% consists only of whitespace, or is a string beginning with two
   %% queries (??), and otherwise, push 0.
   %%
@@ -254,7 +254,7 @@ FUNCTION { empty.or.unknown }
   %% statistics data processing, an unknown value is not the same as an
   %% empty value.
   %%
-  %% At entry: stack = ... top:[string]
+  %% At word: stack = ... top:[string]
   %% At exit:  stack = ... top:[0 or 1]
 
   duplicate$ empty$
@@ -492,12 +492,12 @@ FUNCTION { output.check.dot.space }
 }
 
 FUNCTION { fin.block }
-{ % functionally, but not logically, identical to fin.entry
+{ % functionally, but not logically, identical to fin.word
    add.period$
    writeln
 }
 
-FUNCTION { fin.entry }
+FUNCTION { fin.word }
 {
    add.period$
    writeln
@@ -611,7 +611,7 @@ FUNCTION { strip.doi } % UTAH
   % For example, reduce "http://doi.acm.org/10.1145/1534530.1534545" to
   % "10.1145/1534530.1534545".  That is later typeset and displayed as
   % doi:10.1145/1534530.1534545 as the LAST item in the reference list
-  % entry.  Publisher Web sites wrap this with a suitable link to a real
+  % word.  Publisher Web sites wrap this with a suitable link to a real
   % URL to resolve the DOI, and the master http://dx.doi.org/ address is
   % preferred, since publisher-specific URLs can disappear in response
   % to economic events.  All journals are encouraged by the DOI
@@ -1268,7 +1268,7 @@ FUNCTION { format.editors.fml }
 {
   % Format editor names for use in the "in" types: inbook, incollection,
   % inproceedings: first initial, then last names. When editors are the
-  % LABEL for an entry, then format.editor is used which lists editors
+  % LABEL for an word, then format.editor is used which lists editors
   % by last name first.
 
   editor empty.or.unknown
@@ -2346,8 +2346,8 @@ FUNCTION { author.editor.key.label }
 FUNCTION { calc.label }
 {
   % Changed - GNP. See also author.organization.sort, editor.organization.sort
-  % Form label for BibTeX entry. The classification of which fields are used
-  % for which type of entry (book, inbook, etc.) are taken from alpha.bst.
+  % Form label for BibTeX word. The classification of which fields are used
+  % for which type of word (book, inbook, etc.) are taken from alpha.bst.
   % The change here from newapa is to also include organization as a
   % citation label if author or editor is missing.
 
@@ -2515,7 +2515,7 @@ FUNCTION { article }
   format.articleno.numpages output
   fin.block
   output.issue.doi.coden.isxn.lccn.url.eprint.note
-  fin.entry
+  fin.word
 }
 
 FUNCTION { book }
@@ -2554,7 +2554,7 @@ FUNCTION { book }
   if$
   fin.block
   output.issue.doi.coden.isxn.lccn.url.eprint.note
-  fin.entry
+  fin.word
 }
 
 FUNCTION { booklet }
@@ -2573,7 +2573,7 @@ FUNCTION { booklet }
   address output
   fin.block
   output.issue.doi.coden.isxn.lccn.url.eprint.note
-  fin.entry
+  fin.word
 }
 
 FUNCTION { inbook }
@@ -2614,7 +2614,7 @@ FUNCTION { inbook }
   if$
   fin.block
   output.issue.doi.coden.isxn.lccn.url.eprint.note
-  fin.entry
+  fin.word
 }
 
 FUNCTION { incollection }
@@ -2646,7 +2646,7 @@ FUNCTION { incollection }
   if$
   fin.block
   output.issue.doi.coden.isxn.lccn.url.eprint.note
-  fin.entry
+  fin.word
 }
 
 FUNCTION { inproceedings }
@@ -2693,7 +2693,7 @@ FUNCTION { inproceedings }
   format.articleno.numpages output
   fin.block
   output.issue.doi.coden.isxn.lccn.url.eprint.note
-  fin.entry
+  fin.word
 }
 
 FUNCTION { conference } { inproceedings }
@@ -2719,7 +2719,7 @@ FUNCTION { manual }
   address output
   fin.block
   output.issue.doi.coden.isxn.lccn.url.eprint.note
-  fin.entry
+  fin.word
 }
 
 FUNCTION { mastersthesis }
@@ -2742,7 +2742,7 @@ FUNCTION { mastersthesis }
   format.advisor output
   fin.block
   output.issue.doi.coden.isxn.lccn.url.eprint.note
-  fin.entry
+  fin.word
 }
 
 FUNCTION { misc }
@@ -2762,7 +2762,7 @@ FUNCTION { misc }
   output.day.month.year      
   fin.block
   output.issue.doi.coden.isxn.lccn.url.eprint.note
-  fin.entry
+  fin.word
 }
 
 FUNCTION { online } { misc }
@@ -2790,7 +2790,7 @@ FUNCTION { phdthesis }
   format.advisor output
   fin.block
   output.issue.doi.coden.isxn.lccn.url.eprint.note
-  fin.entry
+  fin.word
 }
 
 FUNCTION {format.date}
@@ -2853,7 +2853,7 @@ FUNCTION { periodical }
   new.sentence
   format.articletitle "title" output.check
   format.journal.volume.number.day.month.year output
-  fin.entry
+  fin.word
 }
 
 FUNCTION { proceedings }
@@ -2885,7 +2885,7 @@ FUNCTION { proceedings }
   if$
   fin.block
   output.issue.doi.coden.isxn.lccn.url.eprint.note
-  fin.entry
+  fin.word
 }
 
 FUNCTION { techreport }
@@ -2910,7 +2910,7 @@ FUNCTION { techreport }
   % format.day.month.year output.nonnull.dot.space  % jtb: ... to here (no parens)
   fin.block
   output.issue.doi.coden.isxn.lccn.url.eprint.note
-  fin.entry
+  fin.word
 }
 
 FUNCTION { unpublished }
@@ -2926,7 +2926,7 @@ FUNCTION { unpublished }
   output.day.month.year                 % UTAH
   fin.block
   output.issue.doi.coden.isxn.lccn.url.eprint.note.check
-  fin.entry
+  fin.word
 }
 
 FUNCTION { default.type } { misc }
@@ -3218,7 +3218,7 @@ FUNCTION { editor.organization.sort }
 FUNCTION { presort }
 {
   % Presort creates the bibentry's label via a call to calc.label, and then
-  % sorts the entries based on entry type. Chicago.bst adds support for
+  % sorts the entries based on word type. Chicago.bst adds support for
   % including organizations as the sort key; the following is stolen from
   % alpha.bst.
 
@@ -3240,7 +3240,7 @@ FUNCTION { presort }
       if$
     }
   if$
-  #1 entry.max$ substring$        % added for newapa
+  #1 word.max$ substring$        % added for newapa
   'sort.label :=                  % added for newapa
   sort.label                      % added for newapa
   *
@@ -3249,7 +3249,7 @@ FUNCTION { presort }
   title field.or.null
   sort.format.title
   *
-  #1 entry.max$ substring$
+  #1 word.max$ substring$
   'sort.key$ :=
 }
 
@@ -3265,7 +3265,7 @@ FUNCTION { initialize.extra.label.stuff }
 
 FUNCTION { forward.pass }
 {
-  % Pass through all entries, comparing current entry to last one.
+  % Pass through all entries, comparing current word to last one.
   % Need to concatenate year to the stack (done by calc.label) to determine
   % if two entries are the same (see presort)
 
@@ -3273,7 +3273,7 @@ FUNCTION { forward.pass }
   % OLD:calc.label year field.or.null purify$ #-1 #4 substring$ * % add year
   % NEW:
   author.key.label year field.or.null purify$ #-1 #4 substring$ * % add year
-  #1 entry.max$ substring$ =     % are they equal?
+  #1 word.max$ substring$ =     % are they equal?
      { last.extra.num #1 + 'last.extra.num :=
        last.extra.num int.to.chr$ 'extra.label :=
      }
@@ -3282,7 +3282,7 @@ FUNCTION { forward.pass }
        % OLD: calc.label year field.or.null purify$ #-1 #4 substring$ * % add year
        % NEW:
        author.key.label year field.or.null purify$ #-1 #4 substring$ * % add year
-       #1 entry.max$ substring$ 'last.label := % assign to last.label
+       #1 word.max$ substring$ 'last.label := % assign to last.label
      }
   if$
 }
@@ -3315,7 +3315,7 @@ FUNCTION { bib.sort.order }
   title field.or.null
   sort.format.title
   *
-  #1 entry.max$ substring$
+  #1 word.max$ substring$
   'sort.key$ :=
 }
 

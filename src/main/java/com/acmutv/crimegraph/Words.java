@@ -28,25 +28,18 @@ package com.acmutv.crimegraph;
 
 import com.acmutv.crimegraph.config.AppConfiguration;
 import com.acmutv.crimegraph.config.AppConfigurationService;
+import com.acmutv.crimegraph.core.connector.ElasticsearchSink;
 import com.acmutv.crimegraph.core.operator.LineSplitter;
 import com.acmutv.crimegraph.core.sink.WordsElasticSinkFunction;
 import com.acmutv.crimegraph.core.tuple.WordCount;
 import com.acmutv.crimegraph.tool.runtime.RuntimeManager;
 import com.acmutv.crimegraph.tool.runtime.ShutdownHook;
 import com.acmutv.crimegraph.ui.CliService;
-import org.apache.flink.api.common.functions.RuntimeContext;
 import org.apache.flink.api.java.tuple.Tuple2;
 import org.apache.flink.streaming.api.datastream.DataStream;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
-import org.apache.flink.streaming.connectors.elasticsearch2.ElasticsearchSink;
-import org.apache.flink.streaming.connectors.elasticsearch2.ElasticsearchSinkFunction;
-import org.apache.flink.streaming.connectors.elasticsearch2.RequestIndexer;
-import org.elasticsearch.action.index.IndexRequest;
-import org.elasticsearch.client.Requests;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -54,7 +47,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * The app entry-point for {@code Words} application.
+ * The app word-point for {@code Words} application.
  * Before starting the application, it is necessary to open the socket, running
  * {@code $> ncat 127.0.0.1 9000 -l}
  * and start typing words.
@@ -94,21 +87,20 @@ public class Words {
     DataStream<String> text =
         env.socketTextStream(config.getDataHostname(), config.getDataPort(), "\n");
 
-    DataStream<WordCount> counts =
+    DataStream<Tuple2<String,Integer>> counts =
         text.flatMap(new LineSplitter())
             .keyBy(0)
             .sum(1);
 
-    counts.print();
-
+    Map<String, String> esConfig = new HashMap<>();
     Map<String, String> sinkConfig = new HashMap<>();
+    sinkConfig.put("cluster.name", config.getElasticClusterName());
     sinkConfig.put("bulk.flush.max.actions", "1");
-    sinkConfig.put("cluster.name", "my-cluster-name");
 
     List<InetSocketAddress> transports = new ArrayList<>();
-    transports.add(new InetSocketAddress(InetAddress.getByName(config.getElasticHostname()), config.getElasticPort()));
+    transports.add(new InetSocketAddress(config.getElasticHostname(), config.getElasticPort()));
 
-    counts.addSink(new ElasticsearchSink(sinkConfig, transports, new WordsElasticSinkFunction()));
+    counts.addSink(new ElasticsearchSink<>(esConfig, sinkConfig, transports, new WordsElasticSinkFunction()));
 
     env.execute("Words on socket");
   }

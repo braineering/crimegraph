@@ -85,6 +85,11 @@ public class AppConfigurationDeserializer extends StdDeserializer<AppConfigurati
       config.setDataPort(dataPort);
     }
 
+    if (node.hasNonNull("elasticClusterName")) {
+      final String elasticClusterName = node.get("elasticClusterName").asText();
+      config.setElasticClusterName(elasticClusterName);
+    }
+
     if (node.hasNonNull("elasticHostname")) {
       final String elasticHostname = node.get("elasticHostname").asText();
       config.setElasticHostname(elasticHostname);

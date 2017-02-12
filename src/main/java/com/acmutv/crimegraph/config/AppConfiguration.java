@@ -58,6 +58,11 @@ public class AppConfiguration {
   public static final int DATA_PORT = 9000;
 
   /**
+   * Default value for property {@code elasticClusterName}.
+   */
+  public static final String ELASTIC_CLUSTER_NAME = "elasticsearch";
+
+  /**
    * Default value for property {@code elasticHostname}.
    */
   public static final String ELASTIC_HOSTNAME = "127.0.0.1";
@@ -78,6 +83,12 @@ public class AppConfiguration {
    * Default is: {@code 9000}.
    */
   private int dataPort = DATA_PORT;
+
+  /**
+   * The cluster name of the ElasticSearch instance.
+   * Default is: {@code elasticsearch}.
+   */
+  private String elasticClusterName = ELASTIC_CLUSTER_NAME;
 
   /**
    * The hostname of the ElasticSearch instance.
@@ -106,6 +117,7 @@ public class AppConfiguration {
   public void copy(AppConfiguration other) {
     this.dataHostname = other.dataHostname;
     this.dataPort = other.dataPort;
+    this.elasticClusterName = other.elasticClusterName;
     this.elasticHostname = other.elasticHostname;
     this.elasticPort = other.elasticPort;
   }
@@ -116,6 +128,7 @@ public class AppConfiguration {
   public void toDefault() {
     this.dataHostname = DATA_HOSTNAME;
     this.dataPort = DATA_PORT;
+    this.elasticClusterName = ELASTIC_CLUSTER_NAME;
     this.elasticHostname = ELASTIC_HOSTNAME;
     this.elasticPort = ELASTIC_PORT;
   }

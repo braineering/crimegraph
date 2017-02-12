@@ -28,6 +28,7 @@ package com.acmutv.crimegraph.core.tuple;
 
 import lombok.Data;
 import lombok.NonNull;
+import org.apache.flink.api.java.tuple.Tuple2;
 
 /**
  * The tuple representing the a word counter.
@@ -35,17 +36,14 @@ import lombok.NonNull;
  * @author Michele Porretta {@literal <mporretta@acm.org>}
  * @since 1.0
  */
-@Data
-public class WordCount {
+public class WordCount extends Tuple2<String,Long> {
 
-  @NonNull
-  private String entry;
-
-  @NonNull
-  private Integer count;
+  public WordCount(String word, long count) {
+    super(word, count);
+  }
 
   @Override
   public String toString() {
-    return String.format("(%s,%d)", this.getEntry(), this.getCount());
+    return String.format("(%s,%d)", super.f0, super.f1);
   }
 }

@@ -64,6 +64,7 @@ public class AppConfigurationServiceTest {
     AppConfiguration expected = new AppConfiguration();
     expected.setDataHostname("Custom");
     expected.setDataPort(3333);
+    expected.setElasticClusterName("Custom");
     expected.setElasticHostname("Custom");
     expected.setElasticPort(4444);
     Assert.assertEquals(expected, actualjson);

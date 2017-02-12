@@ -37,14 +37,14 @@ import org.apache.flink.util.Collector;
  * @author Michele Porretta {@literal <mporretta@acm.org>}
  * @since 1.0
  */
-public class LineSplitter implements FlatMapFunction<String, WordCount> {
+public class LineSplitter implements FlatMapFunction<String, Tuple2<String,Integer>> {
 
   @Override
-  public void flatMap(String value, Collector<WordCount> out) {
+  public void flatMap(String value, Collector<Tuple2<String,Integer>> out) {
     String[] words = value.toLowerCase().split("\\W+");
     for (String word : words) {
       if (word.length() > 0) {
-        out.collect(new WordCount(word, 1));
+        out.collect(new Tuple2(word, 1));
       }
     }
   }

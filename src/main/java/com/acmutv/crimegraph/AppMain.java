@@ -73,7 +73,7 @@ public class AppMain {
     DataStream<String> text =
         env.socketTextStream(config.getDataHostname(), config.getDataPort(), "\n");
 
-    DataStream<WordCount> counts =
+    DataStream<Tuple2<String,Integer>> counts =
         text.flatMap(new LineSplitter())
             .keyBy(0)
             .sum(1);

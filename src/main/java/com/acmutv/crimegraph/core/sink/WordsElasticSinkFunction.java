@@ -26,10 +26,11 @@
 
 package com.acmutv.crimegraph.core.sink;
 
+import com.acmutv.crimegraph.core.connector.ElasticsearchSinkFunction;
+import com.acmutv.crimegraph.core.connector.RequestIndexer;
 import com.acmutv.crimegraph.core.tuple.WordCount;
 import org.apache.flink.api.common.functions.RuntimeContext;
-import org.apache.flink.streaming.connectors.elasticsearch2.ElasticsearchSinkFunction;
-import org.apache.flink.streaming.connectors.elasticsearch2.RequestIndexer;
+import org.apache.flink.api.java.tuple.Tuple2;
 import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.client.Requests;
 
@@ -42,21 +43,21 @@ import java.util.Map;
  * @author Michele Porretta {@literal <mporretta@acm.org>}
  * @since 1.0
  */
-public class WordsElasticSinkFunction implements ElasticsearchSinkFunction<WordCount> {
+public class WordsElasticSinkFunction implements ElasticsearchSinkFunction<Tuple2<String,Integer>> {
 
   private static final String INDEX = "words";
 
-  private static final String MAPPING = "words-counter";
+  private static final String MAPPING = "word-counter";
 
   @Override
-  public void process(WordCount element, RuntimeContext ctx, RequestIndexer indexer) {
+  public void process(Tuple2<String,Integer> element, RuntimeContext ctx, RequestIndexer indexer) {
     indexer.add(createIndexRequest(element));
   }
 
-  public IndexRequest createIndexRequest(WordCount element) {
+  private IndexRequest createIndexRequest(Tuple2<String,Integer> element) {
     Map<String, String> json = new HashMap<>();
-    json.put("entry", element.getEntry());
-    json.put("count", element.getCount().toString());
+    json.put("word", element.f0);
+    json.put("count", element.f1.toString());
 
     return Requests.indexRequest()
         .index(INDEX)
