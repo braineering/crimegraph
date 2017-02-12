@@ -28,7 +28,6 @@ package com.acmutv.crimegraph;
 
 import com.acmutv.crimegraph.config.AppConfiguration;
 import com.acmutv.crimegraph.core.operator.LineSplitter;
-import com.acmutv.crimegraph.core.tuple.WordCount;
 import com.acmutv.crimegraph.tool.runtime.RuntimeManager;
 import com.acmutv.crimegraph.config.AppConfigurationService;
 import com.acmutv.crimegraph.tool.runtime.ShutdownHook;

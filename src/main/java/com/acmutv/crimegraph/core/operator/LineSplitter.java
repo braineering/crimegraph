@@ -26,7 +26,6 @@
 
 package com.acmutv.crimegraph.core.operator;
 
-import com.acmutv.crimegraph.core.tuple.WordCount;
 import org.apache.flink.api.common.functions.FlatMapFunction;
 import org.apache.flink.api.java.tuple.Tuple2;
 import org.apache.flink.util.Collector;
@@ -39,6 +38,7 @@ import org.apache.flink.util.Collector;
  */
 public class LineSplitter implements FlatMapFunction<String, Tuple2<String,Integer>> {
 
+  @SuppressWarnings("unchecked")
   @Override
   public void flatMap(String value, Collector<Tuple2<String,Integer>> out) {
     String[] words = value.toLowerCase().split("\\W+");

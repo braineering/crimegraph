@@ -28,7 +28,6 @@ package com.acmutv.crimegraph.core.sink;
 
 import com.acmutv.crimegraph.core.connector.ElasticsearchSinkFunction;
 import com.acmutv.crimegraph.core.connector.RequestIndexer;
-import com.acmutv.crimegraph.core.tuple.WordCount;
 import org.apache.flink.api.common.functions.RuntimeContext;
 import org.apache.flink.api.java.tuple.Tuple2;
 import org.elasticsearch.action.index.IndexRequest;

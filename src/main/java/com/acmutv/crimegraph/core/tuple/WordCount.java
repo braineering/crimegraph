@@ -26,8 +26,6 @@
 
 package com.acmutv.crimegraph.core.tuple;
 
-import lombok.Data;
-import lombok.NonNull;
 import org.apache.flink.api.java.tuple.Tuple2;
 
 /**

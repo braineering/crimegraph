@@ -31,7 +31,6 @@ import com.acmutv.crimegraph.config.AppConfigurationService;
 import com.acmutv.crimegraph.core.connector.ElasticsearchSink;
 import com.acmutv.crimegraph.core.operator.LineSplitter;
 import com.acmutv.crimegraph.core.sink.WordsElasticSinkFunction;
-import com.acmutv.crimegraph.core.tuple.WordCount;
 import com.acmutv.crimegraph.tool.runtime.RuntimeManager;
 import com.acmutv.crimegraph.tool.runtime.ShutdownHook;
 import com.acmutv.crimegraph.ui.CliService;
