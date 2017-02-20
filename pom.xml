@@ -101,6 +101,7 @@
         <!-- Core  -->
         <flink.version>1.2.0</flink.version>
         <elasticsearch.version>5.2.0</elasticsearch.version>
+        <neo4j.version>1.1.0</neo4j.version>
 
         <!-- GUI/CLI -->
         <apache.cli.version>1.3.1</apache.cli.version>
@@ -183,6 +184,12 @@
           <artifactId>transport</artifactId>
           <version>${elasticsearch.version}</version>
         </dependency>
+      <dependency>
+        <groupId>org.neo4j.driver</groupId>
+        <artifactId>neo4j-java-driver</artifactId>
+        <version>${neo4j.version}</version>
+      </dependency>
+
 
         <!-- GUI/CLI -->
         <dependency>
@@ -278,6 +285,17 @@
         </activation>
         <properties>
           <project.main>com.acmutv.crimegraph.AppMain</project.main>
+        </properties>
+      </profile>
+
+      <!-- PROFILE: interactions -->
+      <profile>
+        <id>interactions</id>
+        <activation>
+          <activeByDefault>true</activeByDefault>
+        </activation>
+        <properties>
+          <project.main>com.acmutv.crimegraph.Interactions</project.main>
         </properties>
       </profile>
 
