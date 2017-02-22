@@ -32,9 +32,9 @@ import org.junit.Test;
 import java.io.*;
 
 /**
- * This class realizes JUnit tests for {@link AppConfigurationService}.
- * and {@link AppConfiguration}.
+ * JUnit tests for {@link AppConfigurationService} and {@link AppConfiguration}.
  * @author Giacomo Marciani {@literal <gmarciani@acm.org>}
+ * @author Michele Porretta {@literal <mporretta@acm.org>}
  * @since 1.0
  * @see AppConfigurationService
  */
@@ -51,70 +51,59 @@ public class AppConfigurationServiceTest {
   }
 
   /**
-   * Tests the app configuration parsing from an external JSON/YAML file.
+   * Tests the app configuration parsing from an external YAML file.
    * In this test the configuration file provides with complete custom settings.
    * The configuration file has non-null values and template string (${RES}).
    */
   @Test
   public void test_fromJsonYaml_custom() throws IOException {
-    InputStream injson = AppConfigurationServiceTest.class.getResourceAsStream("/config/custom.json");
-    InputStream inyaml = AppConfigurationServiceTest.class.getResourceAsStream("/config/custom.yaml");
-    AppConfiguration actualjson = AppConfigurationService.fromJson(injson);
-    AppConfiguration actualyaml = AppConfigurationService.fromYaml(inyaml);
+    InputStream in = AppConfigurationServiceTest.class.getResourceAsStream("/config/custom.yaml");
+    AppConfiguration actual = AppConfigurationService.fromYaml(in);
     AppConfiguration expected = new AppConfiguration();
-    expected.setDataHostname("Custom");
+    expected.setDataHostname("CustomDataHostname");
     expected.setDataPort(3333);
-    expected.setElasticClusterName("Custom");
-    expected.setElasticHostname("Custom");
-    expected.setElasticPort(4444);
-    Assert.assertEquals(expected, actualjson);
-    Assert.assertEquals(expected, actualyaml);
+    expected.setNeo4jHostname("CustomNeo4jHostname");
+    expected.setNeo4jUsername("CustomNeo4jUsername");
+    expected.setNeo4jPassword("CustomNeo4jPassword");
+    Assert.assertEquals(expected, actual);
   }
 
   /**
-   * Tests the app configuration parsing from an external JSON/YAML file.
+   * Tests the app configuration parsing from an external YAML file.
    * In this test the configuration file provides with complete default settings.
    */
   @Test
   public void test_fromJsonYaml_default() throws IOException {
-    InputStream injson = AppConfigurationServiceTest.class.getResourceAsStream("/config/default.json");
-    InputStream inyaml = AppConfigurationServiceTest.class.getResourceAsStream("/config/default.yaml");
-    AppConfiguration actualjson = AppConfigurationService.fromJson(injson);
-    AppConfiguration actualyaml = AppConfigurationService.fromYaml(inyaml);
+    InputStream in = AppConfigurationServiceTest.class.getResourceAsStream("/config/default.yaml");
+    AppConfiguration actual = AppConfigurationService.fromYaml(in);
     AppConfiguration expected = new AppConfiguration();
-    Assert.assertEquals(expected, actualjson);
-    Assert.assertEquals(expected, actualyaml);
+    Assert.assertEquals(expected, actual);
   }
 
   /**
-   * Tests the configuration parsing from an external JSON/YAML file.
+   * Tests the configuration parsing from an external YAML file.
    * In this test the configuration file provides with empty settings.
    */
   @Test
   public void test_fromJsonYaml_empty() throws IOException {
-    InputStream injson = AppConfigurationServiceTest.class.getResourceAsStream("/config/empty.json");
-    InputStream inyaml = AppConfigurationServiceTest.class.getResourceAsStream("/config/empty.yaml");
+    InputStream in = AppConfigurationServiceTest.class.getResourceAsStream("/config/empty.yaml");
     try {
-      AppConfigurationService.fromJson(injson);
-      AppConfigurationService.fromYaml(inyaml);
+      AppConfigurationService.fromYaml(in);
     } catch (IOException exc) {return;}
     Assert.fail();
   }
 
   /**
-   * Tests the configuration parsing from an external JSON/YAML configuration file.
+   * Tests the configuration parsing from an external YAML configuration file.
    * In this test the configuration file provides with partial custom settings.
    */
   @Test
   public void test_fromJsonYaml_partialCustom() throws IOException {
-    InputStream injson = AppConfigurationServiceTest.class.getResourceAsStream("/config/partial.json");
-    InputStream inyaml = AppConfigurationServiceTest.class.getResourceAsStream("/config/partial.yaml");
-    AppConfiguration actualjson = AppConfigurationService.fromJson(injson);
-    AppConfiguration actualyaml = AppConfigurationService.fromYaml(inyaml);
+    InputStream in = AppConfigurationServiceTest.class.getResourceAsStream("/config/partial.yaml");
+    AppConfiguration actual = AppConfigurationService.fromYaml(in);
     AppConfiguration expected = new AppConfiguration();
-    expected.setDataHostname("Custom");
-    Assert.assertEquals(expected, actualjson);
-    Assert.assertEquals(expected, actualyaml);
+    expected.setNeo4jHostname("CustomNeo4jHostname2");
+    Assert.assertEquals(expected, actual);
   }
 
 }

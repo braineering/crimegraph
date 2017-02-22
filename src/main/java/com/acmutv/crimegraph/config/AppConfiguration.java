@@ -58,19 +58,19 @@ public class AppConfiguration {
   public static final int DATA_PORT = 9000;
 
   /**
-   * Default value for property {@code elasticClusterName}.
+   * Default value for property {@code neo4jHostname}.
    */
-  public static final String ELASTIC_CLUSTER_NAME = "elasticsearch";
+  public static final String NEO4J_HOSTNAME = "bolt://localhost:7687";
 
   /**
-   * Default value for property {@code elasticHostname}.
+   * Default value for property {@code neo4jUsername}.
    */
-  public static final String ELASTIC_HOSTNAME = "127.0.0.1";
+  public static final String NEO4J_USERNAME = "neo4j";
 
   /**
-   * Default value for property {@code elasticPort}.
+   * Default value for property {@code neo4jPassword}.
    */
-  public static final int ELASTIC_PORT = 9300;
+  public static final String NEO4J_PASSWORD = "password";
 
   /**
    * The hostname of the data stream socket.
@@ -85,22 +85,22 @@ public class AppConfiguration {
   private int dataPort = DATA_PORT;
 
   /**
-   * The cluster name of the ElasticSearch instance.
-   * Default is: {@code elasticsearch}.
+   * The hostname of the NEO4J instance.
+   * Default is: {@code bolt://localhost:7474}.
    */
-  private String elasticClusterName = ELASTIC_CLUSTER_NAME;
+  private String neo4jHostname = NEO4J_HOSTNAME;
 
   /**
-   * The hostname of the ElasticSearch instance.
-   * Default is: {@code 127.0.0.1}.
+   * The username of the NEO4J instance.
+   * Default is: {@code neo4j}.
    */
-  private String elasticHostname = ELASTIC_HOSTNAME;
+  private String neo4jUsername = NEO4J_USERNAME;
 
   /**
-   * The port number of the ElasticSearch instance.
-   * Default is: {@code 9200}.
+   * The password of the NEO4J instance.
+   * Default is: {@code password}.
    */
-  private int elasticPort = ELASTIC_PORT;
+  private String neo4jPassword = NEO4J_PASSWORD;
 
   /**
    * Constructs a configuration as a copy of the one specified.
@@ -117,9 +117,9 @@ public class AppConfiguration {
   public void copy(AppConfiguration other) {
     this.dataHostname = other.dataHostname;
     this.dataPort = other.dataPort;
-    this.elasticClusterName = other.elasticClusterName;
-    this.elasticHostname = other.elasticHostname;
-    this.elasticPort = other.elasticPort;
+    this.neo4jHostname = other.neo4jHostname;
+    this.neo4jUsername = other.neo4jUsername;
+    this.neo4jPassword = other.neo4jPassword;
   }
 
   /**
@@ -128,9 +128,9 @@ public class AppConfiguration {
   public void toDefault() {
     this.dataHostname = DATA_HOSTNAME;
     this.dataPort = DATA_PORT;
-    this.elasticClusterName = ELASTIC_CLUSTER_NAME;
-    this.elasticHostname = ELASTIC_HOSTNAME;
-    this.elasticPort = ELASTIC_PORT;
+    this.neo4jHostname = NEO4J_HOSTNAME;
+    this.neo4jUsername = NEO4J_USERNAME;
+    this.neo4jPassword = NEO4J_PASSWORD;
   }
 
 }

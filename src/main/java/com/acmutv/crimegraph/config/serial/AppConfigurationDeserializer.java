@@ -75,29 +75,29 @@ public class AppConfigurationDeserializer extends StdDeserializer<AppConfigurati
     AppConfiguration config = new AppConfiguration();
     JsonNode node = parser.getCodec().readTree(parser);
 
-    if (node.hasNonNull("dataHostname")) {
-      final String dataHostname = node.get("dataHostname").asText();
+    if (node.hasNonNull("data.hostname")) {
+      final String dataHostname = node.get("data.hostname").asText();
       config.setDataHostname(dataHostname);
     }
 
-    if (node.hasNonNull("dataPort")) {
-      final int dataPort = node.get("dataPort").asInt();
+    if (node.hasNonNull("data.port")) {
+      final int dataPort = node.get("data.port").asInt();
       config.setDataPort(dataPort);
     }
 
-    if (node.hasNonNull("elasticClusterName")) {
-      final String elasticClusterName = node.get("elasticClusterName").asText();
-      config.setElasticClusterName(elasticClusterName);
+    if (node.hasNonNull("neo4j.hostname")) {
+      final String neo4jHostname = node.get("neo4j.hostname").asText();
+      config.setNeo4jHostname(neo4jHostname);
     }
 
-    if (node.hasNonNull("elasticHostname")) {
-      final String elasticHostname = node.get("elasticHostname").asText();
-      config.setElasticHostname(elasticHostname);
+    if (node.hasNonNull("neo4j.username")) {
+      final String neo4jUsername = node.get("neo4j.username").asText();
+      config.setNeo4jUsername(neo4jUsername);
     }
 
-    if (node.hasNonNull("elasticPort")) {
-      final int elasticPort = node.get("elasticPort").asInt();
-      config.setElasticPort(elasticPort);
+    if (node.hasNonNull("neo4j.password")) {
+      final String neo4jPassword = node.get("neo4j.password").asText();
+      config.setNeo4jPassword(neo4jPassword);
     }
 
     return config;

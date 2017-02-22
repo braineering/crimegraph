@@ -28,26 +28,16 @@ package com.acmutv.crimegraph;
 
 import com.acmutv.crimegraph.config.AppConfiguration;
 import com.acmutv.crimegraph.config.AppConfigurationService;
-import com.acmutv.crimegraph.core.connector.ElasticsearchSink;
 import com.acmutv.crimegraph.core.operator.InteractionParser;
-import com.acmutv.crimegraph.core.operator.LineSplitter;
 import com.acmutv.crimegraph.core.sink.InteractionsNeo4JSinkFunction;
-import com.acmutv.crimegraph.core.sink.WordsElasticSinkFunction;
 import com.acmutv.crimegraph.core.tuple.Interaction;
 import com.acmutv.crimegraph.tool.runtime.RuntimeManager;
 import com.acmutv.crimegraph.tool.runtime.ShutdownHook;
 import com.acmutv.crimegraph.ui.CliService;
-import org.apache.flink.api.java.tuple.Tuple2;
 import org.apache.flink.streaming.api.datastream.DataStream;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.net.InetSocketAddress;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 /**
  * The app word-point for {@code Interactions} application.
@@ -89,9 +79,11 @@ public class Interactions {
 
     DataStream<Interaction> interactions =
         text.flatMap(new InteractionParser())
-        .keyBy(0);
+        .shuffle();
 
-    interactions.addSink(new InteractionsNeo4JSinkFunction("bolt://localhost:7474", "neo4j", "password"));
+    interactions.addSink(new InteractionsNeo4JSinkFunction(
+        config.getNeo4jHostname(), config.getNeo4jUsername(), config.getNeo4jPassword())
+    );
 
     env.execute("Interactions from socket to Neo4J");
   }

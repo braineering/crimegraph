@@ -39,8 +39,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 
 /**
- * This class realizes JUnit tests for {@link IOManager}.
+ * JUnit tests for {@link IOManager}.
  * @author Giacomo Marciani {@literal <gmarciani@acm.org>}
+ * @author Michele Porretta {@literal <mporretta@acm.org>}
  * @since 1.0
  * @see IOManager
  */

@@ -33,8 +33,9 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
 /**
- * This class realizes the JUnit test suite that encapsulates all the JUnit tests for the whole app.
+ * JUnit test suite that encapsulates all the JUnit tests for the whole app.
  * @author Giacomo Marciani {@literal <gmarciani@acm.org>}
+ * @author Michele Porretta {@literal <mporretta@acm.org>}
  * @since 1.0
  * @see TestAllConfig
  * @see TestAllCore

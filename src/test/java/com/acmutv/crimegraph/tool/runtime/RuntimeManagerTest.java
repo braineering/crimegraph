@@ -33,8 +33,9 @@ import java.io.IOException;
 import static org.junit.Assert.assertEquals;
 
 /**
- * This class realizes JUnit tests for {@link RuntimeManager}.
+ * JUnit tests for {@link RuntimeManager}.
  * @author Giacomo Marciani {@literal <gmarciani@acm.org>}
+ * @author Michele Porretta {@literal <mporretta@acm.org>}
  * @since 1.0
  * @see RuntimeManager
  */

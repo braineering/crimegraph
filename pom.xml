@@ -299,17 +299,6 @@
         </properties>
       </profile>
 
-      <!-- PROFILE: words -->
-        <profile>
-          <id>words</id>
-          <activation>
-            <activeByDefault>false</activeByDefault>
-          </activation>
-          <properties>
-            <project.main>com.acmutv.crimegraph.Words</project.main>
-          </properties>
-        </profile>
-
         <!-- PROFILE: skip-tests -->
         <profile>
             <id>skip-tests</id>

@@ -30,8 +30,9 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
 /**
- * This class realizes JUnit test suite for all tools related to JVM runtime.
+ * JUnit test suite for all tools related to JVM runtime.
  * @author Giacomo Marciani {@literal <gmarciani@acm.org>}
+ * @author Michele Porretta {@literal <mporretta@acm.org>}
  * @since 1.0
  * @see RuntimeManagerTest
  */

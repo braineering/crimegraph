@@ -1,7 +1,7 @@
 /*
   The MIT License (MIT)
 
-  Copyright (c) 2017 Giacomo Marciani and Michele Porretta
+  Copyright (c) 2016 Giacomo Marciani and Michele Porretta
 
   Permission is hereby granted, free of charge, to any person obtaining a copy
   of this software and associated documentation files (the "Software"), to deal
@@ -24,24 +24,21 @@
   THE SOFTWARE.
  */
 
-package com.acmutv.crimegraph.core.tuple;
+package com.acmutv.crimegraph.core.sink;
 
-import org.apache.flink.api.java.tuple.Tuple2;
+import org.junit.runner.RunWith;
+import org.junit.runners.Suite;
 
 /**
- * The tuple representing the a word counter.
+ * JUnit test suite for sinks.
  * @author Giacomo Marciani {@literal <gmarciani@acm.org>}
  * @author Michele Porretta {@literal <mporretta@acm.org>}
  * @since 1.0
+ * @see Neo4jSinkTest
  */
-public class WordCount extends Tuple2<String,Long> {
-
-  public WordCount(String word, long count) {
-    super(word, count);
-  }
-
-  @Override
-  public String toString() {
-    return String.format("(%s,%d)", super.f0, super.f1);
-  }
+@RunWith(Suite.class)
+@Suite.SuiteClasses({
+    Neo4jSinkTest.class
+})
+public class TestAllSink {
 }

@@ -1,8 +1,17 @@
 #===============================================================================
 # APP Configuration file
 #===============================================================================
-dataHostname: "Custom"
-dataPort: 3333
-elasticClusterName: "Custom"
-elasticHostname: "Custom"
-elasticPort: 4444
+
+
+#===============================================================================
+# DATASOURCES
+#===============================================================================
+data.hostname: "CustomDataHostname"
+data.port: 3333
+
+#===============================================================================
+# NEO4J
+#===============================================================================
+neo4j.hostname: "CustomNeo4jHostname"
+neo4j.username: "CustomNeo4jUsername"
+neo4j.password: "CustomNeo4jPassword"

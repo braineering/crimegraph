@@ -1,7 +1,0 @@
-{
-  "dataHostname": "Custom",
-  "dataPort": 3333,
-  "elasticClusterName": "Custom",
-  "elasticHostname": "Custom",
-  "elasticPort": 4444
-}
