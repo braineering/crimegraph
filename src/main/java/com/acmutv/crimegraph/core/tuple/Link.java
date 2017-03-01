@@ -27,11 +27,11 @@
 package com.acmutv.crimegraph.core.tuple;
 
 import org.apache.flink.api.java.tuple.Tuple3;
+import org.apache.flink.api.java.tuple.Tuple4;
+import org.apache.hadoop.yarn.webapp.hamlet.HamletSpec;
 
-import java.util.Arrays;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 /**
  * The tuple representing an interaction between two nodes.
@@ -39,39 +39,59 @@ import java.util.stream.Collectors;
  * @author Michele Porretta {@literal <mporretta@acm.org>}
  * @since 1.0
  */
-public class Interaction extends Tuple3<Long,Long,Long> {
+public class Link extends Tuple4<Long,Long,LinkType,Double> {
 
   /**
    * The regular expression
    */
-  public static final String REGEXP = "^\\(([0-9]+),([0-9]+),([0-9]+)\\)$";
+  private static final String REGEXP =
+      "^\\(([0-9]+),([0-9]+),(INTERACTION,|POTENTIAL,|HIDDEN,)?([0-9]+)\\)$";
+
   /**
    * The pattern matcher used to match strings on {@code REGEXP}.
    */
   private static final Pattern PATTERN = Pattern.compile(REGEXP);
 
-  public Interaction(long src, long dst, long weight) {
-    super(src, dst, weight);
+  /**
+   * Creates a new interaction.
+   * @param src the id of the source node.
+   * @param dst the id of the destination node.
+   * @param type the link type.
+   * @param weight the weight of the interaction.
+   */
+  public Link(long src, long dst, LinkType type, double weight) {
+    super(src, dst, type, weight);
+  }
+
+  /**
+   * Creates a new interaction.
+   * @param src the id of the source node.
+   * @param dst the id of the destination node.
+   * @param weight the weight of the interaction.
+   */
+  public Link(long src, long dst, double weight) {
+    super(src, dst, LinkType.INTERACTION, weight);
   }
 
   @Override
   public String toString() {
-    return String.format("(%d,%d,%d)", super.f0, super.f1, super.f2);
+    return String.format("(%d,%d,%s,%f)", super.f0, super.f1, super.f2, super.f3);
   }
 
   /**
-   * Parses {@link Interaction} from string.
+   * Parses {@link Link} from string.
    * @param string the string to parse.
-   * @return the parsed {@link Interaction}.
+   * @return the parsed {@link Link}.
    * @throws IllegalArgumentException when {@code string} cannot be parsed.
    */
-  public static Interaction valueOf(String string) throws IllegalArgumentException {
+  public static Link valueOf(String string) throws IllegalArgumentException {
     if (string == null) throw new IllegalArgumentException();
     Matcher matcher = PATTERN.matcher(string);
     if (!matcher.matches()) throw new IllegalArgumentException();
     long src = Long.valueOf(matcher.group(1));
     long dst = Long.valueOf(matcher.group(2));
-    long weight = Long.valueOf(matcher.group(3));
-    return new Interaction(src, dst, weight);
+    LinkType type = LinkType.valueOf(matcher.group(3));
+    double weight = Double.valueOf(matcher.group(4));
+    return new Link(src, dst, type, weight);
   }
 }

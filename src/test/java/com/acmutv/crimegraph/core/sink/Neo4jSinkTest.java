@@ -26,7 +26,7 @@
 
 package com.acmutv.crimegraph.core.sink;
 
-import com.acmutv.crimegraph.core.tuple.Interaction;
+import com.acmutv.crimegraph.core.tuple.Link;
 import org.junit.Assert;
 import org.junit.Test;
 import org.neo4j.driver.v1.*;
@@ -36,10 +36,10 @@ import java.io.IOException;
 import static org.neo4j.driver.v1.Values.parameters;
 
 /**
- * JUnit test suite for {@link InteractionsNeo4JSinkFunction}.
+ * JUnit test suite for {@link LinkSink}.
  * @author Giacomo Marciani {@literal <gmarciani@acm.org>}
  * @since 1.0
- * @see Interaction
+ * @see Link
  */
 public class Neo4jSinkTest {
 
@@ -57,19 +57,19 @@ public class Neo4jSinkTest {
           "RETURN a.id as src, b.id as dst, r.weight as weight";
 
   /**
-   * Tests creation of {@link Interaction} on NEO4J.
+   * Tests creation of {@link Link} on NEO4J.
    * @throws IOException
    */
   @Test
   public void create() throws Exception {
-    InteractionsNeo4JSinkFunction sink =
-        new InteractionsNeo4JSinkFunction(HOSTNAME, USERNAME, PASSWORD);
+    LinkSink sink =
+        new LinkSink(HOSTNAME, USERNAME, PASSWORD);
 
-    Interaction interaction = new Interaction(1, 2, 20);
+    Link link = new Link(1, 2, 20);
 
     sink.open(null);
 
-    sink.invoke(interaction);
+    sink.invoke(link);
 
     sink.close();
 
@@ -78,7 +78,7 @@ public class Neo4jSinkTest {
         Config.build().withEncryptionLevel(Config.EncryptionLevel.NONE ).toConfig());
     Session session = driver.session();
     StatementResult result = session.run(MATCH,
-        parameters("src", interaction.f0, "dst", interaction.f1, "weight", interaction.f2)
+        parameters("src", link.f0, "dst", link.f1, "weight", link.f2)
     );
     Assert.assertTrue(result.hasNext());
     Record record = result.next();

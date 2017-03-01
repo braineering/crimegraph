@@ -26,14 +26,11 @@
 
 package com.acmutv.crimegraph.core.sink;
 
-import com.acmutv.crimegraph.core.tuple.Interaction;
+import com.acmutv.crimegraph.core.db.Neo4JManager;
+import com.acmutv.crimegraph.core.tuple.Link;
 import org.apache.flink.configuration.Configuration;
 import org.apache.flink.streaming.api.functions.sink.RichSinkFunction;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.neo4j.driver.v1.*;
-
-import static org.neo4j.driver.v1.Values.parameters;
 
 /**
  * A simple sink function based on ElasticSearch.
@@ -41,7 +38,7 @@ import static org.neo4j.driver.v1.Values.parameters;
  * @author Michele Porretta {@literal <mporretta@acm.org>}
  * @since 1.0
  */
-public class InteractionsNeo4JSinkFunction extends RichSinkFunction<Interaction> {
+public class LinkSink extends RichSinkFunction<Link> {
 
   //private static final Logger LOGGER = LogManager.getLogger(InteractionsNeo4JSinkFunction.class);
 
@@ -71,37 +68,30 @@ public class InteractionsNeo4JSinkFunction extends RichSinkFunction<Interaction>
   private Session session;
 
   /**
-   * Constructs a new sink to write {@link Interaction} on a NEO4J instance.
+   * Constructs a new sink to write {@link Link} on a NEO4J instance.
    * @param hostname the hostname of the NEO4J instance.
    * @param username the username of the NEO4J instance.
    * @param password the password of the NEO4J instance.
    */
-  public InteractionsNeo4JSinkFunction(String hostname, String username, String password) {
+  public LinkSink(String hostname, String username, String password) {
     this.hostname = hostname;
     this.username = username;
     this.password = password;
   }
 
-  private static final String CREATE =
-      "CREATE (a:Person {id:{src}})-[:INTERACTION {weight:{weight}}]->(b:Person {id:{dst}})";
-
   @Override
-  public void invoke(Interaction value) throws Exception {
-    this.session.run(CREATE,
-        parameters("src", value.f0, "dst", value.f1, "weight", value.f2)
-    );
+  public void invoke(Link value) throws Exception {
+    Neo4JManager.saveLink(this.session, value);
   }
 
   @Override
   public void open(Configuration parameters) throws Exception {
-    this.driver = GraphDatabase.driver(this.hostname, AuthTokens.basic(this.username, this.password),
-        Config.build().withEncryptionLevel(Config.EncryptionLevel.NONE ).toConfig());
+    this.driver = Neo4JManager.open(this.hostname, this.username, this.password);
     this.session = driver.session();
   }
 
   @Override
   public void close() throws Exception {
-    this.session.close();
-    this.driver.close();
+    Neo4JManager.close(this.session, this.driver);
   }
 }

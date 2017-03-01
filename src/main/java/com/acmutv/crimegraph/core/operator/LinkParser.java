@@ -26,9 +26,8 @@
 
 package com.acmutv.crimegraph.core.operator;
 
-import com.acmutv.crimegraph.core.tuple.Interaction;
+import com.acmutv.crimegraph.core.tuple.Link;
 import org.apache.flink.api.common.functions.FlatMapFunction;
-import org.apache.flink.api.java.tuple.Tuple2;
 import org.apache.flink.util.Collector;
 
 /**
@@ -37,12 +36,12 @@ import org.apache.flink.util.Collector;
  * @author Michele Porretta {@literal <mporretta@acm.org>}
  * @since 1.0
  */
-public class InteractionParser implements FlatMapFunction<String, Interaction> {
+public class LinkParser implements FlatMapFunction<String, Link> {
 
   @SuppressWarnings("unchecked")
   @Override
-  public void flatMap(String value, Collector<Interaction> out) {
-    Interaction interaction = Interaction.valueOf(value);
-    out.collect(interaction);
+  public void flatMap(String value, Collector<Link> out) {
+    Link link = Link.valueOf(value);
+    out.collect(link);
   }
 }

@@ -28,9 +28,9 @@ package com.acmutv.crimegraph;
 
 import com.acmutv.crimegraph.config.AppConfiguration;
 import com.acmutv.crimegraph.config.AppConfigurationService;
-import com.acmutv.crimegraph.core.operator.InteractionParser;
-import com.acmutv.crimegraph.core.sink.InteractionsNeo4JSinkFunction;
-import com.acmutv.crimegraph.core.tuple.Interaction;
+import com.acmutv.crimegraph.core.operator.LinkParser;
+import com.acmutv.crimegraph.core.sink.LinkSink;
+import com.acmutv.crimegraph.core.tuple.Link;
 import com.acmutv.crimegraph.tool.runtime.RuntimeManager;
 import com.acmutv.crimegraph.tool.runtime.ShutdownHook;
 import com.acmutv.crimegraph.ui.CliService;
@@ -77,11 +77,11 @@ public class Interactions {
     DataStream<String> text =
         env.socketTextStream(config.getDataHostname(), config.getDataPort(), "\n");
 
-    DataStream<Interaction> interactions =
-        text.flatMap(new InteractionParser())
+    DataStream<Link> interactions =
+        text.flatMap(new LinkParser())
         .shuffle();
 
-    interactions.addSink(new InteractionsNeo4JSinkFunction(
+    interactions.addSink(new LinkSink(
         config.getNeo4jHostname(), config.getNeo4jUsername(), config.getNeo4jPassword())
     );
 
