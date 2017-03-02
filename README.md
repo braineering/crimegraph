@@ -8,7 +8,7 @@ Social Network Analysis (SNA) applied to criminal networks leveraging Apache Fli
 ## Build
 The app building is provided by Apache Maven. To build the app you need to run
 
-    $app> mvn clean package
+    $app> mvn clean package -P build-jar
     
 If you want to skip tests:
 
@@ -20,30 +20,27 @@ If you want to build with code optimization:
 
 
 ## Usage
-The app can be run both with and without Apache Maven.
+Start the Neo4J instance
 
-
-### Usage with Apache Maven
-To run the app with Apache Maven, you need to run
+    $neo4j-home>./bin/neo4j start
     
-    $app>mvn exec:java -Dargs="YOUR ARGUMENTS HERE"
+and visit the Neo4J browser running at *http://localhost:7474*.
 
-For example, to print the app version, you need to run
+Start the Flink cluster
+    
+    $flink-home>./bin/start-local.sh
+    
+Submit the application to the cluster
 
-    $app>mvn exec:java -Dargs="--version"
+    $> flink run path/to/crimegraph/target/crimegraph-1.0.jar
     
-Running the app this way could be useful during development, 
-because it is repackaged at every execution.
+Stop the Flink cluster
     
+    $flink-home>./bin/stop-local.sh
     
-### Usage without Apache Maven    
-To run the app without Apache Maven, you need to run
+Stop the Neo4J instance
 
-    $>java -jar path/to/app-1.0-SNAPSHOT-jar-with-dependencies.jar YOUR ARGUMENTS HERE
-    
-For example, to print the app version, you need to run
-
-    $>java -jar path/to/app-1.0-SNAPSHOT-jar-with-dependencies.jar --version
+    $neo4j-home>./bin/neo4j stop
 
 
 ## Authors

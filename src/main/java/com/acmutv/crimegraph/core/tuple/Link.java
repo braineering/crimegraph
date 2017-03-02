@@ -26,12 +26,12 @@
 
 package com.acmutv.crimegraph.core.tuple;
 
-import org.apache.flink.api.java.tuple.Tuple3;
 import org.apache.flink.api.java.tuple.Tuple4;
-import org.apache.hadoop.yarn.webapp.hamlet.HamletSpec;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * The tuple representing an interaction between two nodes.
@@ -39,13 +39,15 @@ import java.util.regex.Pattern;
  * @author Michele Porretta {@literal <mporretta@acm.org>}
  * @since 1.0
  */
-public class Link extends Tuple4<Long,Long,LinkType,Double> {
+public class Link extends Tuple4<Long,Long,Double,LinkType> {
 
   /**
    * The regular expression
    */
   private static final String REGEXP =
-      "^\\(([0-9]+),([0-9]+),(INTERACTION,|POTENTIAL,|HIDDEN,)?([0-9]+)\\)$";
+      String.format("^\\(([0-9]+),([0-9]+),([0-9]+\\.*[0-9]+)(?:,)?(%s)?\\)$",
+          Stream.of(LinkType.values())
+              .map(LinkType::toString).collect(Collectors.joining("|")));
 
   /**
    * The pattern matcher used to match strings on {@code REGEXP}.
@@ -56,11 +58,11 @@ public class Link extends Tuple4<Long,Long,LinkType,Double> {
    * Creates a new interaction.
    * @param src the id of the source node.
    * @param dst the id of the destination node.
-   * @param type the link type.
    * @param weight the weight of the interaction.
+   * @param type the link type.
    */
-  public Link(long src, long dst, LinkType type, double weight) {
-    super(src, dst, type, weight);
+  public Link(long src, long dst, double weight, LinkType type) {
+    super(src, dst, weight, type);
   }
 
   /**
@@ -70,12 +72,16 @@ public class Link extends Tuple4<Long,Long,LinkType,Double> {
    * @param weight the weight of the interaction.
    */
   public Link(long src, long dst, double weight) {
-    super(src, dst, LinkType.INTERACTION, weight);
+    super(src, dst, weight, LinkType.REAL);
   }
 
   @Override
   public String toString() {
-    return String.format("(%d,%d,%s,%f)", super.f0, super.f1, super.f2, super.f3);
+    if (this.f3.equals(LinkType.REAL)) {
+      return String.format("(%d,%d,%f)", super.f0, super.f1, super.f2);
+    } else {
+      return String.format("(%d,%d,%f,%s)", super.f0, super.f1, super.f2, super.f3);
+    }
   }
 
   /**
@@ -90,8 +96,10 @@ public class Link extends Tuple4<Long,Long,LinkType,Double> {
     if (!matcher.matches()) throw new IllegalArgumentException();
     long src = Long.valueOf(matcher.group(1));
     long dst = Long.valueOf(matcher.group(2));
-    LinkType type = LinkType.valueOf(matcher.group(3));
-    double weight = Double.valueOf(matcher.group(4));
-    return new Link(src, dst, type, weight);
+    double weight = Double.valueOf(matcher.group(3));
+    String strType = matcher.group(4);
+    LinkType type = (strType != null) ?
+        LinkType.valueOf(matcher.group(4)) : LinkType.REAL;
+    return new Link(src, dst, weight, type);
   }
 }

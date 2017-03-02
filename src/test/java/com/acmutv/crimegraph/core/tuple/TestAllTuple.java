@@ -1,7 +1,7 @@
 /*
   The MIT License (MIT)
 
-  Copyright (c) 2017 Giacomo Marciani and Michele Porretta
+  Copyright (c) 2016 Giacomo Marciani and Michele Porretta
 
   Permission is hereby granted, free of charge, to any person obtaining a copy
   of this software and associated documentation files (the "Software"), to deal
@@ -24,29 +24,21 @@
   THE SOFTWARE.
  */
 
-package com.acmutv.crimegraph.core.operator;
+package com.acmutv.crimegraph.core.tuple;
 
-import org.apache.flink.api.common.functions.FlatMapFunction;
-import org.apache.flink.api.java.tuple.Tuple2;
-import org.apache.flink.util.Collector;
+import org.junit.runner.RunWith;
+import org.junit.runners.Suite;
 
 /**
- * This operator splits the incoming string into words.
+ * JUnit test suite for sinks.
  * @author Giacomo Marciani {@literal <gmarciani@acm.org>}
  * @author Michele Porretta {@literal <mporretta@acm.org>}
  * @since 1.0
+ * @see LinkTest
  */
-public class LineSplitter implements FlatMapFunction<String, Tuple2<String,Integer>> {
-
-  @SuppressWarnings("unchecked")
-  @Override
-  public void flatMap(String value, Collector<Tuple2<String,Integer>> out) {
-    String[] words = value.toLowerCase().split("\\W+");
-    for (String word : words) {
-      if (word.length() > 0) {
-        System.out.println(word);
-        out.collect(new Tuple2(word, 1));
-      }
-    }
-  }
+@RunWith(Suite.class)
+@Suite.SuiteClasses({
+    LinkTest.class
+})
+public class TestAllTuple {
 }

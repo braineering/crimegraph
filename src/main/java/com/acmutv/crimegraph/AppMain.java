@@ -38,6 +38,9 @@ import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * The app entry-point.
  * @author Giacomo Marciani {@literal <gmarciani@acm.org>}
@@ -64,13 +67,13 @@ public class AppMain {
 
     RuntimeManager.registerShutdownHooks(new ShutdownHook());
 
-    LOGGER.info("Connecting to {}:{}...", config.getDataHostname(), config.getDataPort());
+    //LOGGER.info("Connecting to {}:{}...", config.getDataHostname(), config.getDataPort());
 
     final StreamExecutionEnvironment env =
         StreamExecutionEnvironment.getExecutionEnvironment();
 
-    DataStream<String> text =
-        env.socketTextStream(config.getDataHostname(), config.getDataPort(), "\n");
+    DataStream<String> text = env.fromCollection(data());
+    //DataStream<String> text = env.socketTextStream(config.getDataHostname(), config.getDataPort(), "\n");
 
     DataStream<Tuple2<String,Integer>> counts =
         text.flatMap(new LineSplitter())
@@ -79,6 +82,13 @@ public class AppMain {
 
     counts.print();
 
-    env.execute("Words on socket");
+    env.execute("Words count");
+  }
+
+  private static List<String> data() {
+    List<String> data = new ArrayList<>();
+    data.add("Hello world");
+    data.add("Hello world");
+    return data;
   }
 }

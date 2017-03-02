@@ -4,731 +4,761 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.acmutv</groupId>
-    <artifactId>crimegraph</artifactId>
-    <version>1.0</version>
-    <packaging>jar</packaging>
+  <groupId>com.acmutv</groupId>
+  <artifactId>crimegraph</artifactId>
+  <version>1.0</version>
+  <packaging>jar</packaging>
 
-    <name>AppMain</name>
-    <description>
-      App description.
-    </description>
-    <url>http://gitlab.com/acm-utv/crimegraph</url>
-    <inceptionYear>2017</inceptionYear>
+  <name>AppMain</name>
+  <description>
+    App description.
+  </description>
+  <url>http://gitlab.com/acm-utv/crimegraph</url>
+  <inceptionYear>2017</inceptionYear>
 
-    <licenses>
-        <license>
-            <name>The MIT License (MIT)</name>
-            <url>https://opensource.org/licenses/MIT</url>
-            <distribution>repo</distribution>
-        </license>
-    </licenses>
+  <licenses>
+    <license>
+      <name>The MIT License (MIT)</name>
+      <url>https://opensource.org/licenses/MIT</url>
+      <distribution>repo</distribution>
+    </license>
+  </licenses>
 
-    <organization>
-        <name>ACM Rome Tor Vergata</name>
-        <url>https://acm.uniroma2.it</url>
-    </organization>
+  <organization>
+    <name>ACM Rome Tor Vergata</name>
+    <url>https://acm.uniroma2.it</url>
+  </organization>
 
-    <developers>
-        <developer>
-            <name>Giacomo Marciani</name>
-            <id>gmarciani</id>
-            <email>gmarciani@acm.org</email>
-            <url>http://gmarciani.com</url>
-            <organization>ACM Rome Tor Vergata</organization>
-            <organizationUrl>http://acm.uniroma2.it</organizationUrl>
-            <roles>
-                <role>Java Developer</role>
-            </roles>
-            <timezone>Europe/Rome</timezone>
-            <properties>
-                <picUrl>http://gmarciani.com/media/photos/giacomo-marciani-profile</picUrl>
-            </properties>
-        </developer>
-    </developers>
+  <developers>
+    <developer>
+      <name>Giacomo Marciani</name>
+      <id>gmarciani</id>
+      <email>gmarciani@acm.org</email>
+      <url>http://gmarciani.com</url>
+      <organization>ACM Rome Tor Vergata</organization>
+      <organizationUrl>http://acm.uniroma2.it</organizationUrl>
+      <roles>
+        <role>Java Developer</role>
+      </roles>
+      <timezone>Europe/Rome</timezone>
+      <properties>
+        <picUrl>http://gmarciani.com/media/photos/giacomo-marciani-profile</picUrl>
+      </properties>
+    </developer>
+    <developer>
+      <name>Michele Porretta</name>
+      <id>mporretta</id>
+      <email>mporretta@acm.org</email>
+      <url>http://micheleporretta.com</url>
+      <organization>ACM Rome Tor Vergata</organization>
+      <organizationUrl>http://acm.uniroma2.it</organizationUrl>
+      <roles>
+        <role>Java Developer</role>
+      </roles>
+      <timezone>Europe/Rome</timezone>
+      <properties>
+        <picUrl></picUrl>
+      </properties>
+    </developer>
+  </developers>
 
-    <issueManagement>
-        <system>Gitlab Issues</system>
-        <url>https://gitlab.com/acm-utv/crimegraph/issues</url>
-    </issueManagement>
+  <issueManagement>
+    <system>Gitlab Issues</system>
+    <url>https://gitlab.com/acm-utv/crimegraph/issues</url>
+  </issueManagement>
 
-    <scm>
-        <url>https://gitlab.com/acm-utv/crimegraph</url>
-        <connection>scm:git:git://gitlab.com/acm-utv/crimegraph.git</connection>
-        <developerConnection>scm:git:git@gitlab.com:acm-utv/crimegraph.git</developerConnection>
-    </scm>
+  <scm>
+    <url>https://gitlab.com/acm-utv/crimegraph</url>
+    <connection>scm:git:git://gitlab.com/acm-utv/crimegraph.git</connection>
+    <developerConnection>scm:git:git@gitlab.com:acm-utv/crimegraph.git</developerConnection>
+  </scm>
 
-    <repositories>
-        <repository>
-            <id>mvn.repository.central</id>
-            <name>Maven Central Repository</name>
-            <url>https://repo1.maven.org/maven2</url>
-            <layout>default</layout>
-            <releases>
-                <enabled>true</enabled>
-                <updatePolicy>always</updatePolicy>
-                <checksumPolicy>warn</checksumPolicy>
-            </releases>
-            <snapshots>
-                <enabled>true</enabled>
-                <updatePolicy>daily</updatePolicy>
-                <checksumPolicy>warn</checksumPolicy>
-            </snapshots>
-        </repository>
-        <repository>
-            <id>apache.snapshots</id>
-            <name>Apache Development Snapshot Repository</name>
-            <url>https://repository.apache.org/content/repositories/snapshots/</url>
-            <releases>
-                <enabled>false</enabled>
-            </releases>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
-        </repository>
-    </repositories>
+  <repositories>
+    <repository>
+      <id>mvn.repository.central</id>
+      <name>Maven Central Repository</name>
+      <url>https://repo1.maven.org/maven2</url>
+      <layout>default</layout>
+      <releases>
+        <enabled>true</enabled>
+        <updatePolicy>always</updatePolicy>
+        <checksumPolicy>warn</checksumPolicy>
+      </releases>
+      <snapshots>
+        <enabled>true</enabled>
+        <updatePolicy>daily</updatePolicy>
+        <checksumPolicy>warn</checksumPolicy>
+      </snapshots>
+    </repository>
+    <repository>
+      <id>apache.snapshots</id>
+      <name>Apache Development Snapshot Repository</name>
+      <url>https://repository.apache.org/content/repositories/snapshots/</url>
+      <releases>
+        <enabled>false</enabled>
+      </releases>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+    </repository>
+  </repositories>
 
-    <prerequisites>
-        <maven>3.0.9</maven>
-    </prerequisites>
+  <prerequisites>
+    <maven>3.0.9</maven>
+  </prerequisites>
 
-    <properties>
-        <!-- General -->
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <project.main>com.acmutv.crimegraph.Words</project.main>
+  <properties>
+    <!-- General -->
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+    <project.main>com.acmutv.crimegraph.Words</project.main>
 
-        <!-- Core  -->
-        <flink.version>1.2.0</flink.version>
-        <elasticsearch.version>5.2.0</elasticsearch.version>
-        <neo4j.version>1.1.0</neo4j.version>
+    <!-- Core  -->
+    <flink.version>1.2.0</flink.version>
+    <neo4j.version>1.1.0</neo4j.version>
 
-        <!-- GUI/CLI -->
-        <apache.cli.version>1.3.1</apache.cli.version>
+    <!-- GUI/CLI -->
+    <apache.cli.version>1.3.1</apache.cli.version>
 
-        <!-- Data Structures -->
-        <apache.lang.version>3.5</apache.lang.version>
+    <!-- Data Structures -->
+    <apache.lang.version>3.5</apache.lang.version>
 
-        <!-- I/O -->
-        <apache.io.version>2.5</apache.io.version>
-        <fasterxml.jackson.version>2.8.5</fasterxml.jackson.version>
-        <fasterxml.jackson.yaml.version>2.8.3</fasterxml.jackson.yaml.version>
+    <!-- I/O -->
+    <apache.io.version>2.5</apache.io.version>
+    <fasterxml.jackson.version>2.8.5</fasterxml.jackson.version>
+    <fasterxml.jackson.yaml.version>2.8.3</fasterxml.jackson.yaml.version>
 
-        <!-- Utilities -->
+    <!-- Utilities -->
 
-        <!-- Log -->
-        <slf4j.version>1.7.7</slf4j.version>
-        <log4j.version>1.2.17</log4j.version>
+    <!-- Log -->
+    <slf4j.version>1.7.24</slf4j.version>
+    <log4j.version>1.2.17</log4j.version> <!--2.8-->
 
-        <!-- Test -->
-        <junit.version>4.12</junit.version>
+    <!-- Test -->
+    <junit.version>4.12</junit.version>
 
-        <!-- Compilation -->
-        <lombok.version>1.16.10</lombok.version>
+    <!-- Compilation -->
+    <lombok.version>1.16.10</lombok.version>
 
-        <!-- MAVEN PLUGINS -->
-        <!-- Compiler -->
-        <compiler.version>3.6.0</compiler.version>
-        <compiler.java.version>1.8</compiler.java.version>
-        <compiler.java.memory.initial>128m</compiler.java.memory.initial>
-        <compiler.java.memory.maximum>512m</compiler.java.memory.maximum>
-        <compiler.arguments/>
+    <!-- MAVEN PLUGINS -->
+    <!-- Compiler -->
+    <compiler.version>3.6.0</compiler.version>
+    <compiler.java.version>1.8</compiler.java.version>
+    <compiler.java.memory.initial>128m</compiler.java.memory.initial>
+    <compiler.java.memory.maximum>512m</compiler.java.memory.maximum>
+    <compiler.arguments/>
 
-        <!-- Shade -->
-        <shade.version>2.4.1</shade.version>
+    <!-- Shade -->
+    <shade.version>2.4.1</shade.version>
 
-        <!-- JAR -->
-        <jar.version>3.0.2</jar.version>
+    <!-- JAR -->
+    <jar.version>3.0.2</jar.version>
 
-        <!-- Assembly -->
-        <assembly.version>3.0.0</assembly.version>
+    <!-- Assembly -->
+    <assembly.version>3.0.0</assembly.version>
 
-        <!-- Exec -->
-        <exec.version>1.5.0</exec.version>
+    <!-- Exec -->
+    <exec.version>1.5.0</exec.version>
 
-        <!-- Surefire -->
-        <surefire.version>2.19.1</surefire.version>
-        <surefire.skipTests>false</surefire.skipTests>
+    <!-- Surefire -->
+    <surefire.version>2.19.1</surefire.version>
+    <surefire.skipTests>false</surefire.skipTests>
 
-        <!-- Proguard -->
-        <proguard.version>2.0.13</proguard.version>
-        <proguard.tool.version>5.3.1</proguard.tool.version>
+    <!-- Proguard -->
+    <proguard.version>2.0.13</proguard.version>
+    <proguard.tool.version>5.3.1</proguard.tool.version>
 
-        <!-- Javadoc -->
-        <javadoc.version>2.10.4</javadoc.version>
+    <!-- Javadoc -->
+    <javadoc.version>2.10.4</javadoc.version>
 
-        <!-- Clean -->
-        <clean.version>3.0.0</clean.version>
+    <!-- Clean -->
+    <clean.version>3.0.0</clean.version>
 
-    </properties>
+  </properties>
 
-    <dependencies>
-        <!-- Core -->
-        <dependency>
+  <dependencies>
+    <!-- Core -->
+    <dependency>
+      <groupId>org.apache.flink</groupId>
+      <artifactId>flink-java</artifactId>
+      <version>${flink.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.flink</groupId>
+      <artifactId>flink-streaming-java_2.10</artifactId>
+      <version>${flink.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.flink</groupId>
+      <artifactId>flink-clients_2.10</artifactId>
+      <version>${flink.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.neo4j.driver</groupId>
+      <artifactId>neo4j-java-driver</artifactId>
+      <version>${neo4j.version}</version>
+    </dependency>
+
+    <!-- GUI/CLI -->
+    <dependency>
+      <groupId>commons-cli</groupId>
+      <artifactId>commons-cli</artifactId>
+      <version>${apache.cli.version}</version>
+      <scope>compile</scope>
+    </dependency>
+
+    <!-- Data Structures -->
+    <dependency>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-lang3</artifactId>
+      <version>${apache.lang.version}</version>
+      <scope>compile</scope>
+    </dependency>
+
+    <!-- I/O -->
+    <dependency>
+      <groupId>commons-io</groupId>
+      <artifactId>commons-io</artifactId>
+      <version>${apache.io.version}</version>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.fasterxml.jackson.core</groupId>
+      <artifactId>jackson-core</artifactId>
+      <version>${fasterxml.jackson.version}</version>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.fasterxml.jackson.core</groupId>
+      <artifactId>jackson-databind</artifactId>
+      <version>${fasterxml.jackson.version}</version>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.fasterxml.jackson.dataformat</groupId>
+      <artifactId>jackson-dataformat-yaml</artifactId>
+      <version>${fasterxml.jackson.yaml.version}</version>
+      <scope>compile</scope>
+    </dependency>
+
+    <!-- Utilities -->
+
+    <!-- Log -->
+    <!--
+    <dependency>
+      <groupId>org.apache.logging.log4j</groupId>
+      <artifactId>log4j-core</artifactId>
+      <version>${log4j.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.logging.log4j</groupId>
+      <artifactId>log4j-slf4j-impl</artifactId>
+      <version>${log4j.version}</version>
+    </dependency>
+    -->
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-api</artifactId>
+      <version>${slf4j.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-log4j12</artifactId>
+      <version>${slf4j.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>log4j</groupId>
+      <artifactId>log4j</artifactId>
+      <version>${log4j.version}</version>
+    </dependency>
+    <!--
+    <dependency>
+      <groupId>org.apache.logging.log4j</groupId>
+      <artifactId>log4j-to-slf4j</artifactId>
+      <version>2.7</version>
+    </dependency>
+    -->
+    <!-- Test -->
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>${junit.version}</version>
+      <scope>test</scope>
+    </dependency>
+
+    <!-- Compilation -->
+    <dependency>
+      <groupId>org.projectlombok</groupId>
+      <artifactId>lombok</artifactId>
+      <version>${lombok.version}</version>
+      <scope>provided</scope>
+    </dependency>
+  </dependencies>
+
+  <profiles>
+    <!-- PROFILE: crimegraph -->
+    <profile>
+      <id>crimegraph</id>
+      <activation>
+        <activeByDefault>true</activeByDefault>
+      </activation>
+      <properties>
+        <project.main>com.acmutv.crimegraph.AppMain</project.main>
+      </properties>
+    </profile>
+
+    <!-- PROFILE: interactions -->
+    <profile>
+      <id>interactions</id>
+      <activation>
+        <activeByDefault>true</activeByDefault>
+      </activation>
+      <properties>
+        <project.main>com.acmutv.crimegraph.Interactions</project.main>
+      </properties>
+    </profile>
+
+      <!-- PROFILE: skip-tests -->
+      <profile>
+        <id>skip-tests</id>
+        <activation>
+          <activeByDefault>false</activeByDefault>
+        </activation>
+        <properties>
+          <surefire.skipTests>true</surefire.skipTests>
+        </properties>
+      </profile>
+
+      <!-- PROFILE: build-jar (for Flink) -->
+      <profile>
+        <id>build-jar</id>
+
+        <activation>
+          <activeByDefault>false</activeByDefault>
+        </activation>
+
+        <dependencies>
+          <dependency>
             <groupId>org.apache.flink</groupId>
             <artifactId>flink-java</artifactId>
             <version>${flink.version}</version>
-        </dependency>
-        <dependency>
+            <scope>provided</scope>
+          </dependency>
+          <dependency>
             <groupId>org.apache.flink</groupId>
             <artifactId>flink-streaming-java_2.10</artifactId>
             <version>${flink.version}</version>
-        </dependency>
-        <dependency>
+            <scope>provided</scope>
+          </dependency>
+          <dependency>
             <groupId>org.apache.flink</groupId>
             <artifactId>flink-clients_2.10</artifactId>
             <version>${flink.version}</version>
-        </dependency>
-        <dependency>
-          <groupId>org.elasticsearch.client</groupId>
-          <artifactId>transport</artifactId>
-          <version>${elasticsearch.version}</version>
-        </dependency>
-      <dependency>
-        <groupId>org.neo4j.driver</groupId>
-        <artifactId>neo4j-java-driver</artifactId>
-        <version>${neo4j.version}</version>
-      </dependency>
-
-
-        <!-- GUI/CLI -->
-        <dependency>
-            <groupId>commons-cli</groupId>
-            <artifactId>commons-cli</artifactId>
-            <version>${apache.cli.version}</version>
-            <scope>compile</scope>
-        </dependency>
-
-        <!-- Data Structures -->
-        <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-lang3</artifactId>
-            <version>${apache.lang.version}</version>
-            <scope>compile</scope>
-        </dependency>
-
-        <!-- I/O -->
-        <dependency>
-            <groupId>commons-io</groupId>
-            <artifactId>commons-io</artifactId>
-            <version>${apache.io.version}</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-core</artifactId>
-            <version>${fasterxml.jackson.version}</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-databind</artifactId>
-            <version>${fasterxml.jackson.version}</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.fasterxml.jackson.dataformat</groupId>
-            <artifactId>jackson-dataformat-yaml</artifactId>
-            <version>${fasterxml.jackson.yaml.version}</version>
-            <scope>compile</scope>
-        </dependency>
-
-        <!-- Utilities -->
-
-        <!-- Log -->
-        <dependency>
+            <scope>provided</scope>
+          </dependency>
+          <!--
+          <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-core</artifactId>
+            <version>${log4j.version}</version>
+          </dependency>
+          <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-slf4j-impl</artifactId>
+            <version>${log4j.version}</version>
+          </dependency>
+          -->
+          <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-log4j12</artifactId>
             <version>${slf4j.version}</version>
-        </dependency>
-        <dependency>
+            <scope>provided</scope>
+          </dependency>
+          <dependency>
             <groupId>log4j</groupId>
             <artifactId>log4j</artifactId>
             <version>${log4j.version}</version>
-        </dependency>
-      <!-- added because of ElasticSearch -->
-        <dependency>
-          <groupId>org.apache.logging.log4j</groupId>
-          <artifactId>log4j-to-slf4j</artifactId>
-          <version>2.7</version>
-        </dependency>
-        <dependency>
-          <groupId>org.slf4j</groupId>
-          <artifactId>slf4j-api</artifactId>
-          <version>1.7.21</version>
-        </dependency>
-
-
-        <!-- Test -->
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>${junit.version}</version>
-            <scope>test</scope>
-        </dependency>
-
-        <!-- Compilation -->
-        <dependency>
-            <groupId>org.projectlombok</groupId>
-            <artifactId>lombok</artifactId>
-            <version>${lombok.version}</version>
             <scope>provided</scope>
-        </dependency>
-    </dependencies>
+          </dependency>
+        </dependencies>
 
-    <profiles>
-      <!-- PROFILE: crimegraph -->
-      <profile>
-        <id>crimegraph</id>
-        <activation>
-          <activeByDefault>true</activeByDefault>
-        </activation>
-        <properties>
-          <project.main>com.acmutv.crimegraph.AppMain</project.main>
-        </properties>
+        <build>
+          <plugins>
+            <!-- disable the exclusion rules -->
+            <plugin>
+              <groupId>org.apache.maven.plugins</groupId>
+              <artifactId>maven-shade-plugin</artifactId>
+              <version>2.4.1</version>
+              <executions>
+                <execution>
+                  <phase>package</phase>
+                  <goals>
+                    <goal>shade</goal>
+                  </goals>
+                  <configuration>
+                    <artifactSet>
+                      <excludes combine.self="override"></excludes>
+                    </artifactSet>
+                  </configuration>
+                </execution>
+              </executions>
+            </plugin>
+          </plugins>
+        </build>
       </profile>
 
-      <!-- PROFILE: interactions -->
+      <!-- PROFILE: optimize -->
       <profile>
-        <id>interactions</id>
+        <id>optimize</id>
         <activation>
-          <activeByDefault>true</activeByDefault>
+          <activeByDefault>false</activeByDefault>
         </activation>
-        <properties>
-          <project.main>com.acmutv.crimegraph.Interactions</project.main>
-        </properties>
+        <build>
+          <plugins>
+            <!-- Proguard -->
+            <plugin>
+              <groupId>com.github.wvengen</groupId>
+              <artifactId>proguard-maven-plugin</artifactId>
+              <version>${proguard.version}</version>
+              <executions>
+                <execution>
+                  <id>obfuscation-packaging</id>
+                  <phase>package</phase>
+                  <goals>
+                      <goal>proguard</goal>
+                  </goals>
+                  <configuration>
+                    <proguardVersion>${proguard.tool.version}</proguardVersion>
+                    <obfuscate>true</obfuscate>
+                    <injar>${project.build.finalName}.jar</injar>
+                    <outjar>${project.build.finalName}-small.jar</outjar>
+                    <outputDirectory>${project.build.directory}</outputDirectory>
+                    <proguardInclude>${basedir}/proguard.conf</proguardInclude>
+                    <libs>
+                      <lib>${java.home}/lib/rt.jar</lib>
+                      <lib>${java.home}/lib/jsse.jar</lib>
+                    </libs>
+                    <options>
+                      <option>-allowaccessmodification</option>
+                      <option>-optimizationpasses 3</option>
+                      <option>-overloadaggressively</option>
+                      <option>-overloadaggressively</option>
+                      <option>-overloadaggressively</option>
+                      <option>-keep public class ${project.main} { public static void main(java.lang.String[]); }</option>
+                    </options>
+                  </configuration>
+                </execution>
+              </executions>
+              <dependencies>
+                <dependency>
+                  <groupId>net.sf.proguard</groupId>
+                  <artifactId>proguard-base</artifactId>
+                  <version>${proguard.tool.version}</version>
+                </dependency>
+              </dependencies>
+            </plugin>
+          </plugins>
+        </build>
       </profile>
+  </profiles>
 
-        <!-- PROFILE: skip-tests -->
-        <profile>
-            <id>skip-tests</id>
-            <activation>
-                <activeByDefault>false</activeByDefault>
-            </activation>
-            <properties>
-                <surefire.skipTests>true</surefire.skipTests>
-            </properties>
-        </profile>
+  <build>
+    <pluginManagement>
+      <plugins>
 
-        <!-- PROFILE: build-jar (for Flink) -->
-        <profile>
-            <id>build-jar</id>
+        <!-- Shade -->
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-shade-plugin</artifactId>
+          <version>${shade.version}</version>
+        </plugin>
 
-            <activation>
-                <activeByDefault>false</activeByDefault>
-            </activation>
+        <!-- Compiler -->
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-compiler-plugin</artifactId>
+          <version>${compiler.version}</version>
+        </plugin>
 
-            <dependencies>
-                <dependency>
-                    <groupId>org.apache.flink</groupId>
-                    <artifactId>flink-java</artifactId>
-                    <version>${flink.version}</version>
-                    <scope>provided</scope>
-                </dependency>
-                <dependency>
-                    <groupId>org.apache.flink</groupId>
-                    <artifactId>flink-streaming-java_2.10</artifactId>
-                    <version>${flink.version}</version>
-                    <scope>provided</scope>
-                </dependency>
-                <dependency>
-                    <groupId>org.apache.flink</groupId>
-                    <artifactId>flink-clients_2.10</artifactId>
-                    <version>${flink.version}</version>
-                    <scope>provided</scope>
-                </dependency>
-                <dependency>
-                    <groupId>org.slf4j</groupId>
-                    <artifactId>slf4j-log4j12</artifactId>
-                    <version>${slf4j.version}</version>
-                    <scope>provided</scope>
-                </dependency>
-                <dependency>
-                    <groupId>log4j</groupId>
-                    <artifactId>log4j</artifactId>
-                    <version>${log4j.version}</version>
-                    <scope>provided</scope>
-                </dependency>
-            </dependencies>
+        <!-- JAR -->
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-jar-plugin</artifactId>
+          <version>${jar.version}</version>
+        </plugin>
 
-            <build>
-                <plugins>
-                    <!-- disable the exclusion rules -->
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-shade-plugin</artifactId>
-                        <version>2.4.1</version>
-                        <executions>
-                            <execution>
-                                <phase>package</phase>
-                                <goals>
-                                    <goal>shade</goal>
-                                </goals>
-                                <configuration>
-                                    <artifactSet>
-                                        <excludes combine.self="override"></excludes>
-                                    </artifactSet>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
+        <!-- Assembly -->
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-assembly-plugin</artifactId>
+          <version>${assembly.version}</version>
+        </plugin>
 
-        <!-- PROFILE: optimize -->
-        <profile>
-            <id>optimize</id>
-            <activation>
-                <activeByDefault>false</activeByDefault>
-            </activation>
-            <build>
-                <plugins>
-                    <!-- Proguard -->
-                    <plugin>
-                        <groupId>com.github.wvengen</groupId>
-                        <artifactId>proguard-maven-plugin</artifactId>
-                        <version>${proguard.version}</version>
-                        <executions>
-                            <execution>
-                                <id>obfuscation-packaging</id>
-                                <phase>package</phase>
-                                <goals>
-                                    <goal>proguard</goal>
-                                </goals>
-                                <configuration>
-                                    <proguardVersion>${proguard.tool.version}</proguardVersion>
-                                    <obfuscate>true</obfuscate>
-                                    <injar>${project.build.finalName}.jar</injar>
-                                    <outjar>${project.build.finalName}-small.jar</outjar>
-                                    <outputDirectory>${project.build.directory}</outputDirectory>
-                                    <proguardInclude>${basedir}/proguard.conf</proguardInclude>
-                                    <libs>
-                                        <lib>${java.home}/lib/rt.jar</lib>
-                                        <lib>${java.home}/lib/jsse.jar</lib>
-                                    </libs>
-                                    <options>
-                                        <option>-allowaccessmodification</option>
-                                        <option>-optimizationpasses 3</option>
-                                        <option>-overloadaggressively</option>
-                                        <option>-overloadaggressively</option>
-                                        <option>-overloadaggressively</option>
-                                        <option>-keep public class ${project.main} { public static void main(java.lang.String[]); }</option>
-                                    </options>
-                                </configuration>
-                            </execution>
-                        </executions>
-                        <dependencies>
-                            <dependency>
-                                <groupId>net.sf.proguard</groupId>
-                                <artifactId>proguard-base</artifactId>
-                                <version>${proguard.tool.version}</version>
-                            </dependency>
-                        </dependencies>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-    </profiles>
+        <!-- Exec -->
+        <plugin>
+          <groupId>org.codehaus.mojo</groupId>
+          <artifactId>exec-maven-plugin</artifactId>
+          <version>${exec.version}</version>
+        </plugin>
 
-    <build>
-        <pluginManagement>
-            <plugins>
+        <!-- Surefire -->
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-surefire-plugin</artifactId>
+          <version>${surefire.version}</version>
+        </plugin>
 
-                <!-- Shade -->
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-shade-plugin</artifactId>
-                    <version>${shade.version}</version>
-                </plugin>
+        <!-- Proguard -->
+        <plugin>
+          <groupId>com.github.wvengen</groupId>
+          <artifactId>proguard-maven-plugin</artifactId>
+          <version>${proguard.version}</version>
+        </plugin>
 
-                <!-- Compiler -->
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-compiler-plugin</artifactId>
-                    <version>${compiler.version}</version>
-                </plugin>
+        <!-- Javadoc -->
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-javadoc-plugin</artifactId>
+          <version>${javadoc.version}</version>
+        </plugin>
 
-                <!-- JAR -->
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-jar-plugin</artifactId>
-                    <version>${jar.version}</version>
-                </plugin>
+        <!-- Clean -->
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-clean-plugin</artifactId>
+          <version>${clean.version}</version>
+        </plugin>
 
-                <!-- Assembly -->
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-assembly-plugin</artifactId>
-                    <version>${assembly.version}</version>
-                </plugin>
+      </plugins>
+    </pluginManagement>
 
-                <!-- Exec -->
-                <plugin>
-                    <groupId>org.codehaus.mojo</groupId>
-                    <artifactId>exec-maven-plugin</artifactId>
-                    <version>${exec.version}</version>
-                </plugin>
+    <plugins>
 
-                <!-- Surefire -->
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-surefire-plugin</artifactId>
-                    <version>${surefire.version}</version>
-                </plugin>
+      <!-- Compiler -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>${compiler.version}</version>
+        <configuration>
+          <source>${compiler.java.version}</source>
+          <target>${compiler.java.version}</target>
+          <fork>true</fork>
+          <meminitial>${compiler.java.memory.initial}</meminitial>
+          <maxmem>${compiler.java.memory.maximum}</maxmem>
+          <compilerArgs>
+            <arg>${compiler.arguments}</arg>
+          </compilerArgs>
+        </configuration>
+      </plugin>
 
-                <!-- Proguard -->
-                <plugin>
-                    <groupId>com.github.wvengen</groupId>
-                    <artifactId>proguard-maven-plugin</artifactId>
-                    <version>${proguard.version}</version>
-                </plugin>
+      <!-- Shade -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-shade-plugin</artifactId>
+        <version>${shade.version}</version>
+        <executions>
+          <!-- Run shade goal on package phase -->
+          <execution>
+            <phase>package</phase>
+            <goals>
+              <goal>shade</goal>
+            </goals>
+            <configuration>
+              <artifactSet>
+                <excludes>
+                  <!-- This list contains all dependencies of flink-dist
+                  Everything else will be packaged into the fat-jar
+                  -->
+                  <exclude>org.apache.flink:flink-annotations</exclude>
+                  <exclude>org.apache.flink:flink-shaded-hadoop2</exclude>
+                  <exclude>org.apache.flink:flink-shaded-curator-recipes</exclude>
+                  <exclude>org.apache.flink:flink-core</exclude>
+                  <exclude>org.apache.flink:flink-java</exclude>
+                  <exclude>org.apache.flink:flink-scala_2.10</exclude>
+                  <exclude>org.apache.flink:flink-runtime_2.10</exclude>
+                  <exclude>org.apache.flink:flink-optimizer_2.10</exclude>
+                  <exclude>org.apache.flink:flink-clients_2.10</exclude>
+                  <exclude>org.apache.flink:flink-avro_2.10</exclude>
+                  <exclude>org.apache.flink:flink-examples-batch_2.10</exclude>
+                  <exclude>org.apache.flink:flink-examples-streaming_2.10</exclude>
+                  <exclude>org.apache.flink:flink-streaming-java_2.10</exclude>
+                  <exclude>org.apache.flink:flink-streaming-scala_2.10</exclude>
+                  <exclude>org.apache.flink:flink-scala-shell_2.10</exclude>
+                  <exclude>org.apache.flink:flink-python</exclude>
+                  <exclude>org.apache.flink:flink-metrics-core</exclude>
+                  <exclude>org.apache.flink:flink-metrics-jmx</exclude>
+                  <exclude>org.apache.flink:flink-statebackend-rocksdb_2.10</exclude>
 
-                <!-- Javadoc -->
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-javadoc-plugin</artifactId>
-                    <version>${javadoc.version}</version>
-                </plugin>
+                  <!-- Also exclude very big transitive dependencies of Flink
 
-                <!-- Clean -->
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-clean-plugin</artifactId>
-                    <version>${clean.version}</version>
-                </plugin>
+                  WARNING: You have to remove these excludes if your code relies on other
+                  versions of these dependencies.
+                  -->
 
-            </plugins>
-        </pluginManagement>
-
-        <plugins>
-
-            <!-- Compiler -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <version>${compiler.version}</version>
-                <configuration>
-                    <source>${compiler.java.version}</source>
-                    <target>${compiler.java.version}</target>
-                    <fork>true</fork>
-                    <meminitial>${compiler.java.memory.initial}</meminitial>
-                    <maxmem>${compiler.java.memory.maximum}</maxmem>
-                    <compilerArgs>
-                        <arg>${compiler.arguments}</arg>
-                    </compilerArgs>
-                </configuration>
-            </plugin>
-
-            <!-- Shade -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-shade-plugin</artifactId>
-                <version>${shade.version}</version>
-                <executions>
-                    <!-- Run shade goal on package phase -->
-                    <execution>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>shade</goal>
-                        </goals>
-                        <configuration>
-                            <artifactSet>
-                                <excludes>
-                                    <!-- This list contains all dependencies of flink-dist
-                                    Everything else will be packaged into the fat-jar
-                                    -->
-                                    <exclude>org.apache.flink:flink-annotations</exclude>
-                                    <exclude>org.apache.flink:flink-shaded-hadoop2</exclude>
-                                    <exclude>org.apache.flink:flink-shaded-curator-recipes</exclude>
-                                    <exclude>org.apache.flink:flink-core</exclude>
-                                    <exclude>org.apache.flink:flink-java</exclude>
-                                    <exclude>org.apache.flink:flink-scala_2.10</exclude>
-                                    <exclude>org.apache.flink:flink-runtime_2.10</exclude>
-                                    <exclude>org.apache.flink:flink-optimizer_2.10</exclude>
-                                    <exclude>org.apache.flink:flink-clients_2.10</exclude>
-                                    <exclude>org.apache.flink:flink-avro_2.10</exclude>
-                                    <exclude>org.apache.flink:flink-examples-batch_2.10</exclude>
-                                    <exclude>org.apache.flink:flink-examples-streaming_2.10</exclude>
-                                    <exclude>org.apache.flink:flink-streaming-java_2.10</exclude>
-                                    <exclude>org.apache.flink:flink-streaming-scala_2.10</exclude>
-                                    <exclude>org.apache.flink:flink-scala-shell_2.10</exclude>
-                                    <exclude>org.apache.flink:flink-python</exclude>
-                                    <exclude>org.apache.flink:flink-metrics-core</exclude>
-                                    <exclude>org.apache.flink:flink-metrics-jmx</exclude>
-                                    <exclude>org.apache.flink:flink-statebackend-rocksdb_2.10</exclude>
-
-                                    <!-- Also exclude very big transitive dependencies of Flink
-
-                                    WARNING: You have to remove these excludes if your code relies on other
-                                    versions of these dependencies.
-
-                                    -->
-
-                                    <exclude>log4j:log4j</exclude>
-                                    <exclude>org.scala-lang:scala-library</exclude>
-                                    <exclude>org.scala-lang:scala-compiler</exclude>
-                                    <exclude>org.scala-lang:scala-reflect</exclude>
-                                    <exclude>com.data-artisans:flakka-actor_*</exclude>
-                                    <exclude>com.data-artisans:flakka-remote_*</exclude>
-                                    <exclude>com.data-artisans:flakka-slf4j_*</exclude>
-                                    <exclude>io.netty:netty-all</exclude>
-                                    <exclude>io.netty:netty</exclude>
-                                    <exclude>commons-fileupload:commons-fileupload</exclude>
-                                    <exclude>org.apache.avro:avro</exclude>
-                                    <exclude>commons-collections:commons-collections</exclude>
-                                    <exclude>org.codehaus.jackson:jackson-core-asl</exclude>
-                                    <exclude>org.codehaus.jackson:jackson-mapper-asl</exclude>
-                                    <exclude>com.thoughtworks.paranamer:paranamer</exclude>
-                                    <exclude>org.xerial.snappy:snappy-java</exclude>
-                                    <exclude>org.apache.commons:commons-compress</exclude>
-                                    <exclude>org.tukaani:xz</exclude>
-                                    <exclude>com.esotericsoftware.kryo:kryo</exclude>
-                                    <exclude>com.esotericsoftware.minlog:minlog</exclude>
-                                    <exclude>org.objenesis:objenesis</exclude>
-                                    <exclude>com.twitter:chill_*</exclude>
-                                    <exclude>com.twitter:chill-java</exclude>
-                                    <exclude>commons-lang:commons-lang</exclude>
-                                    <exclude>junit:junit</exclude>
-                                    <exclude>org.apache.commons:commons-lang3</exclude>
-                                    <exclude>org.slf4j:slf4j-api</exclude>
-                                    <exclude>org.slf4j:slf4j-log4j12</exclude>
-                                    <exclude>log4j:log4j</exclude>
-                                    <exclude>org.apache.commons:commons-math</exclude>
-                                    <exclude>org.apache.sling:org.apache.sling.commons.json</exclude>
-                                    <exclude>commons-logging:commons-logging</exclude>
-                                    <exclude>commons-codec:commons-codec</exclude>
-                                    <exclude>com.fasterxml.jackson.core:jackson-core</exclude>
-                                    <exclude>com.fasterxml.jackson.core:jackson-databind</exclude>
-                                    <exclude>com.fasterxml.jackson.core:jackson-annotations</exclude>
-                                    <exclude>stax:stax-api</exclude>
-                                    <exclude>com.typesafe:config</exclude>
-                                    <exclude>org.uncommons.maths:uncommons-maths</exclude>
-                                    <exclude>com.github.scopt:scopt_*</exclude>
-                                    <exclude>commons-io:commons-io</exclude>
-                                    <exclude>commons-cli:commons-cli</exclude>
-                                </excludes>
-                            </artifactSet>
-                            <filters>
-                                <filter>
-                                    <artifact>org.apache.flink:*</artifact>
-                                    <excludes>
-                                        <!-- exclude shaded google but include shaded curator -->
-                                        <exclude>org/apache/flink/shaded/com/**</exclude>
-                                        <exclude>web-docs/**</exclude>
-                                    </excludes>
-                                </filter>
-                                <filter>
-                                    <!-- Do not copy the signatures in the META-INF folder.
-                                    Otherwise, this might cause SecurityExceptions when using the JAR. -->
-                                    <artifact>*:*</artifact>
-                                    <excludes>
-                                        <exclude>META-INF/*.SF</exclude>
-                                        <exclude>META-INF/*.DSA</exclude>
-                                        <exclude>META-INF/*.RSA</exclude>
-                                    </excludes>
-                                </filter>
-                            </filters>
-                            <transformers>
-                                <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-                                    <mainClass>${project.main}</mainClass>
-                                </transformer>
-                            </transformers>
-                            <createDependencyReducedPom>false</createDependencyReducedPom>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
+                  <exclude>log4j:log4j</exclude>
+                  <exclude>org.scala-lang:scala-library</exclude>
+                  <exclude>org.scala-lang:scala-compiler</exclude>
+                  <exclude>org.scala-lang:scala-reflect</exclude>
+                  <exclude>com.data-artisans:flakka-actor_*</exclude>
+                  <exclude>com.data-artisans:flakka-remote_*</exclude>
+                  <exclude>com.data-artisans:flakka-slf4j_*</exclude>
+                  <exclude>io.netty:netty-all</exclude>
+                  <exclude>io.netty:netty</exclude>
+                  <exclude>commons-fileupload:commons-fileupload</exclude>
+                  <exclude>org.apache.avro:avro</exclude>
+                  <exclude>commons-collections:commons-collections</exclude>
+                  <exclude>org.codehaus.jackson:jackson-core-asl</exclude>
+                  <exclude>org.codehaus.jackson:jackson-mapper-asl</exclude>
+                  <exclude>com.thoughtworks.paranamer:paranamer</exclude>
+                  <exclude>org.xerial.snappy:snappy-java</exclude>
+                  <exclude>org.apache.commons:commons-compress</exclude>
+                  <exclude>org.tukaani:xz</exclude>
+                  <exclude>com.esotericsoftware.kryo:kryo</exclude>
+                  <exclude>com.esotericsoftware.minlog:minlog</exclude>
+                  <exclude>org.objenesis:objenesis</exclude>
+                  <exclude>com.twitter:chill_*</exclude>
+                  <exclude>com.twitter:chill-java</exclude>
+                  <exclude>commons-lang:commons-lang</exclude>
+                  <exclude>junit:junit</exclude>
+                  <exclude>org.apache.commons:commons-lang3</exclude>
+                  <exclude>org.slf4j:slf4j-api</exclude>
+                  <exclude>log4j:log4j</exclude>
+                  <exclude>org.slf4j:slf4j-log4j12</exclude>
+                  <exclude>org.apache.commons:commons-math</exclude>
+                  <exclude>org.apache.sling:org.apache.sling.commons.json</exclude>
+                  <exclude>commons-logging:commons-logging</exclude>
+                  <exclude>commons-codec:commons-codec</exclude>
+                  <exclude>com.fasterxml.jackson.core:jackson-core</exclude>
+                  <exclude>com.fasterxml.jackson.core:jackson-databind</exclude>
+                  <exclude>com.fasterxml.jackson.core:jackson-annotations</exclude>
+                  <exclude>stax:stax-api</exclude>
+                  <exclude>com.typesafe:config</exclude>
+                  <exclude>org.uncommons.maths:uncommons-maths</exclude>
+                  <exclude>com.github.scopt:scopt_*</exclude>
+                  <exclude>commons-io:commons-io</exclude>
+                  <exclude>commons-cli:commons-cli</exclude>
+                </excludes>
+              </artifactSet>
+              <filters>
+                <filter>
+                  <artifact>org.apache.flink:*</artifact>
+                  <excludes>
+                    <!-- exclude shaded google but include shaded curator -->
+                    <exclude>org/apache/flink/shaded/com/**</exclude>
+                    <exclude>web-docs/**</exclude>
+                  </excludes>
+                </filter>
+                <filter>
+                  <!-- Do not copy the signatures in the META-INF folder.
+                  Otherwise, this might cause SecurityExceptions when using the JAR. -->
+                  <artifact>*:*</artifact>
+                  <excludes>
+                    <exclude>META-INF/*.SF</exclude>
+                    <exclude>META-INF/*.DSA</exclude>
+                    <exclude>META-INF/*.RSA</exclude>
+                  </excludes>
+                </filter>
+              </filters>
+              <transformers>
+                <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                  <mainClass>${project.main}</mainClass>
+                </transformer>
+              </transformers>
+              <createDependencyReducedPom>false</createDependencyReducedPom>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
 
 
-            <!-- JAR -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-jar-plugin</artifactId>
-                <version>${jar.version}</version>
-                <configuration>
-                    <archive>
-                        <manifestEntries>
-                            <Main-Class>${project.main}</Main-Class>
-                        </manifestEntries>
-                    </archive>
-                </configuration>
-            </plugin>
+      <!-- JAR -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jar-plugin</artifactId>
+        <version>${jar.version}</version>
+        <configuration>
+          <archive>
+            <manifestEntries>
+              <Main-Class>${project.main}</Main-Class>
+            </manifestEntries>
+          </archive>
+        </configuration>
+      </plugin>
 
-            <!-- Assembly -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-assembly-plugin</artifactId>
-                <version>${assembly.version}</version>
-                <configuration>
-                    <archive>
-                        <manifest>
-                            <mainClass>${project.main}</mainClass>
-                        </manifest>
-                    </archive>
-                    <descriptorRefs>
-                        <descriptorRef>jar-with-dependencies</descriptorRef>
-                    </descriptorRefs>
-                </configuration>
-                <executions>
-                    <execution>
-                        <id>make-assembly</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>single</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
+      <!-- Assembly -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-assembly-plugin</artifactId>
+        <version>${assembly.version}</version>
+        <configuration>
+          <archive>
+            <manifest>
+              <mainClass>${project.main}</mainClass>
+            </manifest>
+          </archive>
+          <descriptorRefs>
+            <descriptorRef>jar-with-dependencies</descriptorRef>
+          </descriptorRefs>
+        </configuration>
+        <executions>
+          <execution>
+            <id>make-assembly</id>
+            <phase>package</phase>
+            <goals>
+              <goal>single</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
 
-            <!-- Exec -->
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>exec-maven-plugin</artifactId>
-                <version>${exec.version}</version>
-                <configuration>
-                    <mainClass>${project.main}</mainClass>
-                    <arguments>
-                        <argument/>
-                    </arguments>
-                    <systemProperties>
-                        <systemProperty>
-                            <key/>
-                            <value/>
-                        </systemProperty>
-                    </systemProperties>
-                </configuration>
-            </plugin>
+      <!-- Exec -->
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>exec-maven-plugin</artifactId>
+        <version>${exec.version}</version>
+        <configuration>
+          <mainClass>${project.main}</mainClass>
+          <arguments>
+            <argument/>
+          </arguments>
+          <systemProperties>
+            <systemProperty>
+              <key/>
+              <value/>
+            </systemProperty>
+          </systemProperties>
+        </configuration>
+      </plugin>
 
-            <!-- Surefire -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <version>${surefire.version}</version>
-                <configuration>
-                    <skipTests>${surefire.skipTests}</skipTests>
-                    <parallel>methods</parallel>
-                    <threadCount>10</threadCount>
-                </configuration>
-            </plugin>
+      <!-- Surefire -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <version>${surefire.version}</version>
+        <configuration>
+          <skipTests>${surefire.skipTests}</skipTests>
+          <parallel>methods</parallel>
+          <threadCount>10</threadCount>
+        </configuration>
+      </plugin>
 
-            <!-- Javadoc -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-javadoc-plugin</artifactId>
-                <version>${javadoc.version}</version>
-                <configuration>
-                    <show>private</show>
-                    <nohelp>true</nohelp>
-                </configuration>
-            </plugin>
+      <!-- Javadoc -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <version>${javadoc.version}</version>
+        <configuration>
+          <show>private</show>
+          <nohelp>true</nohelp>
+        </configuration>
+      </plugin>
 
-            <!-- Clean -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-clean-plugin</artifactId>
-                <version>${clean.version}</version>
-            </plugin>
-        </plugins>
-    </build>
+      <!-- Clean -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-clean-plugin</artifactId>
+        <version>${clean.version}</version>
+      </plugin>
+    </plugins>
+  </build>
 </project>

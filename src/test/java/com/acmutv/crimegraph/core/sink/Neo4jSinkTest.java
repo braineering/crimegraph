@@ -27,11 +27,15 @@
 package com.acmutv.crimegraph.core.sink;
 
 import com.acmutv.crimegraph.core.tuple.Link;
+import com.acmutv.crimegraph.core.tuple.LinkType;
 import org.junit.Assert;
 import org.junit.Test;
 import org.neo4j.driver.v1.*;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.neo4j.driver.v1.Values.parameters;
 
@@ -49,46 +53,53 @@ public class Neo4jSinkTest {
 
   private static final String PASSWORD = "password";
 
-  private static final String CREATE =
-      "CREATE (a:Person {id:'{src}'})-[:INTERACTION {weight:{weight}}]->(b:Person {id:'{dst}'})";
-
   private static final String MATCH =
-      "MATCH (a:Person {id:{src}})-[r:INTERACTION {weight:{weight}}]->(b:Person {id:{dst}}) " +
-          "RETURN a.id as src, b.id as dst, r.weight as weight";
+      "MATCH (a:Person {id:{src}})-[r:%s {weight:{weight}}]->(b:Person {id:{dst}}) " +
+          "RETURN a.id as src, b.id as dst";
 
   /**
-   * Tests creation of {@link Link} on NEO4J.
+   * Tests creation of real/potential and hidden links on NEO4J.
    * @throws IOException
    */
   @Test
-  public void create() throws Exception {
+  public void test_create() throws Exception {
     LinkSink sink =
         new LinkSink(HOSTNAME, USERNAME, PASSWORD);
 
-    Link link = new Link(1, 2, 20);
+    List<Link> links = data();
 
     sink.open(null);
 
-    sink.invoke(link);
+    for (Link link : links) sink.invoke(link);
 
     sink.close();
 
     // Check
     Driver driver = GraphDatabase.driver(HOSTNAME, AuthTokens.basic(USERNAME, PASSWORD),
-        Config.build().withEncryptionLevel(Config.EncryptionLevel.NONE ).toConfig());
+        Config.build().withEncryptionLevel(Config.EncryptionLevel.NONE).toConfig());
     Session session = driver.session();
-    StatementResult result = session.run(MATCH,
-        parameters("src", link.f0, "dst", link.f1, "weight", link.f2)
-    );
-    Assert.assertTrue(result.hasNext());
-    Record record = result.next();
-    long src = record.get("src").asLong();
-    long dst = record.get("dst").asLong();
-    long weight = record.get("weight").asLong();
-    Assert.assertEquals(1, src);
-    Assert.assertEquals(2, dst);
-    Assert.assertEquals(20, weight);
+    for (Link link : links) {
+      String query = String.format(MATCH, link.f3.name());
+      Value params = parameters("src", link.f0, "dst", link.f1, "weight", link.f2);
+      StatementResult result = session.run(query, params);
+      Assert.assertTrue(result.hasNext());
+      Record record = result.next();
+      Long src = record.get("src").asLong();
+      Long dst = record.get("dst").asLong();
+      Assert.assertEquals(link.f0, src);
+      Assert.assertEquals(link.f1, dst);
+    }
     session.close();
     driver.close();
+  }
+
+  private static List<Link> data() {
+    List<Link> data = new ArrayList<>();
+    data.add(new Link(1,2,10.0, LinkType.REAL));
+    data.add(new Link(1,3,20.0, LinkType.REAL));
+    data.add(new Link(1,4,30.0, LinkType.REAL));
+    data.add(new Link(2,3,50.0, LinkType.POTENTIAL));
+    data.add(new Link(3,4,100.0, LinkType.HIDDEN));
+    return data;
   }
 }

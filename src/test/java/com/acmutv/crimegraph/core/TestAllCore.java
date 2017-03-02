@@ -27,19 +27,22 @@
 package com.acmutv.crimegraph.core;
 
 import com.acmutv.crimegraph.core.sink.TestAllSink;
+import com.acmutv.crimegraph.core.tuple.TestAllTuple;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
 /**
- * JUnit test suite for core services.
+ * JUnit test suite for all tuples.
  * @author Giacomo Marciani {@literal <gmarciani@acm.org>}
  * @author Michele Porretta {@literal <mporretta@acm.org>}
  * @since 1.0
  * @see TestAllSink
+ * @see TestAllTuple
  */
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
-    TestAllSink.class
+    TestAllSink.class,
+    TestAllTuple.class
 })
 public class TestAllCore {
 }

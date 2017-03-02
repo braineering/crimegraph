@@ -41,16 +41,37 @@ import static org.neo4j.driver.v1.Values.parameters;
 public class Neo4JManager {
 
   /**
-   * Query to create a new link.
+   * Query to create a new real link.
    */
-  private static final String CREATE_LINK =
-      "CREATE (a:Person {id:{src}})-[:{type} {weight:{weight}}]->(b:Person {id:{dst}})";
+  private static final String CREATE_LINK_REAL =
+      "MERGE (u1:Person {id:{src}}) MERGE (u2:Person {id:{dst}}) " +
+          "MERGE (u1)-[r:REAL]-(u2) " +
+          "ON CREATE SET r.weight={weight},r.num=1,r.created=timestamp(),r.updated=r.created " +
+          "ON MATCH SET r.weight=(r.weight*r.num+{weight})/(r.num+1),r.num=r.num+1,r.updated=timestamp()";
+
+  /**
+   * Query to create a new potential link.
+   */
+  private static final String CREATE_LINK_POTENTIAL =
+      "MERGE (u1:Person {id:{src}}) MERGE (u2:Person {id:{dst}}) " +
+          "MERGE (u1)-[r:POTENTIAL]-(u2) " +
+          "ON CREATE SET r.weight={weight},r.created=timestamp(),r.updated=r.created " +
+          "ON MATCH SET r.weight={weight},r.updated=timestamp()";
+
+  /**
+   * Query to create a new hidden link.
+   */
+  private static final String CREATE_LINK_HIDDEN =
+      "MERGE (u1:Person {id:{src}}) MERGE (u2:Person {id:{dst}}) " +
+          "MERGE (u1)-[r:HIDDEN]-(u2) " +
+          "ON CREATE SET r.weight={weight},r.created=timestamp(),r.updated=r.created " +
+          "ON MATCH SET r.weight={weight},r.updated=timestamp()";
 
   /**
    * Query to match a neighborhood intersection.
    */
   private static final String MATCH_NEIGHBORHOOD_INTERSECTION =
-      "MATCH (a:Person {id:{src}})-[:INTERACTION]->(c:Person)<-[:INTERACTION]-(b:Person {id:{dst}}) RETURN c.id";
+      "MATCH (a:Person {id:{src}})-[:REAL]->(c:Person)<-[:REAL]-(b:Person {id:{dst}}) RETURN c.id";
 
   /**
    * Opens a NEO4J connection.
@@ -83,12 +104,17 @@ public class Neo4JManager {
   public static void saveLink(Session session, Link link) {
     long src = link.f0;
     long dst = link.f1;
-    LinkType type = link.f2;
-    double weight = link.f3;
+    double weight = link.f2;
+    LinkType type = link.f3;
 
-    Value params = parameters("src", src, "dst", dst, "type", type, "weight", weight);
+    Value params = parameters("src", src, "dst", dst, "weight", weight);
 
-    session.run(MATCH_NEIGHBORHOOD_INTERSECTION, params);
+    switch (type) {
+      case REAL: session.run(CREATE_LINK_REAL, params); break;
+      case POTENTIAL: session.run(CREATE_LINK_POTENTIAL, params); break;
+      case HIDDEN: session.run(CREATE_LINK_HIDDEN, params); break;
+      default: break;
+    }
   }
 
   /**

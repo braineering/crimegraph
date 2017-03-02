@@ -1,7 +1,7 @@
 /*
   The MIT License (MIT)
 
-  Copyright (c) 2017 Giacomo Marciani and Michele Porretta
+  Copyright (c) 2016 Giacomo Marciani and Michele Porretta
 
   Permission is hereby granted, free of charge, to any person obtaining a copy
   of this software and associated documentation files (the "Software"), to deal
@@ -24,29 +24,42 @@
   THE SOFTWARE.
  */
 
-package com.acmutv.crimegraph.core.operator;
+package com.acmutv.crimegraph.core.tuple;
+import com.acmutv.crimegraph.AppMain;
+import org.junit.Assert;
+import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import org.apache.flink.api.common.functions.FlatMapFunction;
-import org.apache.flink.api.java.tuple.Tuple2;
-import org.apache.flink.util.Collector;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
- * This operator splits the incoming string into words.
+ * JUnit test suite for {@link Link}.
  * @author Giacomo Marciani {@literal <gmarciani@acm.org>}
- * @author Michele Porretta {@literal <mporretta@acm.org>}
  * @since 1.0
+ * @see Link
  */
-public class LineSplitter implements FlatMapFunction<String, Tuple2<String,Integer>> {
+public class LinkTest {
 
-  @SuppressWarnings("unchecked")
-  @Override
-  public void flatMap(String value, Collector<Tuple2<String,Integer>> out) {
-    String[] words = value.toLowerCase().split("\\W+");
-    for (String word : words) {
-      if (word.length() > 0) {
-        System.out.println(word);
-        out.collect(new Tuple2(word, 1));
-      }
+  private static final Logger LOGGER = LoggerFactory.getLogger(AppMain.class);
+
+  /**
+   * Tests serialization of {@link Link}.
+   */
+  @Test
+  public void test_serialize() throws Exception {
+    List<Link> links = new ArrayList<>();
+    links.add(new Link(1,2,0.0));
+    links.add(new Link(1,2,123.123, LinkType.REAL));
+    links.add(new Link(1,2,123.123, LinkType.POTENTIAL));
+    links.add(new Link(1,2,123.123, LinkType.HIDDEN));
+
+    for (Link expected : links) {
+      LOGGER.debug("Link serialized: " + expected);
+      String str = expected.toString();
+      Link actual = Link.valueOf(str);
+      Assert.assertEquals(expected, actual);
     }
   }
 }

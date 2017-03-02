@@ -31,6 +31,7 @@ import com.acmutv.crimegraph.config.AppConfigurationService;
 import com.acmutv.crimegraph.core.operator.LinkParser;
 import com.acmutv.crimegraph.core.sink.LinkSink;
 import com.acmutv.crimegraph.core.tuple.Link;
+import com.acmutv.crimegraph.core.tuple.LinkType;
 import com.acmutv.crimegraph.tool.runtime.RuntimeManager;
 import com.acmutv.crimegraph.tool.runtime.ShutdownHook;
 import com.acmutv.crimegraph.ui.CliService;
@@ -38,6 +39,10 @@ import org.apache.flink.streaming.api.datastream.DataStream;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * The app word-point for {@code Interactions} application.
@@ -68,14 +73,14 @@ public class Interactions {
 
     RuntimeManager.registerShutdownHooks(new ShutdownHook());
 
-    LOGGER.info("Connecting to data stream on {}:{}...",
-        config.getDataHostname(), config.getDataPort());
+    //LOGGER.info("Connecting to data stream on {}:{}...", config.getDataHostname(), config.getDataPort());
 
     final StreamExecutionEnvironment env =
         StreamExecutionEnvironment.getExecutionEnvironment();
 
-    DataStream<String> text =
-        env.socketTextStream(config.getDataHostname(), config.getDataPort(), "\n");
+    //DataStream<String> text = env.socketTextStream(config.getDataHostname(), config.getDataPort(), "\n");
+
+    DataStream<String> text = env.fromCollection(data());
 
     DataStream<Link> interactions =
         text.flatMap(new LinkParser())
@@ -85,6 +90,16 @@ public class Interactions {
         config.getNeo4jHostname(), config.getNeo4jUsername(), config.getNeo4jPassword())
     );
 
-    env.execute("Interactions from socket to Neo4J");
+    env.execute("Interactions to Neo4J");
+  }
+
+  private static List<String> data() {
+    List<Link> data = new ArrayList<>();
+    data.add(new Link(1,2,10.0, LinkType.REAL));
+    data.add(new Link(1,3,20.0, LinkType.REAL));
+    data.add(new Link(1,4,30.0, LinkType.REAL));
+    data.add(new Link(2,3,50.0, LinkType.POTENTIAL));
+    data.add(new Link(3,4,100.0, LinkType.HIDDEN));
+    return data.stream().map(Link::toString).collect(Collectors.toList());
   }
 }

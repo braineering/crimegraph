@@ -26,13 +26,24 @@
 
 package com.acmutv.crimegraph.core.tuple;
 
+import lombok.Getter;
+
 /**
  * All types of links.
  * @author Giacomo Marciani {@literal <gmarciani@acm.org>}
  * @author Michele Porretta {@literal <mporretta@acm.org>}
  * @since 1.0
  */
+@Getter
 public enum LinkType {
 
-  INTERACTION, POTENTIAL, HIDDEN;
+  REAL      ("REAL"),
+  POTENTIAL ("POTENTIAL"),
+  HIDDEN    ("HIDDEN");
+
+  private final String name;
+
+  LinkType(final String name) {
+    this.name = name;
+  }
 }
