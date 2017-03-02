@@ -24,28 +24,21 @@
   THE SOFTWARE.
  */
 
-package com.acmutv.crimegraph.core;
+package com.acmutv.crimegraph.core.db;
 
-import com.acmutv.crimegraph.core.db.TestAllDb;
-import com.acmutv.crimegraph.core.sink.TestAllSink;
-import com.acmutv.crimegraph.core.tuple.TestAllTuple;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
 /**
- * JUnit test suite for all tuples.
+ * JUnit test suite for database services.
  * @author Giacomo Marciani {@literal <gmarciani@acm.org>}
  * @author Michele Porretta {@literal <mporretta@acm.org>}
  * @since 1.0
- * @see TestAllDb
- * @see TestAllSink
- * @see TestAllTuple
+ * @see Neo4JManagerTest
  */
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
-    TestAllDb.class,
-    TestAllSink.class,
-    TestAllTuple.class
+    Neo4JManagerTest.class
 })
-public class TestAllCore {
+public class TestAllDb {
 }

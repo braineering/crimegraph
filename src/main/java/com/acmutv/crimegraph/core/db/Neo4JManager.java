@@ -30,6 +30,12 @@ import com.acmutv.crimegraph.core.tuple.Link;
 import com.acmutv.crimegraph.core.tuple.LinkType;
 import org.neo4j.driver.v1.*;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+
 import static org.neo4j.driver.v1.Values.parameters;
 
 /**
@@ -71,7 +77,7 @@ public class Neo4JManager {
    * Query to match a neighborhood intersection.
    */
   private static final String MATCH_NEIGHBORHOOD_INTERSECTION =
-      "MATCH (a:Person {id:{src}})-[:REAL]->(c:Person)<-[:REAL]-(b:Person {id:{dst}}) RETURN c.id";
+      "MATCH (u1:Person {id:{src}})-[:REAL]-(n:Person)-[:REAL]-(u2:Person {id:{dst}}) RETURN n.id AS id";
 
   /**
    * Opens a NEO4J connection.
@@ -118,13 +124,20 @@ public class Neo4JManager {
   }
 
   /**
-   * Matches a neighborhood intersection.
+   * Matches common neighbours.
    * @param session the NEO4J open session.
    * @param a the id of the first node.
    * @param b the id of the second node.
    */
-  public static void matchNeighborhodIntersection(Session session, long a, long b) {
+  public static Set<Long> matchCommonNeighbours(Session session, long a, long b) {
     Value params = parameters("src", a, "dst", b);
-    session.run(MATCH_NEIGHBORHOOD_INTERSECTION, params);
+    StatementResult result = session.run(MATCH_NEIGHBORHOOD_INTERSECTION, params);
+    Set<Long> neighbours = new HashSet<>();
+    while (result.hasNext()) {
+      Record rec = result.next();
+      Long id = rec.get("id").asLong();
+      neighbours.add(id);
+    }
+    return neighbours;
   }
 }

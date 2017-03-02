@@ -1,32 +1,37 @@
-#######################
-# DB reset            #
-#######################
+#################################
+# DB reset                      #
+#################################
 MATCH n DETACH DELETE n
 CREATE CONSTRAINT ON (u:Person) IS UNIQUE n.id
 
-#######################
-# SAVE REAL LINK      #
-#######################
+#################################
+# SAVE REAL LINK                #
+#################################
 MERGE (u1:Person {id:{src}})
 MERGE (u2:Person {id:{dst}})
 MERGE (u1)-[r:REAL]-(u2)
 ON CREATE SET r.weight={weight},r.num=1,r.created=timestamp(),r.updated=r.created
 ON MATCH SET r.weight=(r.weight*r.num+{weight})/(r.num+1),r.num=r.num+1,r.updated=timestamp()
 
-#######################
-# SAVE POTENTIAL LINK #
-#######################
+#################################
+# SAVE POTENTIAL LINK           #
+#################################
 MERGE (u1:Person {id:{src}})
 MERGE (u2:Person {id:{dst}})
 MERGE (u1)-[r:POTENTIAL]-(u2)
 ON CREATE SET r.weight={weight},r.created=timestamp(),r.updated=r.created
 ON MATCH SET r.weight={weight},r.updated=timestamp()
 
-#######################
-# SAVE HIDDEN LINK    #
-#######################
+#################################
+# SAVE HIDDEN LINK              #
+#################################
 MERGE (u1:Person {id:{src}})
 MERGE (u2:Person {id:{dst}})
 MERGE (u1)-[r:HIDDEN]-(u2)
 ON CREATE SET r.weight={weight},r.created=timestamp(),r.updated=r.created
 ON MATCH SET r.weight={weight},r.updated=timestamp()
+
+#################################
+# NEIGHBOURHOOD INTERSECTION    #
+#################################
+MATCH (u1:Person {id:{src}})-[:REAL]-(n:Person)-[:REAL]-(u2:Person {id:{dst}}) RETURN n.id AS id

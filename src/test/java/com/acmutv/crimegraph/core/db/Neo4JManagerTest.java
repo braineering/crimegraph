@@ -24,12 +24,14 @@
   THE SOFTWARE.
  */
 
-package com.acmutv.crimegraph.core.sink;
+package com.acmutv.crimegraph.core.db;
 
-import com.acmutv.crimegraph.core.db.Neo4JManager;
+import com.acmutv.crimegraph.core.sink.LinkSink;
 import com.acmutv.crimegraph.core.tuple.Link;
 import com.acmutv.crimegraph.core.tuple.LinkType;
+import org.junit.AfterClass;
 import org.junit.Assert;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.neo4j.driver.v1.*;
 
@@ -42,12 +44,12 @@ import java.util.Set;
 import static org.neo4j.driver.v1.Values.parameters;
 
 /**
- * JUnit test suite for {@link LinkSink}.
+ * JUnit test suite for {@link Neo4JManager}.
  * @author Giacomo Marciani {@literal <gmarciani@acm.org>}
  * @since 1.0
- * @see Link
+ * @see Neo4JManager
  */
-public class Neo4jSinkTest {
+public class Neo4JManagerTest {
 
   private static final String HOSTNAME = "bolt://localhost:7687";
 
@@ -55,9 +57,23 @@ public class Neo4jSinkTest {
 
   private static final String PASSWORD = "password";
 
+  private static Driver DRIVER;
+
+  private static Config CONFIG = Config.build().withEncryptionLevel(Config.EncryptionLevel.NONE).toConfig();
+
   private static final String MATCH =
       "MATCH (a:Person {id:{src}})-[r:%s {weight:{weight}}]->(b:Person {id:{dst}}) " +
           "RETURN a.id as src, b.id as dst";
+
+  @BeforeClass
+  public static void init() {
+    DRIVER = GraphDatabase.driver(HOSTNAME, AuthTokens.basic(USERNAME, PASSWORD), CONFIG);
+  }
+
+  @AfterClass
+  public static void deinit() {
+    DRIVER.close();
+  }
 
   /**
    * Tests creation of real/potential and hidden links on NEO4J.
@@ -65,13 +81,13 @@ public class Neo4jSinkTest {
    */
   @Test
   public void test_create() throws Exception {
+    Session session = DRIVER.session();
+
     List<Link> links = data();
-    writeData(links);
+
+    for (Link link : links) Neo4JManager.saveLink(session, link);
 
     // Check
-    Driver driver = GraphDatabase.driver(HOSTNAME, AuthTokens.basic(USERNAME, PASSWORD),
-        Config.build().withEncryptionLevel(Config.EncryptionLevel.NONE).toConfig());
-    Session session = driver.session();
     for (Link link : links) {
       String query = String.format(MATCH, link.f3.name());
       Value params = parameters("src", link.f0, "dst", link.f1, "weight", link.f2);
@@ -83,20 +99,29 @@ public class Neo4jSinkTest {
       Assert.assertEquals(link.f0, src);
       Assert.assertEquals(link.f1, dst);
     }
+
     session.close();
-    driver.close();
   }
 
-  private static void writeData(List<Link> data) throws Exception {
-    LinkSink sink = new LinkSink(HOSTNAME, USERNAME, PASSWORD);
+  /**
+   * Tests common neighbours from NEO4J.
+   * @throws IOException when operator cannot be managed.
+   */
+  @Test
+  public void test_commonNeighbours() throws Exception {
+    Session session = DRIVER.session();
 
     List<Link> links = data();
 
-    sink.open(null);
+    for (Link link : links) Neo4JManager.saveLink(session, link);
 
-    for (Link link : links) sink.invoke(link);
+    // Check
+    Set<Long> actual = Neo4JManager.matchCommonNeighbours(session, 1, 5);
+    Set<Long> expected = new HashSet<>();
+    expected.add(2L);
+    Assert.assertEquals(expected, actual);
 
-    sink.close();
+    session.close();
   }
 
   private static List<Link> data() {
@@ -104,8 +129,8 @@ public class Neo4jSinkTest {
     data.add(new Link(1,2,10.0, LinkType.REAL));
     data.add(new Link(1,3,20.0, LinkType.REAL));
     data.add(new Link(2,3,30.0, LinkType.REAL));
-    data.add(new Link(1,4,50.0, LinkType.POTENTIAL));
-    data.add(new Link(2,5,100.0, LinkType.HIDDEN));
+    data.add(new Link(1,4,50.0, LinkType.REAL));
+    data.add(new Link(2,5,100.0, LinkType.REAL));
     return data;
   }
 }
