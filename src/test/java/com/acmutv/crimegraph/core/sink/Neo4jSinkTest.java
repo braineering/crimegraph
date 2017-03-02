@@ -35,7 +35,6 @@ import org.neo4j.driver.v1.*;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static org.neo4j.driver.v1.Values.parameters;
 
@@ -59,7 +58,7 @@ public class Neo4jSinkTest {
 
   /**
    * Tests creation of real/potential and hidden links on NEO4J.
-   * @throws IOException
+   * @throws IOException when operator cannot be managed.
    */
   @Test
   public void test_create() throws Exception {
