@@ -73,12 +73,8 @@ public class Interactions {
 
     RuntimeManager.registerShutdownHooks(new ShutdownHook());
 
-    //LOGGER.info("Connecting to data stream on {}:{}...", config.getDataHostname(), config.getDataPort());
-
     final StreamExecutionEnvironment env =
         StreamExecutionEnvironment.getExecutionEnvironment();
-
-    //DataStream<String> text = env.socketTextStream(config.getDataHostname(), config.getDataPort(), "\n");
 
     DataStream<String> text = env.fromCollection(data());
 

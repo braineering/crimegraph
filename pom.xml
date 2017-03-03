@@ -111,7 +111,7 @@
     <!-- General -->
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-    <project.main>com.acmutv.crimegraph.Words</project.main>
+    <project.main>com.acmutv.crimegraph.Interactions</project.main>
 
     <!-- Core  -->
     <flink.version>1.2.0</flink.version>
@@ -299,17 +299,6 @@
     <!-- PROFILE: crimegraph -->
     <profile>
       <id>crimegraph</id>
-      <activation>
-        <activeByDefault>true</activeByDefault>
-      </activation>
-      <properties>
-        <project.main>com.acmutv.crimegraph.AppMain</project.main>
-      </properties>
-    </profile>
-
-    <!-- PROFILE: interactions -->
-    <profile>
-      <id>interactions</id>
       <activation>
         <activeByDefault>true</activeByDefault>
       </activation>

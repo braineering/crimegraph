@@ -75,6 +75,12 @@ public class Link extends Tuple4<Long,Long,Double,LinkType> {
     super(src, dst, weight, LinkType.REAL);
   }
 
+  /**
+   * Creates an empty link.
+   * This constructor is mandatory for Flink serialization.
+   */
+  public Link(){}
+
   @Override
   public String toString() {
     if (this.f3.equals(LinkType.REAL)) {
