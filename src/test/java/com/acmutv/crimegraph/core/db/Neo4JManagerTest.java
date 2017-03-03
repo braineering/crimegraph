@@ -36,10 +36,7 @@ import org.junit.Test;
 import org.neo4j.driver.v1.*;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import static org.neo4j.driver.v1.Values.parameters;
 
@@ -269,6 +266,28 @@ public class Neo4JManagerTest {
     expected.add(new Tuple2<>(2L,3L));
     expected.add(new Tuple2<>(3L,3L));
     Assert.assertEquals(expected, actual);
+
+    session.close();
+  }
+
+  /**
+   * Tests checking of extremes existence from NEO4J.
+   * @throws IOException when operator cannot be managed.
+   */
+  @Test
+  public void test_checkExtremes() throws Exception {
+    Session session = DRIVER.session();
+
+    for (Link link : DATA) Neo4JManager.save(session, link);
+
+    // Check
+    Map<Tuple2<Long,Long>,Tuple2<Boolean,Boolean>> expectedMap = new HashMap<>();
+    expectedMap.put(new Tuple2<>(1L,2L), new Tuple2<>(true, true));
+    for (Tuple2<Long,Long> key : expectedMap.keySet()) {
+      Tuple2<Boolean,Boolean> actual = Neo4JManager.checkExtremes(session, key.f0, key.f1);
+      Tuple2<Boolean,Boolean> expected = expectedMap.get(key);
+      Assert.assertEquals(expected, actual);
+    }
 
     session.close();
   }

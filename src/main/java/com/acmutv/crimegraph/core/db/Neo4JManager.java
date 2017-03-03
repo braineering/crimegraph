@@ -29,6 +29,7 @@ package com.acmutv.crimegraph.core.db;
 import com.acmutv.crimegraph.core.tuple.Link;
 import com.acmutv.crimegraph.core.tuple.LinkType;
 import org.apache.flink.api.java.tuple.Tuple2;
+import org.apache.flink.api.java.tuple.Tuple3;
 import org.neo4j.driver.v1.*;
 
 import java.util.HashSet;
@@ -132,6 +133,13 @@ public class Neo4JManager {
           "WITH DISTINCT n " +
           "MATCH (n)-[r:REAL]-() " +
           "RETURN n.id AS id,COUNT(r) AS deg";
+
+  /**
+   * Query to check the existence of the extremes.
+   */
+  private static final String CHECK_EXTREMES =
+      "OPTIONAL MATCH (u1:Person {id:{src}}),(u2:Person {id:{dst}}) " +
+          "RETURN u1 IS NOT NULL AS src,u2 IS NOT NULL AS dst";
 
   /**
    * Opens a NEO4J connection.
@@ -327,6 +335,25 @@ public class Neo4JManager {
       neighbours.add(new Tuple2<>(id, deg));
     }
     return neighbours;
+  }
+
+  /**
+   * Checks the existence of {@code a} and {@code b}.
+   * @param session the NEO4J open session.
+   * @param a the id of the first node.
+   * @param b the id of the second node.
+   */
+  public static Tuple2<Boolean,Boolean> checkExtremes(Session session, long a, long b) {
+    Value params = parameters("src", a, "dst", b);
+    StatementResult result = session.run(CHECK_EXTREMES, params);
+    Tuple2<Boolean,Boolean> check = new Tuple2<>();
+    if (result.hasNext()) {
+      Record rec = result.next();
+      Boolean src = rec.get("src").asBoolean();
+      Boolean dst = rec.get("dst").asBoolean();
+      check.setFields(src, dst);
+    }
+    return check;
   }
 
 

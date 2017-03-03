@@ -86,10 +86,9 @@ RETURN n.id AS id,COUNT(r) AS deg
 
 
 
-##########################################
-# CHECK PAIR                             #
-##########################################
-dato arco (x,y) verifica loro esistenza, restituendo 00,01,10,11 come maschera di esistenza.
+# CHECK EXTREMES
+OPTIONAL MATCH (u1:Person {id:{src}}),(u2:Person {id:{dst}})
+RETURN u1 IS NOT NULL AS src,u2 IS NOT NULL AS dst
 
 #################################
 # UPDATE                        #
