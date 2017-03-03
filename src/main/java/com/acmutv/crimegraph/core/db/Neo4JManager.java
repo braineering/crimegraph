@@ -28,6 +28,7 @@ package com.acmutv.crimegraph.core.db;
 
 import com.acmutv.crimegraph.core.tuple.Link;
 import com.acmutv.crimegraph.core.tuple.LinkType;
+import org.apache.flink.api.java.tuple.Tuple2;
 import org.neo4j.driver.v1.*;
 
 import java.util.HashSet;
@@ -46,7 +47,7 @@ public class Neo4JManager {
   /**
    * Query to create a new real link.
    */
-  private static final String CREATE_LINK_REAL =
+  private static final String SAVE_LINK_REAL =
       "MERGE (u1:Person {id:{src}}) MERGE (u2:Person {id:{dst}}) " +
           "MERGE (u1)-[r:REAL]-(u2) " +
           "ON CREATE SET r.weight={weight},r.num=1,r.created=timestamp(),r.updated=r.created " +
@@ -55,7 +56,7 @@ public class Neo4JManager {
   /**
    * Query to create a new potential link.
    */
-  private static final String CREATE_LINK_POTENTIAL =
+  private static final String SAVE_LINK_POTENTIAL =
       "MERGE (u1:Person {id:{src}}) MERGE (u2:Person {id:{dst}}) " +
           "MERGE (u1)-[r:POTENTIAL]-(u2) " +
           "ON CREATE SET r.weight={weight},r.created=timestamp(),r.updated=r.created " +
@@ -64,29 +65,73 @@ public class Neo4JManager {
   /**
    * Query to create a new hidden link.
    */
-  private static final String CREATE_LINK_HIDDEN =
+  private static final String SAVE_LINK_HIDDEN =
       "MERGE (u1:Person {id:{src}}) MERGE (u2:Person {id:{dst}}) " +
           "MERGE (u1)-[r:HIDDEN]-(u2) " +
           "ON CREATE SET r.weight={weight},r.created=timestamp(),r.updated=r.created " +
           "ON MATCH SET r.weight={weight},r.updated=timestamp()";
 
   /**
-   * Query to match a neighborhood.
+   * Query to match neighbours.
    */
-  private static final String MATCH_NEIGHBORHOOD =
+  private static final String MATCH_NEIGHBOURS =
       "MATCH (u1:Person {id:{src}})-[:REAL]-(n:Person) RETURN n.id AS id";
 
   /**
-   * Query to match a neighborhood with upper bound distance.
+   * Query to match neighbours and degree.
    */
-  private static final String MATCH_NEIGHBORHOOD_WITHIN_DISTANCE =
+  private static final String MATCH_NEIGHBOURS_WITH_DEGREE =
+      "MATCH (u1:Person {id:{src}})-[:REAL]-(n:Person) " +
+          "WITH DISTINCT n " +
+          "MATCH (n)-[r:REAL]-() " +
+          "RETURN n.id AS id,COUNT(r) AS deg";
+
+  /**
+   * Query to match neighbours within maximum distance.
+   */
+  private static final String MATCH_NEIGHBOURS_WITHIN_DISTANCE =
       "MATCH (u1:Person {id:{src}})-[:REAL*1..%d]-(n:Person) RETURN DISTINCT n.id AS id";
 
   /**
-   * Query to match a neighborhood intersection.
+   * Query to match neighbours with degree within maximum distance.
    */
-  private static final String MATCH_NEIGHBORHOOD_INTERSECTION =
-      "MATCH (u1:Person {id:{src}})-[:REAL]-(n:Person)-[:REAL]-(u2:Person {id:{dst}}) RETURN DISTINCT n.id AS id";
+  private static final String MATCH_NEIGHBOURS_WITH_DEGREE_WITHIN_DISTANCE =
+      "MATCH (u1:Person {id:{src}})-[:REAL*1..%d]-(n:Person) " +
+          "WITH DISTINCT n " +
+          "MATCH (n)-[r:REAL]-() " +
+          "RETURN n.id AS id,COUNT(r) AS deg";
+
+  /**
+   * Query to match common neighbours.
+   */
+  private static final String MATCH_COMMON_NEIGHBOURS =
+      "MATCH (u1:Person {id:{src}})-[:REAL]-(n:Person)-[:REAL]-(u2:Person {id:{dst}}) " +
+          "RETURN DISTINCT n.id AS id";
+
+  /**
+   * Query to match common neighbours with degree.
+   */
+  private static final String MATCH_COMMON_NEIGHBOURS_WITH_DEGREE =
+      "MATCH (u1:Person {id:{src}})-[:REAL]-(n:Person)-[:REAL]-(u2:Person {id:{dst}}) " +
+          "WITH DISTINCT n " +
+          "MATCH (n)-[r:REAL]-() " +
+          "RETURN n.id AS id,COUNT(r) AS deg";
+
+  /**
+   * Query to match common neighbours within distance.
+   */
+  private static final String MATCH_COMMON_NEIGHBOURS_WITHIN_DISTANCE =
+      "MATCH (u1:Person {id:{src}})-[:REAL*1..%d]-(n:Person)-[:REAL*1..%d]-(u2:Person {id:{dst}}) " +
+          "RETURN DISTINCT n.id AS id";
+
+  /**
+   * Query to match common neighbours with degree within distance.
+   */
+  private static final String MATCH_COMMON_NEIGHBOURS_WITH_DEGREE_WITHIN_DISTANCE =
+      "MATCH (u1:Person {id:{src}})-[:REAL*1..%d]-(n:Person)-[:REAL*1..%d]-(u2:Person {id:{dst}}) " +
+          "WITH DISTINCT n " +
+          "MATCH (n)-[r:REAL]-() " +
+          "RETURN n.id AS id,COUNT(r) AS deg";
 
   /**
    * Opens a NEO4J connection.
@@ -116,7 +161,7 @@ public class Neo4JManager {
    * @param session the NEO4J open session.
    * @param link the link to save.
    */
-  public static void saveLink(Session session, Link link) {
+  public static void save(Session session, Link link) {
     long src = link.f0;
     long dst = link.f1;
     double weight = link.f2;
@@ -125,39 +170,21 @@ public class Neo4JManager {
     Value params = parameters("src", src, "dst", dst, "weight", weight);
 
     switch (type) {
-      case REAL: session.run(CREATE_LINK_REAL, params); break;
-      case POTENTIAL: session.run(CREATE_LINK_POTENTIAL, params); break;
-      case HIDDEN: session.run(CREATE_LINK_HIDDEN, params); break;
+      case REAL: session.run(SAVE_LINK_REAL, params); break;
+      case POTENTIAL: session.run(SAVE_LINK_POTENTIAL, params); break;
+      case HIDDEN: session.run(SAVE_LINK_HIDDEN, params); break;
       default: break;
     }
   }
 
   /**
-   * Matches common neighbours.
-   * @param session the NEO4J open session.
-   * @param a the id of the first node.
-   * @param b the id of the second node.
-   */
-  public static Set<Long> matchCommonNeighbours(Session session, long a, long b) {
-    Value params = parameters("src", a, "dst", b);
-    StatementResult result = session.run(MATCH_NEIGHBORHOOD_INTERSECTION, params);
-    Set<Long> neighbours = new HashSet<>();
-    while (result.hasNext()) {
-      Record rec = result.next();
-      Long id = rec.get("id").asLong();
-      neighbours.add(id);
-    }
-    return neighbours;
-  }
-
-  /**
-   * Matches common neighbours.
+   * Matches neighbours of node {@code a}.
    * @param session the NEO4J open session.
    * @param a the id of the first node.
    */
-  public static Set<Long> matchNeighbours(Session session, long a) {
+  public static Set<Long> neighbours(Session session, long a) {
     Value params = parameters("src", a);
-    StatementResult result = session.run(MATCH_NEIGHBORHOOD, params);
+    StatementResult result = session.run(MATCH_NEIGHBOURS, params);
     Set<Long> neighbours = new HashSet<>();
     while (result.hasNext()) {
       Record rec = result.next();
@@ -168,14 +195,32 @@ public class Neo4JManager {
   }
 
   /**
-   * Matches common neighbours within distance.
+   * Matches neighbours with degree.
+   * @param session the NEO4J open session.
+   * @param a the id of the first node.
+   */
+  public static Set<Tuple2<Long,Long>> neighboursWithDegree(Session session, long a) {
+    Value params = parameters("src", a);
+    StatementResult result = session.run(MATCH_NEIGHBOURS_WITH_DEGREE, params);
+    Set<Tuple2<Long,Long>> neighbours = new HashSet<>();
+    while (result.hasNext()) {
+      Record rec = result.next();
+      Long id = rec.get("id").asLong();
+      Long deg = rec.get("deg").asLong();
+      neighbours.add(new Tuple2<>(id, deg));
+    }
+    return neighbours;
+  }
+
+  /**
+   * Matches neighbours within upper bound distance.
    * @param session the NEO4J open session.
    * @param a the id of the first node.
    * @param dist the neighbourhood distance.
    */
-  public static Set<Long> matchNeighbours(Session session, long a, long dist) {
+  public static Set<Long> neighboursWithinDistance(Session session, long a, long dist) {
     Value params = parameters("src", a, "dist", dist);
-    String query = String.format(MATCH_NEIGHBORHOOD_WITHIN_DISTANCE, dist);
+    String query = String.format(MATCH_NEIGHBOURS_WITHIN_DISTANCE, dist);
     StatementResult result = session.run(query, params);
     Set<Long> neighbours = new HashSet<>();
     while (result.hasNext()) {
@@ -185,4 +230,104 @@ public class Neo4JManager {
     }
     return neighbours;
   }
+
+  /**
+   * Matches neighbours with degree within upper bound distance.
+   * @param session the NEO4J open session.
+   * @param a the id of the first node.
+   * @param dist the neighbourhood distance.
+   */
+  public static Set<Tuple2<Long,Long>> neighboursWithDegreeWithinDistance(Session session, long a, long dist) {
+    Value params = parameters("src", a, "dist", dist);
+    String query = String.format(MATCH_NEIGHBOURS_WITH_DEGREE_WITHIN_DISTANCE, dist);
+    StatementResult result = session.run(query, params);
+    Set<Tuple2<Long,Long>> neighbours = new HashSet<>();
+    while (result.hasNext()) {
+      Record rec = result.next();
+      Long id = rec.get("id").asLong();
+      Long deg = rec.get("deg").asLong();
+      neighbours.add(new Tuple2<>(id, deg));
+    }
+    return neighbours;
+  }
+
+  /**
+   * Matches common neighbours.
+   * @param session the NEO4J open session.
+   * @param a the id of the first node.
+   * @param b the id of the second node.
+   */
+  public static Set<Long> commonNeighbours(Session session, long a, long b) {
+    Value params = parameters("src", a, "dst", b);
+    StatementResult result = session.run(MATCH_COMMON_NEIGHBOURS, params);
+    Set<Long> neighbours = new HashSet<>();
+    while (result.hasNext()) {
+      Record rec = result.next();
+      Long id = rec.get("id").asLong();
+      neighbours.add(id);
+    }
+    return neighbours;
+  }
+
+  /**
+   * Matches common neighbours with degree.
+   * @param session the NEO4J open session.
+   * @param a the id of the first node.
+   * @param b the id of the second node.
+   */
+  public static Set<Tuple2<Long,Long>> commonNeighboursWithDegree(Session session, long a, long b) {
+    Value params = parameters("src", a, "dst", b);
+    StatementResult result = session.run(MATCH_COMMON_NEIGHBOURS_WITH_DEGREE, params);
+    Set<Tuple2<Long,Long>> neighbours = new HashSet<>();
+    while (result.hasNext()) {
+      Record rec = result.next();
+      Long id = rec.get("id").asLong();
+      Long deg = rec.get("deg").asLong();
+      neighbours.add(new Tuple2<>(id, deg));
+    }
+    return neighbours;
+  }
+
+  /**
+   * Matches common neighbours within upper bound distance.
+   * @param session the NEO4J open session.
+   * @param a the id of the first node.
+   * @param b the id of the second node.
+   * @param dist the neighbourhood distance.
+   */
+  public static Set<Long> commonNeighboursWithinDistance(Session session, long a, long b, long dist) {
+    Value params = parameters("src", a, "dst", b, "dist", dist);
+    String query = String.format(MATCH_COMMON_NEIGHBOURS_WITHIN_DISTANCE, dist, dist);
+    StatementResult result = session.run(query, params);
+    Set<Long> neighbours = new HashSet<>();
+    while (result.hasNext()) {
+      Record rec = result.next();
+      Long id = rec.get("id").asLong();
+      neighbours.add(id);
+    }
+    return neighbours;
+  }
+
+  /**
+   * Matches common neighbours with degree within upper bound distance.
+   * @param session the NEO4J open session.
+   * @param a the id of the first node.
+   * @param b the id of the second node.
+   * @param dist the neighbourhood distance.
+   */
+  public static Set<Tuple2<Long,Long>> commonNeighboursWithDegreeWithinDistance(Session session, long a, long b, long dist) {
+    Value params = parameters("src", a, "dst", b, "dist", dist);
+    String query = String.format(MATCH_COMMON_NEIGHBOURS_WITH_DEGREE_WITHIN_DISTANCE, dist, dist);
+    StatementResult result = session.run(query, params);
+    Set<Tuple2<Long,Long>> neighbours = new HashSet<>();
+    while (result.hasNext()) {
+      Record rec = result.next();
+      Long id = rec.get("id").asLong();
+      Long deg = rec.get("deg").asLong();
+      neighbours.add(new Tuple2<>(id, deg));
+    }
+    return neighbours;
+  }
+
+
 }
