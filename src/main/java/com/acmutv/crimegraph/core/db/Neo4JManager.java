@@ -30,11 +30,8 @@ import com.acmutv.crimegraph.core.tuple.Link;
 import com.acmutv.crimegraph.core.tuple.LinkType;
 import org.neo4j.driver.v1.*;
 
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import static org.neo4j.driver.v1.Values.parameters;
 
@@ -74,10 +71,22 @@ public class Neo4JManager {
           "ON MATCH SET r.weight={weight},r.updated=timestamp()";
 
   /**
+   * Query to match a neighborhood.
+   */
+  private static final String MATCH_NEIGHBORHOOD =
+      "MATCH (u1:Person {id:{src}})-[:REAL]-(n:Person) RETURN n.id AS id";
+
+  /**
+   * Query to match a neighborhood with upper bound distance.
+   */
+  private static final String MATCH_NEIGHBORHOOD_WITHIN_DISTANCE =
+      "MATCH (u1:Person {id:{src}})-[:REAL*1..%d]-(n:Person) RETURN DISTINCT n.id AS id";
+
+  /**
    * Query to match a neighborhood intersection.
    */
   private static final String MATCH_NEIGHBORHOOD_INTERSECTION =
-      "MATCH (u1:Person {id:{src}})-[:REAL]-(n:Person)-[:REAL]-(u2:Person {id:{dst}}) RETURN n.id AS id";
+      "MATCH (u1:Person {id:{src}})-[:REAL]-(n:Person)-[:REAL]-(u2:Person {id:{dst}}) RETURN DISTINCT n.id AS id";
 
   /**
    * Opens a NEO4J connection.
@@ -132,6 +141,42 @@ public class Neo4JManager {
   public static Set<Long> matchCommonNeighbours(Session session, long a, long b) {
     Value params = parameters("src", a, "dst", b);
     StatementResult result = session.run(MATCH_NEIGHBORHOOD_INTERSECTION, params);
+    Set<Long> neighbours = new HashSet<>();
+    while (result.hasNext()) {
+      Record rec = result.next();
+      Long id = rec.get("id").asLong();
+      neighbours.add(id);
+    }
+    return neighbours;
+  }
+
+  /**
+   * Matches common neighbours.
+   * @param session the NEO4J open session.
+   * @param a the id of the first node.
+   */
+  public static Set<Long> matchNeighbours(Session session, long a) {
+    Value params = parameters("src", a);
+    StatementResult result = session.run(MATCH_NEIGHBORHOOD, params);
+    Set<Long> neighbours = new HashSet<>();
+    while (result.hasNext()) {
+      Record rec = result.next();
+      Long id = rec.get("id").asLong();
+      neighbours.add(id);
+    }
+    return neighbours;
+  }
+
+  /**
+   * Matches common neighbours within distance.
+   * @param session the NEO4J open session.
+   * @param a the id of the first node.
+   * @param dist the neighbourhood distance.
+   */
+  public static Set<Long> matchNeighbours(Session session, long a, long dist) {
+    Value params = parameters("src", a, "dist", dist);
+    String query = String.format(MATCH_NEIGHBORHOOD_WITHIN_DISTANCE, dist);
+    StatementResult result = session.run(query, params);
     Set<Long> neighbours = new HashSet<>();
     while (result.hasNext()) {
       Record rec = result.next();

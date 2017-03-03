@@ -32,6 +32,20 @@ ON CREATE SET r.weight={weight},r.created=timestamp(),r.updated=r.created
 ON MATCH SET r.weight={weight},r.updated=timestamp()
 
 #################################
+# CHECK PAIR                    #
+#################################
+
+#################################
+# NEIGHBOURHOOD                 #
+#################################
+MATCH (u1:Person {id:{src}})-[:REAL]-(n:Person) RETURN DISTINCT n.id AS id
+
+#################################
+# NEIGHBOURHOOD DISTANCE T      #
+#################################
+MATCH (u1:Person {id:{src}})-[:REAL*{distance}]-(n:Person) RETURN DISTINCT n.id AS id
+
+#################################
 # NEIGHBOURHOOD INTERSECTION    #
 #################################
 MATCH (u1:Person {id:{src}})-[:REAL]-(n:Person)-[:REAL]-(u2:Person {id:{dst}}) RETURN n.id AS id

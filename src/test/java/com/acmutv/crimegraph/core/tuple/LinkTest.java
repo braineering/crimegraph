@@ -25,7 +25,6 @@
  */
 
 package com.acmutv.crimegraph.core.tuple;
-import com.acmutv.crimegraph.AppMain;
 import org.junit.Assert;
 import org.junit.Test;
 import org.slf4j.Logger;
@@ -42,7 +41,7 @@ import java.util.List;
  */
 public class LinkTest {
 
-  private static final Logger LOGGER = LoggerFactory.getLogger(AppMain.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger(LinkTest.class);
 
   /**
    * Tests serialization of {@link Link}.

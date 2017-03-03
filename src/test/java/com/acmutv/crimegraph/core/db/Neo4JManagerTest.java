@@ -124,6 +124,53 @@ public class Neo4JManagerTest {
     session.close();
   }
 
+  /**
+   * Tests neighbours from NEO4J.
+   * @throws IOException when operator cannot be managed.
+   */
+  @Test
+  public void test_neighbours() throws Exception {
+    Session session = DRIVER.session();
+
+    List<Link> links = data();
+
+    for (Link link : links) Neo4JManager.saveLink(session, link);
+
+    // Check
+    Set<Long> actual = Neo4JManager.matchNeighbours(session, 1);
+    Set<Long> expected = new HashSet<>();
+    expected.add(2L);
+    expected.add(3L);
+    expected.add(4L);
+    Assert.assertEquals(expected, actual);
+
+    session.close();
+  }
+
+  /**
+   * Tests neighbours with upper bound distance from NEO4J.
+   * @throws IOException when operator cannot be managed.
+   */
+  @Test
+  public void test_neighbours_distance() throws Exception {
+    Session session = DRIVER.session();
+
+    List<Link> links = data();
+
+    for (Link link : links) Neo4JManager.saveLink(session, link);
+
+    // Check
+    Set<Long> actual = Neo4JManager.matchNeighbours(session, 1, 2);
+    Set<Long> expected = new HashSet<>();
+    expected.add(2L);
+    expected.add(3L);
+    expected.add(4L);
+    expected.add(5L);
+    Assert.assertEquals(expected, actual);
+
+    session.close();
+  }
+
   private static List<Link> data() {
     List<Link> data = new ArrayList<>();
     data.add(new Link(1,2,10.0, LinkType.REAL));
