@@ -34,6 +34,7 @@ ON MATCH SET r.weight={weight},r.updated=timestamp()
 #################################
 # CHECK PAIR                    #
 #################################
+dato arco (x,y) verifica loro esistenza, restituendo 00,01,10,11 come maschera di esistenza.
 
 #################################
 # NEIGHBOURHOOD                 #
@@ -41,9 +42,33 @@ ON MATCH SET r.weight={weight},r.updated=timestamp()
 MATCH (u1:Person {id:{src}})-[:REAL]-(n:Person) RETURN DISTINCT n.id AS id
 
 #################################
+# UPDATE                        #
+#################################
+dato nodo x, restituisce la lista di archi (x,b) e (a,b) non in G, dove a e b sono nodi vicini di x.
+
+#################################
+# UPDATE TWICE                  #
+#################################
+dato nodo x, restituisce l'insieme Cx di archi (x,b) e (a,b) non in G, dove a e b sono nodi vicini di x.
+dato nodo y, restituisce l'insieme Cy di archi (y,b) e (a,b) non in G, dove a e b sono nodi vicini di y.
+restituisce l'unione di Cx e Cy
+
+#################################
 # NEIGHBOURHOOD DISTANCE T      #
 #################################
 MATCH (u1:Person {id:{src}})-[:REAL*{distance}]-(n:Person) RETURN DISTINCT n.id AS id
+
+#################################
+# UPDATE DISTANCE T             #
+#################################
+dato nodo x, restituisce la lista di archi (x,b) e (a,b) non in G, dove a e b sono nodi a distanza t da x.
+
+#################################
+# UPDATE TWICE DISTANCE T       #
+#################################
+dato nodo x, restituisce l'insieme Cx di archi (x,b) e (a,b) non in G, dove a e b sono nodi a distanza t da x.
+dato nodo y, restituisce l'insieme Cy di archi (y,b) e (a,b) non in G, dove a e b sono nodi a distanza t da y.
+restituisce l'unione di Cx e Cy
 
 #################################
 # NEIGHBOURHOOD INTERSECTION    #
