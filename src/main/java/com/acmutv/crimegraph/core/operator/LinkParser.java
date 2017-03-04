@@ -42,7 +42,12 @@ public class LinkParser implements FlatMapFunction<String, Link> {
   @Override
   public void flatMap(String value, Collector<Link> out) {
     System.out.println("VALUE: " + value);
-    Link link = Link.valueOf(value);
+    Link link = null;
+    try {
+      link = Link.valueOf(value);
+    } catch (IllegalArgumentException exc) {
+      System.out.println(exc.getMessage());
+    }
     out.collect(link);
   }
 }
