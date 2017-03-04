@@ -81,7 +81,7 @@ public class LinkSink extends RichSinkFunction<Link> {
 
   @Override
   public void invoke(Link value) throws Exception {
-    Neo4JManager.saveLink(this.session, value);
+    Neo4JManager.save(this.session, value);
   }
 
   @Override

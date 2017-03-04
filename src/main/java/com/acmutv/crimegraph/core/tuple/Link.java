@@ -85,9 +85,9 @@ public class Link extends Tuple4<Long,Long,Double,LinkType> {
   @Override
   public String toString() {
     if (this.f3.equals(LinkType.REAL)) {
-      return String.format(Locale.ROOT, "(%d,%d,%.3f)", super.f0, super.f1, super.f2);
+      return String.format(Locale.ROOT, "(%d,%d,%f)", super.f0, super.f1, super.f2);
     } else {
-      return String.format(Locale.ROOT, "(%d,%d,%.3f,%s)", super.f0, super.f1, super.f2, super.f3);
+      return String.format(Locale.ROOT, "(%d,%d,%f,%s)", super.f0, super.f1, super.f2, super.f3);
     }
   }
 
