@@ -29,6 +29,7 @@ package com.acmutv.crimegraph.core.tuple;
 import org.apache.flink.api.java.tuple.Tuple2;
 import org.apache.flink.api.java.tuple.Tuple4;
 
+import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -40,12 +41,12 @@ import java.util.stream.Stream;
  * @author Michele Porretta {@literal <mporretta@acm.org>}
  * @since 1.0
  */
-public class NodePair extends Tuple2<Long,Long> {
+public class NodePair extends Tuple4<Long,Long,Long,Double> {
 
   /**
    * The regular expression
    */
-  private static final String REGEXP = "^\\(([0-9]+),([0-9]+)\\)$";
+  private static final String REGEXP = "^\\(([0-9]+),([0-9]+),([0-9]+),([0-9]+\\.*[0-9]+)\\)$";
 
   /**
    * The pattern matcher used to match strings on {@code REGEXP}.
@@ -57,8 +58,8 @@ public class NodePair extends Tuple2<Long,Long> {
    * @param src the id of the source node.
    * @param dst the id of the destination node.
    */
-  public NodePair(long src, long dst) {
-    super(src, dst);
+  public NodePair(long src, long dst, long degree, double weight) {
+    super(src, dst, degree, weight);
   }
 
   /**
@@ -69,7 +70,7 @@ public class NodePair extends Tuple2<Long,Long> {
 
   @Override
   public String toString() {
-    return String.format("(%d,%d)", super.f0, super.f1);
+    return String.format(Locale.ROOT,"(%d,%d,%d,%.3f)", super.f0, super.f1, super.f2, super.f3);
   }
 
   /**
@@ -84,6 +85,8 @@ public class NodePair extends Tuple2<Long,Long> {
     if (!matcher.matches()) throw new IllegalArgumentException();
     long src = Long.valueOf(matcher.group(1));
     long dst = Long.valueOf(matcher.group(2));
-    return new NodePair(src, dst);
+    long degree = Long.valueOf(matcher.group(3));
+    long weight = Long.valueOf(matcher.group(3));
+    return new NodePair(src, dst,degree,weight);
   }
 }
