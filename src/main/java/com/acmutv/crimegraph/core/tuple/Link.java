@@ -28,6 +28,7 @@ package com.acmutv.crimegraph.core.tuple;
 
 import org.apache.flink.api.java.tuple.Tuple4;
 
+import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -84,9 +85,9 @@ public class Link extends Tuple4<Long,Long,Double,LinkType> {
   @Override
   public String toString() {
     if (this.f3.equals(LinkType.REAL)) {
-      return String.format("(%d,%d,%f)", super.f0, super.f1, super.f2);
+      return String.format(Locale.ROOT, "(%d,%d,%.3f)", super.f0, super.f1, super.f2);
     } else {
-      return String.format("(%d,%d,%f,%s)", super.f0, super.f1, super.f2, super.f3);
+      return String.format(Locale.ROOT, "(%d,%d,%.3f,%s)", super.f0, super.f1, super.f2, super.f3);
     }
   }
 
@@ -98,8 +99,9 @@ public class Link extends Tuple4<Long,Long,Double,LinkType> {
    */
   public static Link valueOf(String string) throws IllegalArgumentException {
     if (string == null) throw new IllegalArgumentException();
+    System.out.println("STRING: "+ string);
     Matcher matcher = PATTERN.matcher(string);
-    if (!matcher.matches()) throw new IllegalArgumentException();
+    if (!matcher.matches()) throw new IllegalArgumentException(string);
     long src = Long.valueOf(matcher.group(1));
     long dst = Long.valueOf(matcher.group(2));
     double weight = Double.valueOf(matcher.group(3));
