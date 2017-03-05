@@ -38,11 +38,12 @@ import lombok.Getter;
 public enum ScoreType {
 
     POTENTIAL ("POTENTIAL"),
-    HIDDEN    ("HIDDEN");
+    HIDDEN    ("HIDDEN"),
+    BOTH ("BOTH");
 
     private final String name;
 
     ScoreType(final String name) {
-        this.name = name;
+      this.name = name;
     }
 }
