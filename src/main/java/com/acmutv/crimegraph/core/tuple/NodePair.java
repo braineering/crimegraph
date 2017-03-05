@@ -26,14 +26,10 @@
 
 package com.acmutv.crimegraph.core.tuple;
 
-import org.apache.flink.api.java.tuple.Tuple2;
-import org.apache.flink.api.java.tuple.Tuple4;
-
+import org.apache.flink.api.java.tuple.Tuple3;
 import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * The tuple representing an node pair to update.
@@ -41,25 +37,25 @@ import java.util.stream.Stream;
  * @author Michele Porretta {@literal <mporretta@acm.org>}
  * @since 1.0
  */
-public class NodePair extends Tuple4<Long,Long,Long,Double> {
+public class NodePair extends Tuple3<Long,Long,ScoreType> {
 
   /**
    * The regular expression
    */
-  private static final String REGEXP = "^\\(([0-9]+),([0-9]+),([0-9]+),([0-9]+\\.*[0-9]+)\\)$";
+  //private static final String REGEXP = "^\\(([0-9]+),([0-9]+)\\)$";
 
   /**
    * The pattern matcher used to match strings on {@code REGEXP}.
    */
-  private static final Pattern PATTERN = Pattern.compile(REGEXP);
+  //private static final Pattern PATTERN = Pattern.compile(REGEXP);
 
   /**
    * Creates a new interaction.
    * @param src the id of the source node.
    * @param dst the id of the destination node.
    */
-  public NodePair(long src, long dst, long degree, double weight) {
-    super(src, dst, degree, weight);
+  public NodePair(long src, long dst, ScoreType type) {
+    super(src, dst, type);
   }
 
   /**
@@ -70,23 +66,21 @@ public class NodePair extends Tuple4<Long,Long,Long,Double> {
 
   @Override
   public String toString() {
-    return String.format(Locale.ROOT,"(%d,%d,%d,%.3f)", super.f0, super.f1, super.f2, super.f3);
+    return String.format(Locale.ROOT,"(%d,%d)", super.f0, super.f1);
   }
 
-  /**
+  /*/**
    * Parses {@link NodePair} from string.
    * @param string the string to parse.
    * @return the parsed {@link NodePair}.
    * @throws IllegalArgumentException when {@code string} cannot be parsed.
    */
-  public static NodePair valueOf(String string) throws IllegalArgumentException {
+  /*public static NodePair valueOf(String string) throws IllegalArgumentException {
     if (string == null) throw new IllegalArgumentException();
     Matcher matcher = PATTERN.matcher(string);
     if (!matcher.matches()) throw new IllegalArgumentException();
     long src = Long.valueOf(matcher.group(1));
     long dst = Long.valueOf(matcher.group(2));
-    long degree = Long.valueOf(matcher.group(3));
-    long weight = Long.valueOf(matcher.group(3));
-    return new NodePair(src, dst,degree,weight);
-  }
+    return new NodePair(src, dst,weight);
+  }*/
 }
