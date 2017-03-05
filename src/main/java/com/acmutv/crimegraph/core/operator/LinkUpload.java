@@ -96,8 +96,6 @@ public class LinkUpload extends RichFlatMapFunction<Link, NodePair> {
 
     Tuple3<Boolean,Boolean,Boolean> check = Neo4JManager.checkExtremes(this.session,newLink.f0,newLink.f1);
 
-    //NodePair Structure: (long src, long dst, ScoreType type) types are: Hidden, Potential or Both
-
     // if x in G, y in G, and (x,y) in G
     if(check.f0 && check.f1 && check.f2){
       Neo4JManager.save(this.session, newLink);
