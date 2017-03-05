@@ -27,6 +27,7 @@
 package com.acmutv.crimegraph.core.tuple;
 
 import org.apache.flink.api.java.tuple.Tuple2;
+import org.apache.flink.api.java.tuple.Tuple3;
 import org.apache.flink.api.java.tuple.Tuple4;
 
 import java.util.regex.Matcher;
@@ -40,12 +41,15 @@ import java.util.stream.Stream;
  * @author Michele Porretta {@literal <mporretta@acm.org>}
  * @since 1.0
  */
-public class NodePair extends Tuple2<Long,Long> {
+public class NodePair extends Tuple3<Long,Long,UpdateType> {
 
   /**
    * The regular expression
    */
-  private static final String REGEXP = "^\\(([0-9]+),([0-9]+)\\)$";
+  private static final String REGEXP =
+      String.format("^\\(([0-9]+),([0-9]+),(%s)\\)$",
+          Stream.of(UpdateType.values())
+              .map(UpdateType::toString).collect(Collectors.joining("|")));
 
   /**
    * The pattern matcher used to match strings on {@code REGEXP}.
@@ -56,9 +60,10 @@ public class NodePair extends Tuple2<Long,Long> {
    * Creates a new interaction.
    * @param src the id of the source node.
    * @param dst the id of the destination node.
+   * @param type the type of update.
    */
-  public NodePair(long src, long dst) {
-    super(src, dst);
+  public NodePair(long src, long dst, UpdateType type) {
+    super(src, dst, type);
   }
 
   /**
@@ -69,7 +74,7 @@ public class NodePair extends Tuple2<Long,Long> {
 
   @Override
   public String toString() {
-    return String.format("(%d,%d)", super.f0, super.f1);
+    return String.format("(%d,%d,%s)", super.f0, super.f1, super.f2.name());
   }
 
   /**
@@ -84,6 +89,7 @@ public class NodePair extends Tuple2<Long,Long> {
     if (!matcher.matches()) throw new IllegalArgumentException();
     long src = Long.valueOf(matcher.group(1));
     long dst = Long.valueOf(matcher.group(2));
-    return new NodePair(src, dst);
+    UpdateType type = UpdateType.valueOf(matcher.group(3));
+    return new NodePair(src, dst, type);
   }
 }
