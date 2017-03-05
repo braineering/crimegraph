@@ -24,14 +24,18 @@
   THE SOFTWARE.
  */
 
-package com.acmutv.crimegraph.core.source;
+package com.acmutv.crimegraph.core.operator;
 
 import com.acmutv.crimegraph.core.db.Neo4JManager;
 import com.acmutv.crimegraph.core.tuple.Link;
+import com.acmutv.crimegraph.core.tuple.NodePair;
 import org.apache.flink.api.common.functions.RichFlatMapFunction;
+import org.apache.flink.api.java.tuple.Tuple2;
 import org.apache.flink.configuration.Configuration;
 import org.apache.flink.util.Collector;
 import org.neo4j.driver.v1.*;
+
+import java.util.Set;
 
 /**
  * A simple source function based on Neo4j.
@@ -39,9 +43,7 @@ import org.neo4j.driver.v1.*;
  * @author Michele Porretta {@literal <mporretta@acm.org>}
  * @since 1.0
  */
-public class LinkSource extends RichFlatMapFunction<Link, Link> {
-
-  //private static final Logger LOGGER = LogManager.getLogger(InteractionsNeo4JSourceFunction.class);
+public class LinkUpload extends RichFlatMapFunction<Link, NodePair> {
 
   /**
    * The hostname of the NEO4J instance.
@@ -69,28 +71,72 @@ public class LinkSource extends RichFlatMapFunction<Link, Link> {
   private Session session;
 
   /**
+   * The considered distance
+   * (in terms of steps)
+   * to update scores.
+   */
+  private Long distance;
+
+  /**
    * Constructs for load edge to write {@link Link} on a NEO4J instance.
    * @param hostname the hostname of the NEO4J instance.
    * @param username the username of the NEO4J instance.
    * @param password the password of the NEO4J instance.
    */
-  public LinkSource(String hostname, String username, String password) {
+  public LinkUpload(String hostname, String username, String password, Long distance) {
     this.hostname = hostname;
     this.username = username;
     this.password = password;
+    this.distance = distance;
   }
 
   @SuppressWarnings("unchecked")
   @Override
-  public void flatMap(Link value, Collector<Link> out){
-    Neo4JManager.saveLink(this.session, value);
+  public void flatMap(Link value, Collector<NodePair> out){
 
-    //da modificare così:
-    // 1) salva il link
-    // 2) richiedi i neighbors di tipo NodePair
-    // 3) poni in output i NodePair verso ScoreCalculator
+    Link newLink;
 
-    out.collect(value);
+    // Link's indexes sorting
+    if(value.f0 > value.f1)
+      newLink = new Link(value.f1,value.f0,value.f2);
+    else
+      newLink = value;
+
+    Tuple3<Boolean,Boolean,Boolean> check = Neo4JManager.checkExtremes(this.session,newLink.f0,newLink.f1);
+
+    //NodePair Structure: (long src, long dst, ScoreType type) types are: Hidden, Potential or Both
+
+    // if x in G, y in G, and (x,y) in G
+    if(check.f0 && check.f1 && check.f2){
+      Neo4JManager.save(this.session, newLink);
+      // emettere coppie (a,b) solo per calcolo degli hidden
+    }
+
+    // if x in G, y in G, and (x,y) NOT in G
+    else if (check.f0 && check.f1 && !check.f2){
+      Neo4JManager.save(this.session, newLink);
+      // update x e y - emettere coppie (a,b) per il calcolo entrambi i tipi di score
+
+    }
+
+    // if x NOT in G and y in G
+    else if(!check.f0 && check.f1 && !check.f2){
+      Neo4JManager.save(this.session, newLink);
+      //update x - emettere coppie (a,b) per il calcolo entrambi i tipi di score
+
+    }
+
+    // if x in G and y NOT in G
+    else if(!check.f0 && check.f1 && !check.f2) {
+      Neo4JManager.save(this.session, newLink);
+      //update y - emettere coppie (a,b) per il calcolo di entrambi i tipi di score
+
+    }
+
+    // if x NOT in G and Y NOT in G
+    else if(!check.f0 && !check.f1 && !check.f2){
+      Neo4JManager.save(this.session, newLink);
+    }
   }
 
   @Override
