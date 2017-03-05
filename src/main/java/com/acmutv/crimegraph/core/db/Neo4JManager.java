@@ -33,6 +33,7 @@ import org.apache.flink.api.java.tuple.Tuple3;
 import org.neo4j.driver.v1.*;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import static org.neo4j.driver.v1.Values.parameters;
@@ -145,19 +146,68 @@ public class Neo4JManager {
           "RETURN u1 IS NOT NULL AS src,u2 IS NOT NULL AS dst,r IS NOT NULL AS arc";
 
   /**
-   * Query to generate pairs of unlinked nodes to update, with single node insertion.
+   * Query to find pairs of unlinked nodes to update, with single node insertion.
    */
   private static final String NODES_TO_UPDATE =
-      "MATCH (n1:Person)-[:REAL]-(u:Person {id:{x}})-[:REAL]-(n2:Person) " +
-          "WHERE id(n1) > id(n2) " +
-          "RETURN collect([n1.id,n2.id]) as pairs";
+      "MATCH (x:Person {id:{x}})-[:REAL*2]-(n:Person) " +
+          "WHERE NOT (x)-[:REAL]-(n) " +
+          "RETURN [x.id,n.id] AS pairs " +
+          "UNION ALL " +
+          "MATCH (n1:Person)-[:REAL*2]-(x:Person {id:{x}})-[:REAL*2]-(n2:Person) " +
+          "WHERE id(n1) > id(n2) AND NOT (x)-[:REAL]-(n1) AND NOT (x)-[:REAL]-(n2) " +
+          "RETURN [n1.id,n2.id] as pairs";
 
   /**
-   * Query to generate pairs of unlinked nodes to update, with double node insertion.
+   * Query to find pairs of unlinked nodes to update, with double node insertion.
    */
   private static final String NODES_TO_UPDATE_TWICE =
-      "OPTIONAL MATCH (u1:Person {id:{src}}),(u2:Person {id:{dst}}) " +
-          "RETURN u1 IS NOT NULL AS src,u2 IS NOT NULL AS dst";
+      "MATCH (x:Person {id:{x}})-[:REAL*2]-(n:Person) " +
+          "WHERE NOT (x)-[:REAL]-(n) " +
+          "RETURN [x.id,n.id] AS pairs " +
+          "UNION ALL " +
+          "MATCH (n1:Person)-[:REAL*2]-(x:Person {id:{x}})-[:REAL*2]-(n2:Person) " +
+          "WHERE id(n1) > id(n2) AND NOT (x)-[:REAL]-(n1) AND NOT (x)-[:REAL]-(n2) " +
+          "RETURN [n1.id,n2.id] as pairs " +
+          "UNION ALL " +
+          "MATCH (y:Person {id:{y}})-[:REAL*2]-(n:Person) " +
+          "WHERE NOT (y)-[:REAL]-(n) " +
+          "RETURN [y.id,n.id] AS pairs " +
+          "UNION ALL " +
+          "MATCH (n1:Person)-[:REAL*2]-(y:Person {id:{y}})-[:REAL*2]-(n2:Person) " +
+          "WHERE id(n1) > id(n2) AND NOT (y)-[:REAL]-(n1) AND NOT (y)-[:REAL]-(n2) " +
+          "RETURN [n1.id,n2.id] as pairs";
+
+  /**
+   * Query to find pairs of unlinked nodes to update, with single node insertion.
+   */
+  private static final String NODES_TO_UPDATE_WITHIN_DISTANCE =
+      "MATCH (x:Person {id:{x}})-[:REAL*%d]-(n:Person) " +
+          "WHERE NOT (x)-[:REAL*%d]-(n) " +
+          "RETURN [x.id,n.id] AS pairs " +
+          "UNION ALL " +
+          "MATCH (n1:Person)-[:REAL*%d]-(x:Person {id:{x}})-[:REAL*%d]-(n2:Person) " +
+          "WHERE id(n1) > id(n2) AND NOT (x)-[:REAL*%d]-(n1) AND NOT (x)-[:REAL*%d]-(n2) " +
+          "RETURN [n1.id,n2.id] as pairs";
+
+  /**
+   * Query to find pairs of unlinked nodes to update, with double node insertion.
+   */
+  private static final String NODES_TO_UPDATE_TWICE_WITHIN_DISTANCE =
+      "MATCH (x:Person {id:{x}})-[:REAL*%d]-(n:Person) " +
+          "WHERE NOT (x)-[:REAL*%d]-(n) " +
+          "RETURN [x.id,n.id] AS pairs " +
+          "UNION ALL " +
+          "MATCH (n1:Person)-[:REAL*%d]-(x:Person {id:{x}})-[:REAL*%d]-(n2:Person) " +
+          "WHERE id(n1) > id(n2) AND NOT (x)-[:REAL*%d]-(n1) AND NOT (x)-[:REAL*%d]-(n2) " +
+          "RETURN [n1.id,n2.id] as pairs " +
+          "UNION ALL " +
+          "MATCH (y:Person {id:{y}})-[:REAL*%d]-(n:Person) " +
+          "WHERE NOT (y)-[:REAL*%d]-(n) " +
+          "RETURN [y.id,n.id] AS pairs " +
+          "UNION ALL " +
+          "MATCH (n1:Person)-[:REAL*%d]-(y:Person {id:{y}})-[:REAL*%d]-(n2:Person) " +
+          "WHERE id(n1) > id(n2) AND NOT (y)-[:REAL*%d]-(n1) AND NOT (y)-[:REAL*%d]-(n2) " +
+          "RETURN [n1.id,n2.id] as pairs";
 
   /**
    * Opens a NEO4J connection.
@@ -375,5 +425,86 @@ public class Neo4JManager {
     return check;
   }
 
+  /**
+   * Finds pairs of unlinked nodes to update, with single node insertion.
+   * @param session the NEO4J open session.
+   * @param x the id of the node to update.
+   */
+  public static Set<Tuple2<Long,Long>> pairsToUpdate(Session session, long x) {
+    Value params = parameters("x", x);
+    StatementResult result = session.run(NODES_TO_UPDATE, params);
+    Set<Tuple2<Long,Long>> neighbours = new HashSet<>();
+    while (result.hasNext()) {
+      Record rec = result.next();
+      Long node1 = rec.get("pairs").get(0).asLong();
+      Long node2 = rec.get("pairs").get(1).asLong();
+      neighbours.add(new Tuple2<>(node1, node2));
+    }
+    return neighbours;
+  }
 
+  /**
+   * Finds pairs of unlinked nodes to update, with single node insertion.
+   * @param session the NEO4J open session.
+   * @param x the id of the first node to update.
+   * @param y the id of the second node to update.
+   */
+  public static Set<Tuple2<Long,Long>> pairsToUpdateTwice(Session session, long x, long y) {
+    Value params = parameters("x", x, "y", y);
+    StatementResult result = session.run(NODES_TO_UPDATE_TWICE, params);
+    Set<Tuple2<Long,Long>> neighbours = new HashSet<>();
+    while (result.hasNext()) {
+      Record rec = result.next();
+      Value pair = rec.get("pairs");
+      Long node1 = pair.get(0).asLong();
+      Long node2 = pair.get(1).asLong();
+      neighbours.add(new Tuple2<>(node1, node2));
+    }
+    return neighbours;
+  }
+
+  /**
+   * Finds pairs of unlinked nodes to update, with single node insertion.
+   * @param session the NEO4J open session.
+   * @param x the id of the node to update.
+   * @param dist the distance.
+   */
+  public static Set<Tuple2<Long,Long>> pairsToUpdateWithinDistance(Session session, long x, long dist) {
+    Value params = parameters("x", x);
+    String query = String.format(NODES_TO_UPDATE_WITHIN_DISTANCE,
+        dist, dist-1, dist, dist, dist-1, dist-1);
+    StatementResult result = session.run(query, params);
+    Set<Tuple2<Long,Long>> neighbours = new HashSet<>();
+    while (result.hasNext()) {
+      Record rec = result.next();
+      Long node1 = rec.get("pairs").get(0).asLong();
+      Long node2 = rec.get("pairs").get(1).asLong();
+      neighbours.add(new Tuple2<>(node1, node2));
+    }
+    return neighbours;
+  }
+
+  /**
+   * Finds pairs of unlinked nodes to update, with single node insertion.
+   * @param session the NEO4J open session.
+   * @param x the id of the first node to update.
+   * @param y the id of the second node to update.
+   * @param dist the distance.
+   */
+  public static Set<Tuple2<Long,Long>> pairsToUpdateTwiceWithinDistance(Session session, long x, long y, long dist) {
+    Value params = parameters("x", x, "y", y);
+    String query = String.format(NODES_TO_UPDATE_TWICE_WITHIN_DISTANCE,
+        dist, dist-1, dist, dist, dist-1, dist-1,
+        dist, dist-1, dist, dist, dist-1, dist-1);
+    StatementResult result = session.run(query, params);
+    Set<Tuple2<Long,Long>> neighbours = new HashSet<>();
+    while (result.hasNext()) {
+      Record rec = result.next();
+      Value pair = rec.get("pairs");
+      Long node1 = pair.get(0).asLong();
+      Long node2 = pair.get(1).asLong();
+      neighbours.add(new Tuple2<>(node1, node2));
+    }
+    return neighbours;
+  }
 }

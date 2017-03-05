@@ -289,9 +289,119 @@ public class Neo4JManagerTest {
     expectedMap.put(new Tuple2<>(10L,1L), new Tuple3<>(false, true, false));
     expectedMap.put(new Tuple2<>(100L,101L), new Tuple3<>(false, false, false));
     for (Tuple2<Long,Long> key : expectedMap.keySet()) {
-      System.out.println(key);
       Tuple3<Boolean,Boolean,Boolean> actual = Neo4JManager.checkExtremes(session, key.f0, key.f1);
       Tuple3<Boolean,Boolean,Boolean> expected = expectedMap.get(key);
+      Assert.assertEquals(expected, actual);
+    }
+
+    session.close();
+  }
+
+  /**
+   * Tests checking of pairs to update, with single node insertion.
+   * @throws IOException when operator cannot be managed.
+   */
+  @Test
+  public void test_pairsToUpdate() throws Exception {
+    Session session = DRIVER.session();
+
+    for (Link link : DATA) Neo4JManager.save(session, link);
+
+    // Check
+    Map<Long,Set<Tuple2<Long,Long>>> expectedMap = new HashMap<>();
+    expectedMap.put(1L, new HashSet<Tuple2<Long,Long>>(){{
+      add(new Tuple2<>(1L,4L));
+      add(new Tuple2<>(1L,6L));
+      add(new Tuple2<>(6L,4L));
+    }});
+    for (Long key : expectedMap.keySet()) {
+      Set<Tuple2<Long, Long>> actual = Neo4JManager.pairsToUpdate(session, key);
+      Set<Tuple2<Long, Long>> expected = expectedMap.get(key);
+      Assert.assertEquals(expected, actual);
+    }
+
+    session.close();
+  }
+
+  /**
+   * Tests checking of pairs to update, with double node insertion.
+   * @throws IOException when operator cannot be managed.
+   */
+  @Test
+  public void test_pairsToUpdateTwice() throws Exception {
+    Session session = DRIVER.session();
+
+    for (Link link : DATA) Neo4JManager.save(session, link);
+
+    // Check
+    Map<Tuple2<Long,Long>,Set<Tuple2<Long,Long>>> expectedMap = new HashMap<>();
+    expectedMap.put(new Tuple2<>(1L,2L), new HashSet<Tuple2<Long,Long>>(){{
+      add(new Tuple2<>(1L,4L));
+      add(new Tuple2<>(1L,6L));
+      add(new Tuple2<>(6L,4L));
+      add(new Tuple2<>(2L,6L));
+      add(new Tuple2<>(2L,5L));
+      add(new Tuple2<>(5L,6L));
+    }});
+    for (Tuple2<Long,Long> key : expectedMap.keySet()) {
+      Set<Tuple2<Long, Long>> actual = Neo4JManager.pairsToUpdateTwice(session, key.f0, key.f1);
+      Set<Tuple2<Long, Long>> expected = expectedMap.get(key);
+      Assert.assertEquals(expected, actual);
+    }
+
+    session.close();
+  }
+
+
+  /**
+   * Tests checking of pairs to update, with single node insertion.
+   * @throws IOException when operator cannot be managed.
+   */
+  @Test
+  public void test_pairsToUpdateWithinDistance() throws Exception {
+    Session session = DRIVER.session();
+
+    for (Link link : DATA) Neo4JManager.save(session, link);
+
+    // Check
+    Map<Long,Set<Tuple2<Long,Long>>> expectedMap = new HashMap<>();
+    expectedMap.put(1L, new HashSet<Tuple2<Long,Long>>(){{
+      add(new Tuple2<>(1L,4L));
+      add(new Tuple2<>(1L,6L));
+      add(new Tuple2<>(6L,4L));
+    }});
+    for (Long key : expectedMap.keySet()) {
+      Set<Tuple2<Long, Long>> actual = Neo4JManager.pairsToUpdateWithinDistance(session, key, 2);
+      Set<Tuple2<Long, Long>> expected = expectedMap.get(key);
+      Assert.assertEquals(expected, actual);
+    }
+
+    session.close();
+  }
+
+  /**
+   * Tests checking of pairs to update, with double node insertion.
+   * @throws IOException when operator cannot be managed.
+   */
+  @Test
+  public void test_pairsToUpdateTwiceWithinDistance() throws Exception {
+    Session session = DRIVER.session();
+
+    for (Link link : DATA) Neo4JManager.save(session, link);
+
+    // Check
+    Map<Tuple2<Long,Long>,Set<Tuple2<Long,Long>>> expectedMap = new HashMap<>();
+    expectedMap.put(new Tuple2<>(1L,2L), new HashSet<Tuple2<Long,Long>>(){{
+      add(new Tuple2<>(1L,4L));
+      add(new Tuple2<>(1L,6L));
+      add(new Tuple2<>(6L,4L));
+      add(new Tuple2<>(2L,6L));
+      add(new Tuple2<>(2L,5L));
+      add(new Tuple2<>(5L,6L));
+    }});
+    for (Tuple2<Long,Long> key : expectedMap.keySet()) {
+      Set<Tuple2<Long, Long>> actual = Neo4JManager.pairsToUpdateTwiceWithinDistance(session, key.f0, key.f1, 2);
+      Set<Tuple2<Long, Long>> expected = expectedMap.get(key);
       Assert.assertEquals(expected, actual);
     }
 
