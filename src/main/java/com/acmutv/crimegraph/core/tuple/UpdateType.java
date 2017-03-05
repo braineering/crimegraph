@@ -29,20 +29,21 @@ package com.acmutv.crimegraph.core.tuple;
 import lombok.Getter;
 
 /**
- * All types of links.
+ * All types of score update.
  * @author Giacomo Marciani {@literal <gmarciani@acm.org>}
  * @author Michele Porretta {@literal <mporretta@acm.org>}
  * @since 1.0
  */
 @Getter
-public enum ScoreType {
+public enum UpdateType {
 
-    POTENTIAL ("POTENTIAL"),
-    HIDDEN    ("HIDDEN");
+  POTENTIAL ("POTENTIAL"),
+  HIDDEN    ("HIDDEN"),
+  BOTH      ("BOTH");
 
-    private final String name;
+  private final String name;
 
-    ScoreType(final String name) {
-      this.name = name;
-    }
+  UpdateType(final String name) {
+    this.name = name;
+  }
 }

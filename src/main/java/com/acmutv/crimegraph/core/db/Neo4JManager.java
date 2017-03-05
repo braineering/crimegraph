@@ -138,6 +138,24 @@ public class Neo4JManager {
    * Query to check the existence of the extremes.
    */
   private static final String CHECK_EXTREMES =
+      "OPTIONAL MATCH (u1:Person {id:{src}}) " +
+          "OPTIONAL MATCH (u2:Person {id:{dst}}) " +
+          "WITH u1,u2 " +
+          "OPTIONAL MATCH (u1)-[r:REAL]-(u2) " +
+          "RETURN u1 IS NOT NULL AS src,u2 IS NOT NULL AS dst,r IS NOT NULL AS arc";
+
+  /**
+   * Query to generate pairs of unlinked nodes to update, with single node insertion.
+   */
+  private static final String NODES_TO_UPDATE =
+      "MATCH (n1:Person)-[:REAL]-(u:Person {id:{x}})-[:REAL]-(n2:Person) " +
+          "WHERE id(n1) > id(n2) " +
+          "RETURN collect([n1.id,n2.id]) as pairs";
+
+  /**
+   * Query to generate pairs of unlinked nodes to update, with double node insertion.
+   */
+  private static final String NODES_TO_UPDATE_TWICE =
       "OPTIONAL MATCH (u1:Person {id:{src}}),(u2:Person {id:{dst}}) " +
           "RETURN u1 IS NOT NULL AS src,u2 IS NOT NULL AS dst";
 
@@ -338,20 +356,21 @@ public class Neo4JManager {
   }
 
   /**
-   * Checks the existence of {@code a} and {@code b}.
+   * Checks the existence of nodes {@code a} and {@code b}, and the edge {@code (a,b)}.
    * @param session the NEO4J open session.
    * @param a the id of the first node.
    * @param b the id of the second node.
    */
-  public static Tuple2<Boolean,Boolean> checkExtremes(Session session, long a, long b) {
+  public static Tuple3<Boolean,Boolean,Boolean> checkExtremes(Session session, long a, long b) {
     Value params = parameters("src", a, "dst", b);
     StatementResult result = session.run(CHECK_EXTREMES, params);
-    Tuple2<Boolean,Boolean> check = new Tuple2<>();
+    Tuple3<Boolean,Boolean,Boolean> check = new Tuple3<>();
     if (result.hasNext()) {
       Record rec = result.next();
       Boolean src = rec.get("src").asBoolean();
       Boolean dst = rec.get("dst").asBoolean();
-      check.setFields(src, dst);
+      Boolean arc = rec.get("arc").asBoolean();
+      check.setFields(src, dst, arc);
     }
     return check;
   }

@@ -27,7 +27,9 @@
 package com.acmutv.crimegraph.core.tuple;
 
 import org.apache.flink.api.java.tuple.Tuple3;
-import java.util.Locale;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -37,24 +39,28 @@ import java.util.regex.Pattern;
  * @author Michele Porretta {@literal <mporretta@acm.org>}
  * @since 1.0
  */
-public class NodePair extends Tuple3<Long,Long,ScoreType> {
+public class NodePair extends Tuple3<Long,Long,UpdateType> {
 
   /**
    * The regular expression
    */
-  //private static final String REGEXP = "^\\(([0-9]+),([0-9]+)\\)$";
+  private static final String REGEXP =
+      String.format("^\\(([0-9]+),([0-9]+),(%s)\\)$",
+          Stream.of(UpdateType.values())
+              .map(UpdateType::toString).collect(Collectors.joining("|")));
 
   /**
    * The pattern matcher used to match strings on {@code REGEXP}.
    */
-  //private static final Pattern PATTERN = Pattern.compile(REGEXP);
+  private static final Pattern PATTERN = Pattern.compile(REGEXP);
 
   /**
    * Creates a new interaction.
    * @param src the id of the source node.
    * @param dst the id of the destination node.
+   * @param type the type of update.
    */
-  public NodePair(long src, long dst, ScoreType type) {
+  public NodePair(long src, long dst, UpdateType type) {
     super(src, dst, type);
   }
 
@@ -66,21 +72,22 @@ public class NodePair extends Tuple3<Long,Long,ScoreType> {
 
   @Override
   public String toString() {
-    return String.format(Locale.ROOT,"(%d,%d)", super.f0, super.f1);
+    return String.format("(%d,%d,%s)", super.f0, super.f1, super.f2.name());
   }
 
-  /*/**
+  /**
    * Parses {@link NodePair} from string.
    * @param string the string to parse.
    * @return the parsed {@link NodePair}.
    * @throws IllegalArgumentException when {@code string} cannot be parsed.
    */
-  /*public static NodePair valueOf(String string) throws IllegalArgumentException {
+  public static NodePair valueOf(String string) throws IllegalArgumentException {
     if (string == null) throw new IllegalArgumentException();
     Matcher matcher = PATTERN.matcher(string);
     if (!matcher.matches()) throw new IllegalArgumentException();
     long src = Long.valueOf(matcher.group(1));
     long dst = Long.valueOf(matcher.group(2));
-    return new NodePair(src, dst,weight);
-  }*/
+    UpdateType type = UpdateType.valueOf(matcher.group(3));
+    return new NodePair(src, dst, type);
+  }
 }

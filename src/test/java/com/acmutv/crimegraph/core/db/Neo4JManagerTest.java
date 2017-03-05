@@ -29,6 +29,7 @@ package com.acmutv.crimegraph.core.db;
 import com.acmutv.crimegraph.core.tuple.Link;
 import com.acmutv.crimegraph.core.tuple.LinkType;
 import org.apache.flink.api.java.tuple.Tuple2;
+import org.apache.flink.api.java.tuple.Tuple3;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -281,11 +282,16 @@ public class Neo4JManagerTest {
     for (Link link : DATA) Neo4JManager.save(session, link);
 
     // Check
-    Map<Tuple2<Long,Long>,Tuple2<Boolean,Boolean>> expectedMap = new HashMap<>();
-    expectedMap.put(new Tuple2<>(1L,2L), new Tuple2<>(true, true));
+    Map<Tuple2<Long,Long>,Tuple3<Boolean,Boolean,Boolean>> expectedMap = new HashMap<>();
+    expectedMap.put(new Tuple2<>(1L,2L), new Tuple3<>(true, true, true));
+    expectedMap.put(new Tuple2<>(1L,4L), new Tuple3<>(true, true, false));
+    expectedMap.put(new Tuple2<>(1L,10L), new Tuple3<>(true, false, false));
+    expectedMap.put(new Tuple2<>(10L,1L), new Tuple3<>(false, true, false));
+    expectedMap.put(new Tuple2<>(100L,101L), new Tuple3<>(false, false, false));
     for (Tuple2<Long,Long> key : expectedMap.keySet()) {
-      Tuple2<Boolean,Boolean> actual = Neo4JManager.checkExtremes(session, key.f0, key.f1);
-      Tuple2<Boolean,Boolean> expected = expectedMap.get(key);
+      System.out.println(key);
+      Tuple3<Boolean,Boolean,Boolean> actual = Neo4JManager.checkExtremes(session, key.f0, key.f1);
+      Tuple3<Boolean,Boolean,Boolean> expected = expectedMap.get(key);
       Assert.assertEquals(expected, actual);
     }
 

@@ -29,6 +29,7 @@ package com.acmutv.crimegraph.core.operator;
 import com.acmutv.crimegraph.core.db.Neo4JManager;
 import com.acmutv.crimegraph.core.tuple.NodePair;
 import com.acmutv.crimegraph.core.tuple.NodePairScore;
+import com.acmutv.crimegraph.core.tuple.UpdateType;
 import com.acmutv.crimegraph.core.tuple.ScoreType;
 import org.apache.flink.api.common.functions.RichFlatMapFunction;
 import org.apache.flink.api.java.tuple.Tuple2;
@@ -102,7 +103,7 @@ public class ScoreCalculator extends RichFlatMapFunction<NodePair, NodePairScore
     @Override
     public void flatMap(NodePair nodePair, Collector<NodePairScore> out) {
 
-      ScoreType type = nodePair.f2;
+      UpdateType type = nodePair.f2;
 
       Set<Tuple2<Long,Long>> neighbours;
       neighbours = Neo4JManager.commonNeighboursWithDegree(this.session, nodePair.f0, nodePair.f1);
