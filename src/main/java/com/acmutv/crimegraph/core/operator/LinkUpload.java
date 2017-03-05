@@ -30,7 +30,7 @@ import com.acmutv.crimegraph.core.db.Neo4JManager;
 import com.acmutv.crimegraph.core.tuple.Link;
 import com.acmutv.crimegraph.core.tuple.NodePair;
 import org.apache.flink.api.common.functions.RichFlatMapFunction;
-import org.apache.flink.api.java.tuple.Tuple2;
+import org.apache.flink.api.java.tuple.Tuple3;
 import org.apache.flink.configuration.Configuration;
 import org.apache.flink.util.Collector;
 import org.neo4j.driver.v1.*;
@@ -71,23 +71,15 @@ public class LinkUpload extends RichFlatMapFunction<Link, NodePair> {
   private Session session;
 
   /**
-   * The considered distance
-   * (in terms of steps)
-   * to update scores.
-   */
-  private Long distance;
-
-  /**
    * Constructs for load edge to write {@link Link} on a NEO4J instance.
    * @param hostname the hostname of the NEO4J instance.
    * @param username the username of the NEO4J instance.
    * @param password the password of the NEO4J instance.
    */
-  public LinkUpload(String hostname, String username, String password, Long distance) {
+  public LinkUpload(String hostname, String username, String password) {
     this.hostname = hostname;
     this.username = username;
     this.password = password;
-    this.distance = distance;
   }
 
   @SuppressWarnings("unchecked")
