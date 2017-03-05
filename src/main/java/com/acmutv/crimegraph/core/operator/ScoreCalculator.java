@@ -31,6 +31,7 @@ import com.acmutv.crimegraph.core.tuple.NodePair;
 import com.acmutv.crimegraph.core.tuple.NodePairScore;
 import com.acmutv.crimegraph.core.tuple.ScoreType;
 import org.apache.flink.api.common.functions.RichFlatMapFunction;
+import org.apache.flink.api.java.tuple.Tuple2;
 import org.apache.flink.configuration.Configuration;
 import org.apache.flink.util.Collector;
 import org.neo4j.driver.v1.Driver;
@@ -101,32 +102,33 @@ public class ScoreCalculator extends RichFlatMapFunction<NodePair, NodePairScore
     @Override
     public void flatMap(NodePair nodePair, Collector<NodePairScore> out) {
 
-      Set<Long> neighbours = new HashSet<>();
-      neighbours = Neo4JManager.matchCommonNeighbours(this.session, nodePair.f0, nodePair.f1);
+      ScoreType type = nodePair.f2;
 
-      double potentialScore = 0.0;
+      Set<Tuple2<Long,Long>> neighbours;
+      neighbours = Neo4JManager.commonNeighboursWithDegree(this.session, nodePair.f0, nodePair.f1);
 
-      for (Long z : neighbours) {
-        //dammi il grado del nodo
-        long degree = 1;
-        potentialScore += (1 / degree);
+      if(type.getName().equals("POTENTIAL") || type.getName().equals("BOTH")){
+        double potentialScore = 0.0;
+
+        for (Tuple2<Long,Long> z : neighbours) {
+          potentialScore += (1 / z.f1);
+        }
+        //manca la gestione del timestamp
+        NodePairScore potential = new NodePairScore(nodePair.f0, nodePair.f1, potentialScore, ScoreType.POTENTIAL.name(), 1);
+        out.collect(potential);
       }
 
-      double hiddenScore = 0.0;
+      if(type.getName().equals("HIDDEN") || type.getName().equals("BOTH")){
+        double hiddenScore = 0.0;
 
-      for (Long z : neighbours) {
-        //dammi il grado del nodo
-        long degree = 1;
-        //prendi il peso
-        long peso = 1;
-        hiddenScore += (peso / degree);
+        for (Tuple2<Long,Long> z : neighbours) {
+          //manca la gestione del peso. (in attesa della query)
+          hiddenScore += (1 / z.f1);
+        }
+        //manca la gestione del timestamp
+        NodePairScore hidden = new NodePairScore(nodePair.f0, nodePair.f1, hiddenScore, ScoreType.HIDDEN.name(), 1);
+        out.collect(hidden);
       }
 
-      //da cambiare il timestamp
-      NodePairScore hidden = new NodePairScore(nodePair.f0, nodePair.f1, hiddenScore, ScoreType.HIDDEN.name(), 1);
-      out.collect(hidden);
-
-      NodePairScore potential = new NodePairScore(nodePair.f0, nodePair.f1, potentialScore, ScoreType.POTENTIAL.name(), 1);
-      out.collect(potential);
     }
 }
