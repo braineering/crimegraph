@@ -29,15 +29,13 @@ package com.acmutv.crimegraph;
 import com.acmutv.crimegraph.config.AppConfiguration;
 import com.acmutv.crimegraph.config.AppConfigurationService;
 import com.acmutv.crimegraph.core.operator.ScoreSplitter;
-import com.acmutv.crimegraph.core.source.LinkSource;
+import com.acmutv.crimegraph.core.operator.LinkUpload;
 import com.acmutv.crimegraph.core.tuple.*;
 import com.acmutv.crimegraph.core.operator.ScoreCalculator;
 import com.acmutv.crimegraph.core.operator.LinkParser;
-import com.acmutv.crimegraph.core.sink.LinkSink;
 import com.acmutv.crimegraph.tool.runtime.RuntimeManager;
 import com.acmutv.crimegraph.tool.runtime.ShutdownHook;
 import com.acmutv.crimegraph.ui.CliService;
-import org.apache.flink.streaming.api.collector.selector.OutputSelector;
 import org.apache.flink.streaming.api.datastream.DataStream;
 import org.apache.flink.streaming.api.datastream.SplitStream;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
@@ -83,43 +81,35 @@ public class Interactions {
     DataStream<String> text = env.fromCollection(data());
 
     DataStream<Link> interactions =
-        text.flatMap(new LinkParser())
-        .shuffle();
+            text.flatMap(new LinkParser()).shuffle();
 
-    DataStream<Link> loadsource =
-            interactions.flatMap(new LinkSource(
-                    config.getNeo4jHostname(), config.getNeo4jUsername(), config.getNeo4jPassword()
+    DataStream<NodePair> pairstoupdate =
+            interactions.flatMap(new LinkUpload(
+                     config.getNeo4jHostname(), config.getNeo4jUsername(), config.getNeo4jPassword()
             ));
 
-    DataStream<NodePair> pairstoupdate = env.fromCollection(getPairs());
-
-    DataStream<NodePairScore> pairscore =
+    DataStream<NodePairScore> pairsscore =
             pairstoupdate.flatMap(new ScoreCalculator(
                     config.getNeo4jHostname(), config.getNeo4jUsername(), config.getNeo4jPassword()
             )).shuffle();
 
-    /*DataStream<NodePairScore> pairscore =
-            pairstoupdate.flatMap(new ScoreCalculator(
-                    config.getNeo4jHostname(), config.getNeo4jUsername(), config.getNeo4jPassword()
-            )).shuffle();*/
-
-    SplitStream<NodePairScore> split = pairscore.split(new ScoreSplitter());
+    SplitStream<NodePairScore> split = pairsscore.split(new ScoreSplitter());
 
     DataStream<NodePairScore> hidden = split.select(ScoreType.HIDDEN.name());
     DataStream<NodePairScore> potential = split.select(ScoreType.POTENTIAL.name());
 
-    System.out.println(hidden.print().toString());
-    System.out.println(potential.print().toString());
+    hidden.print();
+    potential.print();
 
     env.execute("Interactions to Neo4J");
   }
 
   private static List<NodePair> getPairs() {
     List<NodePair>  data = new ArrayList<>();
-    data.add(new NodePair(1,2,1,1.0));
-    data.add(new NodePair(2,3,1,1.0));
-    data.add(new NodePair(3,4,1,1.0));
-    data.add(new NodePair(4,5,1,1.0));
+    data.add(new NodePair(1,2,ScoreType.BOTH));
+    data.add(new NodePair(2,3,ScoreType.BOTH));
+    data.add(new NodePair(3,4,ScoreType.BOTH));
+    data.add(new NodePair(4,5,ScoreType.BOTH));
     return data.stream().collect(Collectors.toList());
   }
 
