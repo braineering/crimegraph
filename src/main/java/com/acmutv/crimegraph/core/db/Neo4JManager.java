@@ -210,6 +210,15 @@ public class Neo4JManager {
           "RETURN [n1.id,n2.id] as pairs";
 
   /**
+   * Query to find common neighborhood and related details for score formulas.
+   */
+  private static final String GAMMA_INTERSECTION =
+      "MATCH (u1:Person {id:{x}})-[r1:REAL]-(n:Person)-[r2:REAL]-(u2:Person {id:{y}}) " +
+          "WITH DISTINCT n,r1,r2 " +
+          "MATCH (n)-[r:REAL]-() " +
+          "RETURN n.id AS id,COUNT(r) AS deg, (r1.weight+r2.weight) AS weight";
+
+  /**
    * Opens a NEO4J connection.
    * @param hostname the instance hostname.
    * @param username the username for the authentication.
@@ -507,4 +516,25 @@ public class Neo4JManager {
     }
     return neighbours;
   }
+
+  /**
+   * Finds gamma intersection and related details for score formulas.
+   * @param session the NEO4J open session.
+   * @param x the id of the first node to update.
+   * @param y the id of the second node to update.
+   */
+  public static Set<Tuple3<Long,Long,Double>> gammaIntersection(Session session, long x, long y) {
+    Value params = parameters("x", x, "y", y);
+    StatementResult result = session.run(GAMMA_INTERSECTION, params);
+    Set<Tuple3<Long,Long,Double>> neighbours = new HashSet<>();
+    while (result.hasNext()) {
+      Record rec = result.next();
+      Long node = rec.get("id").asLong();
+      Long degree = rec.get("deg").asLong();
+      Double weight = rec.get("weight").asDouble();
+      neighbours.add(new Tuple3<>(node, degree, weight));
+    }
+    return neighbours;
+  }
+
 }

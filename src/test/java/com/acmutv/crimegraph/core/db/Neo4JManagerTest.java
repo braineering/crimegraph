@@ -312,7 +312,7 @@ public class Neo4JManagerTest {
     expectedMap.put(1L, new HashSet<Tuple2<Long,Long>>(){{
       add(new Tuple2<>(1L,4L));
       add(new Tuple2<>(1L,6L));
-      add(new Tuple2<>(6L,4L));
+      add(new Tuple2<>(4L,6L));
     }});
     for (Long key : expectedMap.keySet()) {
       Set<Tuple2<Long, Long>> actual = Neo4JManager.pairsToUpdate(session, key);
@@ -338,7 +338,7 @@ public class Neo4JManagerTest {
     expectedMap.put(new Tuple2<>(1L,2L), new HashSet<Tuple2<Long,Long>>(){{
       add(new Tuple2<>(1L,4L));
       add(new Tuple2<>(1L,6L));
-      add(new Tuple2<>(6L,4L));
+      add(new Tuple2<>(4L,6L));
       add(new Tuple2<>(2L,6L));
       add(new Tuple2<>(2L,5L));
       add(new Tuple2<>(5L,6L));
@@ -368,7 +368,7 @@ public class Neo4JManagerTest {
     expectedMap.put(1L, new HashSet<Tuple2<Long,Long>>(){{
       add(new Tuple2<>(1L,4L));
       add(new Tuple2<>(1L,6L));
-      add(new Tuple2<>(6L,4L));
+      add(new Tuple2<>(4L,6L));
     }});
     for (Long key : expectedMap.keySet()) {
       Set<Tuple2<Long, Long>> actual = Neo4JManager.pairsToUpdateWithinDistance(session, key, 2);
@@ -394,7 +394,7 @@ public class Neo4JManagerTest {
     expectedMap.put(new Tuple2<>(1L,2L), new HashSet<Tuple2<Long,Long>>(){{
       add(new Tuple2<>(1L,4L));
       add(new Tuple2<>(1L,6L));
-      add(new Tuple2<>(6L,4L));
+      add(new Tuple2<>(4L,6L));
       add(new Tuple2<>(2L,6L));
       add(new Tuple2<>(2L,5L));
       add(new Tuple2<>(5L,6L));
@@ -402,6 +402,30 @@ public class Neo4JManagerTest {
     for (Tuple2<Long,Long> key : expectedMap.keySet()) {
       Set<Tuple2<Long, Long>> actual = Neo4JManager.pairsToUpdateTwiceWithinDistance(session, key.f0, key.f1, 2);
       Set<Tuple2<Long, Long>> expected = expectedMap.get(key);
+      Assert.assertEquals(expected, actual);
+    }
+
+    session.close();
+  }
+
+  /**
+   * Tests finding of gamma intersection and details related to score formulas.
+   * @throws IOException when operator cannot be managed.
+   */
+  @Test
+  public void test_gammaIntersection() throws Exception {
+    Session session = DRIVER.session();
+
+    for (Link link : DATA) Neo4JManager.save(session, link);
+
+    // Check
+    Map<Tuple2<Long,Long>,Set<Tuple3<Long,Long,Double>>> expectedMap = new HashMap<>();
+    expectedMap.put(new Tuple2<>(2L,6L), new HashSet<Tuple3<Long,Long,Double>>(){{
+      add(new Tuple3<Long,Long,Double>(3L,3L,20D));
+    }});
+    for (Tuple2<Long,Long> key : expectedMap.keySet()) {
+      Set<Tuple3<Long,Long,Double>> actual = Neo4JManager.gammaIntersection(session, key.f0, key.f1);
+      Set<Tuple3<Long,Long,Double>> expected = expectedMap.get(key);
       Assert.assertEquals(expected, actual);
     }
 
