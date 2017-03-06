@@ -58,6 +58,11 @@ public class AppConfiguration {
   public static final int DATA_PORT = 9000;
 
   /**
+   * Default value for property {@code dataset}.
+   */
+  public static final String DATASET = "crimegraph-dataset.txt";
+
+  /**
    * Default value for property {@code neo4jHostname}.
    */
   public static final String NEO4J_HOSTNAME = "bolt://localhost:7687";
@@ -83,6 +88,12 @@ public class AppConfiguration {
    * Default is: {@code 9000}.
    */
   private int dataPort = DATA_PORT;
+
+  /**
+   * The pathname of the file or directory containing the dataset.
+   * Default is: {@code crimegraph-dataset.txt}
+   */
+  private String dataset = DATASET;
 
   /**
    * The hostname of the NEO4J instance.
@@ -117,6 +128,7 @@ public class AppConfiguration {
   public void copy(AppConfiguration other) {
     this.dataHostname = other.dataHostname;
     this.dataPort = other.dataPort;
+    this.dataset = other.dataset;
     this.neo4jHostname = other.neo4jHostname;
     this.neo4jUsername = other.neo4jUsername;
     this.neo4jPassword = other.neo4jPassword;
@@ -128,6 +140,7 @@ public class AppConfiguration {
   public void toDefault() {
     this.dataHostname = DATA_HOSTNAME;
     this.dataPort = DATA_PORT;
+    this.dataset = DATASET;
     this.neo4jHostname = NEO4J_HOSTNAME;
     this.neo4jUsername = NEO4J_USERNAME;
     this.neo4jPassword = NEO4J_PASSWORD;

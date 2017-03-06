@@ -30,6 +30,7 @@ import com.acmutv.crimegraph.config.AppConfiguration;
 import com.acmutv.crimegraph.config.AppConfigurationService;
 import com.acmutv.crimegraph.core.operator.LinkParser;
 import com.acmutv.crimegraph.core.sink.LinkSink;
+import com.acmutv.crimegraph.core.source.LinkSource;
 import com.acmutv.crimegraph.core.tuple.Link;
 import com.acmutv.crimegraph.core.tuple.LinkType;
 import com.acmutv.crimegraph.tool.runtime.RuntimeManager;
@@ -76,26 +77,12 @@ public class Interactions {
     final StreamExecutionEnvironment env =
         StreamExecutionEnvironment.getExecutionEnvironment();
 
-    DataStream<String> text = env.fromCollection(data());
+    DataStream<Link> links = env.addSource(new LinkSource(config.getDataset()));
 
-    DataStream<Link> interactions =
-        text.flatMap(new LinkParser())
-        .shuffle();
-
-    interactions.addSink(new LinkSink(
+    links.addSink(new LinkSink(
         config.getNeo4jHostname(), config.getNeo4jUsername(), config.getNeo4jPassword())
     );
 
     env.execute("Interactions to Neo4J");
-  }
-
-  private static List<String> data() {
-    List<Link> data = new ArrayList<>();
-    data.add(new Link(1,2,10.0, LinkType.REAL));
-    data.add(new Link(1,3,20.0, LinkType.REAL));
-    data.add(new Link(1,4,30.0, LinkType.REAL));
-    data.add(new Link(2,3,50.0, LinkType.POTENTIAL));
-    data.add(new Link(3,4,100.0, LinkType.HIDDEN));
-    return data.stream().map(Link::toString).collect(Collectors.toList());
   }
 }

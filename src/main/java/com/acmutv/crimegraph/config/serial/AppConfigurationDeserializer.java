@@ -85,6 +85,11 @@ public class AppConfigurationDeserializer extends StdDeserializer<AppConfigurati
       config.setDataPort(dataPort);
     }
 
+    if (node.hasNonNull("dataset")) {
+      final String dataset = node.get("dataset").asText();
+      config.setDataset(dataset);
+    }
+
     if (node.hasNonNull("neo4j.hostname")) {
       final String neo4jHostname = node.get("neo4j.hostname").asText();
       config.setNeo4jHostname(neo4jHostname);
