@@ -35,6 +35,9 @@ import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.nio.file.FileSystems;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 /**
  * A source that reads links from a file.
@@ -60,8 +63,8 @@ public class LinkSource extends RichSourceFunction<Link> {
   private transient BufferedReader reader;
 
   /**
-   * Creates a new
-   * @param filename
+   * Creates a new link source.
+   * @param filename the dataset filename.
    */
   public LinkSource(String filename) {
     this.filename = filename;
@@ -73,10 +76,8 @@ public class LinkSource extends RichSourceFunction<Link> {
    */
   @Override
   public void run(SourceContext<Link> ctx) throws Exception {
-    FileInputStream file = new FileInputStream(this.filename);
-    InputStreamReader input = new InputStreamReader(file);
-
-    this.reader = new BufferedReader(input);
+    Path path = FileSystems.getDefault().getPath(this.filename);
+    this.reader = Files.newBufferedReader(path);
 
     String line;
     Link link;

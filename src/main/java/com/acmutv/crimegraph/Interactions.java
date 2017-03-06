@@ -74,14 +74,11 @@ public class Interactions {
 
     RuntimeManager.registerShutdownHooks(new ShutdownHook());
 
-    final StreamExecutionEnvironment env =
-        StreamExecutionEnvironment.getExecutionEnvironment();
+    final StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
 
     DataStream<Link> links = env.addSource(new LinkSource(config.getDataset()));
 
-    links.addSink(new LinkSink(
-        config.getNeo4jHostname(), config.getNeo4jUsername(), config.getNeo4jPassword())
-    );
+    links.addSink(new LinkSink(config.getNeo4jHostname(), config.getNeo4jUsername(), config.getNeo4jPassword()));
 
     env.execute("Interactions to Neo4J");
   }
