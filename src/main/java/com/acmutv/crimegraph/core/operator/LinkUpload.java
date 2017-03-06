@@ -29,11 +29,14 @@ package com.acmutv.crimegraph.core.operator;
 import com.acmutv.crimegraph.core.db.Neo4JManager;
 import com.acmutv.crimegraph.core.tuple.Link;
 import com.acmutv.crimegraph.core.tuple.NodePair;
+import com.acmutv.crimegraph.core.tuple.UpdateType;
 import org.apache.flink.api.common.functions.RichFlatMapFunction;
+import org.apache.flink.api.java.tuple.Tuple2;
 import org.apache.flink.api.java.tuple.Tuple3;
 import org.apache.flink.configuration.Configuration;
 import org.apache.flink.util.Collector;
 import org.neo4j.driver.v1.*;
+import scala.collection.script.Update;
 
 import java.util.Set;
 
@@ -88,6 +91,7 @@ public class LinkUpload extends RichFlatMapFunction<Link, NodePair> {
 
     Link newLink;
 
+    // ORDINAMENTO DA PREVEDERE IN OUTPUT DA NEO4J
     // Link's indexes sorting
     if(value.f0 > value.f1)
       newLink = new Link(value.f1,value.f0,value.f2);
@@ -95,37 +99,42 @@ public class LinkUpload extends RichFlatMapFunction<Link, NodePair> {
       newLink = value;
 
     Tuple3<Boolean,Boolean,Boolean> check = Neo4JManager.checkExtremes(this.session,newLink.f0,newLink.f1);
+    Neo4JManager.save(this.session, newLink);
 
     // if x in G, y in G, and (x,y) in G
     if(check.f0 && check.f1 && check.f2){
-      Neo4JManager.save(this.session, newLink);
-      // emettere coppie (a,b) solo per calcolo degli hidden
+      Set<Tuple2<Long,Long>> pairs = Neo4JManager.pairsToUpdateTwice(this.session, newLink.f0, newLink.f1);
+      for(Tuple2<Long,Long> pair : pairs ) {
+        NodePair update = new NodePair(pair.f0,pair.f1, UpdateType.HIDDEN);
+        out.collect(update);
+      }
     }
 
     // if x in G, y in G, and (x,y) NOT in G
     else if (check.f0 && check.f1 && !check.f2){
-      Neo4JManager.save(this.session, newLink);
-      // update x e y - emettere coppie (a,b) per il calcolo entrambi i tipi di score
-
+      Set<Tuple2<Long,Long>> pairs = Neo4JManager.pairsToUpdateTwice(this.session, newLink.f0, newLink.f1);
+      for(Tuple2<Long,Long> pair : pairs ) {
+        NodePair update = new NodePair(pair.f0,pair.f1, UpdateType.BOTH);
+        out.collect(update);
+      }
     }
 
     // if x NOT in G and y in G
     else if(!check.f0 && check.f1 && !check.f2){
-      Neo4JManager.save(this.session, newLink);
-      //update x - emettere coppie (a,b) per il calcolo entrambi i tipi di score
-
+      Set<Tuple2<Long,Long>> pairs = Neo4JManager.pairsToUpdate(this.session, newLink.f0);
+      for(Tuple2<Long,Long> pair : pairs ) {
+        NodePair update = new NodePair(pair.f0,pair.f1, UpdateType.BOTH);
+        out.collect(update);
+      }
     }
 
     // if x in G and y NOT in G
-    else if(!check.f0 && check.f1 && !check.f2) {
-      Neo4JManager.save(this.session, newLink);
-      //update y - emettere coppie (a,b) per il calcolo di entrambi i tipi di score
-
-    }
-
-    // if x NOT in G and Y NOT in G
-    else if(!check.f0 && !check.f1 && !check.f2){
-      Neo4JManager.save(this.session, newLink);
+    else if(check.f0 && !check.f1 && !check.f2) {
+      Set<Tuple2<Long,Long>> pairs = Neo4JManager.pairsToUpdate(this.session, newLink.f1);
+      for(Tuple2<Long,Long> pair : pairs ) {
+        NodePair update = new NodePair(pair.f0,pair.f1, UpdateType.BOTH);
+        out.collect(update);
+      }
     }
   }
 
