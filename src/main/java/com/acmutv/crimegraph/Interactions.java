@@ -78,16 +78,20 @@ public class Interactions {
     final StreamExecutionEnvironment env =
         StreamExecutionEnvironment.getExecutionEnvironment();
 
+    // source
     DataStream<String> text = env.fromCollection(data());
 
+    // parsing
     DataStream<Link> interactions =
             text.flatMap(new LinkParser()).shuffle();
 
+    // links upload to Neo4J
     DataStream<NodePair> pairstoupdate =
             interactions.flatMap(new LinkUpload(
                      config.getNeo4jHostname(), config.getNeo4jUsername(), config.getNeo4jPassword()
             ));
 
+    // Score Calculator
     DataStream<NodePairScore> pairsscore =
             pairstoupdate.flatMap(new ScoreCalculator(
                     config.getNeo4jHostname(), config.getNeo4jUsername(), config.getNeo4jPassword()
