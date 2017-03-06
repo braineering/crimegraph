@@ -1,7 +1,7 @@
 /*
   The MIT License (MIT)
 
-  Copyright (c) 2016 Giacomo Marciani and Michele Porretta
+  Copyright (c) 2017 Giacomo Marciani and Michele Porretta
 
   Permission is hereby granted, free of charge, to any person obtaining a copy
   of this software and associated documentation files (the "Software"), to deal
@@ -24,21 +24,51 @@
   THE SOFTWARE.
  */
 
-package com.acmutv.crimegraph.core.sink;
+package com.acmutv.crimegraph.data;
 
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
+import com.acmutv.crimegraph.core.tuple.Link;
+import org.slf4j.Logger;
+
+import java.io.BufferedWriter;
+import java.io.IOException;
+import java.nio.charset.Charset;
+import java.nio.file.FileSystems;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
- * JUnit test suite for sinks.
+ * A dataset generator.
  * @author Giacomo Marciani {@literal <gmarciani@acm.org>}
  * @author Michele Porretta {@literal <mporretta@acm.org>}
  * @since 1.0
- * @see Neo4jSinkTest
  */
-@RunWith(Suite.class)
-@Suite.SuiteClasses({
-    Neo4jSinkTest.class
-})
-public class TestAllSink {
+public class Datagen {
+
+  private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(Datagen.class);
+
+  private static final String PATH = "dataset.txt";
+
+  public static void main(String[] args) {
+    String filename = (args.length > 0) ? args[0] : PATH;
+
+    Path path = FileSystems.getDefault().getPath(filename);
+
+    List<Link> data = data();
+
+    try (BufferedWriter writer = Files.newBufferedWriter(path, Charset.defaultCharset())) {
+     for (Link link : data) {
+       writer.append(link.toString() + "\n");
+     }
+    } catch (IOException exc) {
+      LOGGER.error(exc.getMessage());
+    }
+  }
+
+  public static List<Link> data() {
+    List<Link> data = new ArrayList<>();
+    data.add(new Link(1L, 2L, 20.0));
+    return data;
+  }
 }

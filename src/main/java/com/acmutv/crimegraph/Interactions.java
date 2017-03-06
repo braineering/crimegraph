@@ -33,6 +33,10 @@ import com.acmutv.crimegraph.core.operator.LinkUpload;
 import com.acmutv.crimegraph.core.tuple.*;
 import com.acmutv.crimegraph.core.operator.ScoreCalculator;
 import com.acmutv.crimegraph.core.operator.LinkParser;
+
+import com.acmutv.crimegraph.core.sink.LinkSink;
+import com.acmutv.crimegraph.core.tuple.Link;
+import com.acmutv.crimegraph.core.tuple.LinkType;
 import com.acmutv.crimegraph.tool.runtime.RuntimeManager;
 import com.acmutv.crimegraph.tool.runtime.ShutdownHook;
 import com.acmutv.crimegraph.ui.CliService;
@@ -76,8 +80,7 @@ public class Interactions {
 
     RuntimeManager.registerShutdownHooks(new ShutdownHook());
 
-    final StreamExecutionEnvironment env =
-        StreamExecutionEnvironment.getExecutionEnvironment();
+    final StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
 
     //env.setStreamTimeCharacteristic(TimeCharacteristic.IngestionTime);
 

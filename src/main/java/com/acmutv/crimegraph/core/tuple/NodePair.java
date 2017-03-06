@@ -29,7 +29,6 @@ package com.acmutv.crimegraph.core.tuple;
 import org.apache.flink.api.java.tuple.Tuple3;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 

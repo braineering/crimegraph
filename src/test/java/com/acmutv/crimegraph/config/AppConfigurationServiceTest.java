@@ -62,6 +62,7 @@ public class AppConfigurationServiceTest {
     AppConfiguration expected = new AppConfiguration();
     expected.setDataHostname("CustomDataHostname");
     expected.setDataPort(3333);
+    expected.setDataset("CustomDataset");
     expected.setNeo4jHostname("CustomNeo4jHostname");
     expected.setNeo4jUsername("CustomNeo4jUsername");
     expected.setNeo4jPassword("CustomNeo4jPassword");
