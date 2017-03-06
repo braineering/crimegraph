@@ -33,6 +33,7 @@ import com.acmutv.crimegraph.core.tuple.UpdateType;
 import com.acmutv.crimegraph.core.tuple.ScoreType;
 import org.apache.flink.api.common.functions.RichFlatMapFunction;
 import org.apache.flink.api.java.tuple.Tuple2;
+import org.apache.flink.api.java.tuple.Tuple3;
 import org.apache.flink.configuration.Configuration;
 import org.apache.flink.util.Collector;
 import org.neo4j.driver.v1.Driver;
@@ -105,11 +106,11 @@ public class ScoreCalculator extends RichFlatMapFunction<NodePair, NodePairScore
 
       UpdateType type = nodePair.f2;
 
-      Set<Tuple2<Long,Long>> neighbours;
-      neighbours = Neo4JManager.commonNeighboursWithDegree(this.session, nodePair.f0, nodePair.f1);
-
-      if(type.getName().equals("POTENTIAL") || type.getName().equals("BOTH")){
+      if(type.equals(UpdateType.BOTH) || type.equals(UpdateType.POTENTIAL)){
         double potentialScore = 0.0;
+
+        Set<Tuple2<Long,Long>> neighbours;
+        neighbours = Neo4JManager.commonNeighboursWithDegree(this.session, nodePair.f0, nodePair.f1);
 
         for (Tuple2<Long,Long> z : neighbours) {
           potentialScore += (1 / z.f1);
@@ -119,12 +120,14 @@ public class ScoreCalculator extends RichFlatMapFunction<NodePair, NodePairScore
         out.collect(potential);
       }
 
-      if(type.getName().equals("HIDDEN") || type.getName().equals("BOTH")){
+      if(type.equals(UpdateType.BOTH) || type.equals(UpdateType.HIDDEN)){
         double hiddenScore = 0.0;
 
-        for (Tuple2<Long,Long> z : neighbours) {
-          //manca la gestione del peso. (in attesa della query)
-          hiddenScore += (1 / z.f1);
+        Set<Tuple3<Long,Long,Double>> neighbours;
+        neighbours = Neo4JManager.gammaIntersection(this.session, nodePair.f0, nodePair.f1);
+
+        for (Tuple3<Long,Long,Double> z : neighbours) {
+          hiddenScore += (z.f2 / z.f1);
         }
         //manca la gestione del timestamp
         NodePairScore hidden = new NodePairScore(nodePair.f0, nodePair.f1, hiddenScore, ScoreType.HIDDEN.name(), 1);
