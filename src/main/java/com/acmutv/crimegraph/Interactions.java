@@ -110,10 +110,10 @@ public class Interactions {
 
   private static List<NodePair> getPairs() {
     List<NodePair>  data = new ArrayList<>();
-    data.add(new NodePair(1,2,ScoreType.BOTH));
-    data.add(new NodePair(2,3,ScoreType.BOTH));
-    data.add(new NodePair(3,4,ScoreType.BOTH));
-    data.add(new NodePair(4,5,ScoreType.BOTH));
+    data.add(new NodePair(1,2,UpdateType.BOTH));
+    data.add(new NodePair(2,3,UpdateType.BOTH));
+    data.add(new NodePair(3,4,UpdateType.BOTH));
+    data.add(new NodePair(4,5,UpdateType.BOTH));
     return data.stream().collect(Collectors.toList());
   }
 

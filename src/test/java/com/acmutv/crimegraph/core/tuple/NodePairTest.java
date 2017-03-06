@@ -25,22 +25,41 @@
  */
 
 package com.acmutv.crimegraph.core.tuple;
+import org.junit.Assert;
+import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
- * JUnit test suite for sinks.
+ * JUnit test suite for {@link NodePair}.
  * @author Giacomo Marciani {@literal <gmarciani@acm.org>}
  * @author Michele Porretta {@literal <mporretta@acm.org>}
  * @since 1.0
- * @see LinkTest
+ * @see Link
  */
-@RunWith(Suite.class)
-@Suite.SuiteClasses({
-    LinkTest.class,
-    NodePairTest.class,
-    NodePairScoreTest.class
-})
-public class TestAllTuple {
+public class NodePairTest {
+
+  private static final Logger LOGGER = LoggerFactory.getLogger(NodePairTest.class);
+
+  /**
+   * Tests serialization of {@nodepair NodePair}.
+   */
+  @Test
+  public void test_serialize() throws Exception {
+    List<NodePair>  data = new ArrayList<>();
+    data.add(new NodePair(1,2,UpdateType.BOTH));
+    data.add(new NodePair(2,3,UpdateType.BOTH));
+    data.add(new NodePair(3,4,UpdateType.BOTH));
+    data.add(new NodePair(4,5,UpdateType.BOTH));
+
+    for (NodePair expected : data) {
+      LOGGER.debug("NodePair serialized: " + expected);
+      String str = expected.toString();
+      NodePair actual = NodePair.valueOf(str);
+      Assert.assertEquals(expected, actual);
+    }
+  }
 }
