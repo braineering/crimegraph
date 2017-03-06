@@ -116,7 +116,7 @@ public class ScoreCalculator extends RichFlatMapFunction<NodePair, NodePairScore
           potentialScore += (1 / z.f1);
         }
         //manca la gestione del timestamp
-        NodePairScore potential = new NodePairScore(nodePair.f0, nodePair.f1, potentialScore, ScoreType.POTENTIAL.name(), 1);
+        NodePairScore potential = new NodePairScore(nodePair.f0, nodePair.f1, potentialScore, ScoreType.POTENTIAL, 1);
         out.collect(potential);
       }
 
@@ -130,7 +130,7 @@ public class ScoreCalculator extends RichFlatMapFunction<NodePair, NodePairScore
           hiddenScore += (z.f2 / z.f1);
         }
         //manca la gestione del timestamp
-        NodePairScore hidden = new NodePairScore(nodePair.f0, nodePair.f1, hiddenScore, ScoreType.HIDDEN.name(), 1);
+        NodePairScore hidden = new NodePairScore(nodePair.f0, nodePair.f1, hiddenScore, ScoreType.HIDDEN, 1);
         out.collect(hidden);
       }
 
