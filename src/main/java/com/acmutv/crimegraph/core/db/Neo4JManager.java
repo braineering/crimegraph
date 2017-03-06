@@ -33,7 +33,6 @@ import org.apache.flink.api.java.tuple.Tuple3;
 import org.neo4j.driver.v1.*;
 
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import static org.neo4j.driver.v1.Values.parameters;
@@ -151,11 +150,11 @@ public class Neo4JManager {
   private static final String NODES_TO_UPDATE =
       "MATCH (x:Person {id:{x}})-[:REAL*2]-(n:Person) " +
           "WHERE NOT (x)-[:REAL]-(n) " +
-          "RETURN [x.id,n.id] AS pairs " +
+          "RETURN [x.id,n.id] AS pair " +
           "UNION ALL " +
           "MATCH (n1:Person)-[:REAL*2]-(x:Person {id:{x}})-[:REAL*2]-(n2:Person) " +
           "WHERE id(n1) > id(n2) AND NOT (x)-[:REAL]-(n1) AND NOT (x)-[:REAL]-(n2) " +
-          "RETURN [n1.id,n2.id] as pairs";
+          "RETURN [n1.id,n2.id] as pair";
 
   /**
    * Query to find pairs of unlinked nodes to update, with double node insertion.
@@ -163,19 +162,19 @@ public class Neo4JManager {
   private static final String NODES_TO_UPDATE_TWICE =
       "MATCH (x:Person {id:{x}})-[:REAL*2]-(n:Person) " +
           "WHERE NOT (x)-[:REAL]-(n) " +
-          "RETURN [x.id,n.id] AS pairs " +
+          "RETURN [x.id,n.id] AS pair " +
           "UNION ALL " +
           "MATCH (n1:Person)-[:REAL*2]-(x:Person {id:{x}})-[:REAL*2]-(n2:Person) " +
           "WHERE id(n1) > id(n2) AND NOT (x)-[:REAL]-(n1) AND NOT (x)-[:REAL]-(n2) " +
-          "RETURN [n1.id,n2.id] as pairs " +
+          "RETURN [n1.id,n2.id] as pair " +
           "UNION ALL " +
           "MATCH (y:Person {id:{y}})-[:REAL*2]-(n:Person) " +
           "WHERE NOT (y)-[:REAL]-(n) " +
-          "RETURN [y.id,n.id] AS pairs " +
+          "RETURN [y.id,n.id] AS pair " +
           "UNION ALL " +
           "MATCH (n1:Person)-[:REAL*2]-(y:Person {id:{y}})-[:REAL*2]-(n2:Person) " +
           "WHERE id(n1) > id(n2) AND NOT (y)-[:REAL]-(n1) AND NOT (y)-[:REAL]-(n2) " +
-          "RETURN [n1.id,n2.id] as pairs";
+          "RETURN [n1.id,n2.id] as pair";
 
   /**
    * Query to find pairs of unlinked nodes to update, with single node insertion.
@@ -183,11 +182,11 @@ public class Neo4JManager {
   private static final String NODES_TO_UPDATE_WITHIN_DISTANCE =
       "MATCH (x:Person {id:{x}})-[:REAL*%d]-(n:Person) " +
           "WHERE NOT (x)-[:REAL*%d]-(n) " +
-          "RETURN [x.id,n.id] AS pairs " +
+          "RETURN [x.id,n.id] AS pair " +
           "UNION ALL " +
           "MATCH (n1:Person)-[:REAL*%d]-(x:Person {id:{x}})-[:REAL*%d]-(n2:Person) " +
           "WHERE id(n1) > id(n2) AND NOT (x)-[:REAL*%d]-(n1) AND NOT (x)-[:REAL*%d]-(n2) " +
-          "RETURN [n1.id,n2.id] as pairs";
+          "RETURN [n1.id,n2.id] as pair";
 
   /**
    * Query to find pairs of unlinked nodes to update, with double node insertion.
@@ -195,19 +194,19 @@ public class Neo4JManager {
   private static final String NODES_TO_UPDATE_TWICE_WITHIN_DISTANCE =
       "MATCH (x:Person {id:{x}})-[:REAL*%d]-(n:Person) " +
           "WHERE NOT (x)-[:REAL*%d]-(n) " +
-          "RETURN [x.id,n.id] AS pairs " +
+          "RETURN [x.id,n.id] AS pair " +
           "UNION ALL " +
           "MATCH (n1:Person)-[:REAL*%d]-(x:Person {id:{x}})-[:REAL*%d]-(n2:Person) " +
           "WHERE id(n1) > id(n2) AND NOT (x)-[:REAL*%d]-(n1) AND NOT (x)-[:REAL*%d]-(n2) " +
-          "RETURN [n1.id,n2.id] as pairs " +
+          "RETURN [n1.id,n2.id] as pair " +
           "UNION ALL " +
           "MATCH (y:Person {id:{y}})-[:REAL*%d]-(n:Person) " +
           "WHERE NOT (y)-[:REAL*%d]-(n) " +
-          "RETURN [y.id,n.id] AS pairs " +
+          "RETURN [y.id,n.id] AS pair " +
           "UNION ALL " +
           "MATCH (n1:Person)-[:REAL*%d]-(y:Person {id:{y}})-[:REAL*%d]-(n2:Person) " +
           "WHERE id(n1) > id(n2) AND NOT (y)-[:REAL*%d]-(n1) AND NOT (y)-[:REAL*%d]-(n2) " +
-          "RETURN [n1.id,n2.id] as pairs";
+          "RETURN [n1.id,n2.id] as pair";
 
   /**
    * Query to find common neighborhood and related details for score formulas.
@@ -445,9 +444,16 @@ public class Neo4JManager {
     Set<Tuple2<Long,Long>> neighbours = new HashSet<>();
     while (result.hasNext()) {
       Record rec = result.next();
-      Long node1 = rec.get("pairs").get(0).asLong();
-      Long node2 = rec.get("pairs").get(1).asLong();
-      neighbours.add(new Tuple2<>(node1, node2));
+      Value pair = rec.get("pair");
+      Long node1 = pair.get(0).asLong();
+      Long node2 = pair.get(1).asLong();
+      Tuple2<Long,Long> tuple = new Tuple2<>();
+      if (node1 <= node2) {
+        tuple.setFields(node1, node2);
+      } else {
+        tuple.setFields(node2, node1);
+      }
+      neighbours.add(tuple);
     }
     return neighbours;
   }
@@ -464,10 +470,16 @@ public class Neo4JManager {
     Set<Tuple2<Long,Long>> neighbours = new HashSet<>();
     while (result.hasNext()) {
       Record rec = result.next();
-      Value pair = rec.get("pairs");
+      Value pair = rec.get("pair");
       Long node1 = pair.get(0).asLong();
       Long node2 = pair.get(1).asLong();
-      neighbours.add(new Tuple2<>(node1, node2));
+      Tuple2<Long,Long> tuple = new Tuple2<>();
+      if (node1 <= node2) {
+        tuple.setFields(node1, node2);
+      } else {
+        tuple.setFields(node2, node1);
+      }
+      neighbours.add(tuple);
     }
     return neighbours;
   }
@@ -486,9 +498,16 @@ public class Neo4JManager {
     Set<Tuple2<Long,Long>> neighbours = new HashSet<>();
     while (result.hasNext()) {
       Record rec = result.next();
-      Long node1 = rec.get("pairs").get(0).asLong();
-      Long node2 = rec.get("pairs").get(1).asLong();
-      neighbours.add(new Tuple2<>(node1, node2));
+      Value pair = rec.get("pair");
+      Long node1 = pair.get(0).asLong();
+      Long node2 = pair.get(1).asLong();
+      Tuple2<Long,Long> tuple = new Tuple2<>();
+      if (node1 <= node2) {
+        tuple.setFields(node1, node2);
+      } else {
+        tuple.setFields(node2, node1);
+      }
+      neighbours.add(tuple);
     }
     return neighbours;
   }
@@ -509,10 +528,16 @@ public class Neo4JManager {
     Set<Tuple2<Long,Long>> neighbours = new HashSet<>();
     while (result.hasNext()) {
       Record rec = result.next();
-      Value pair = rec.get("pairs");
+      Value pair = rec.get("pair");
       Long node1 = pair.get(0).asLong();
       Long node2 = pair.get(1).asLong();
-      neighbours.add(new Tuple2<>(node1, node2));
+      Tuple2<Long,Long> tuple = new Tuple2<>();
+      if (node1 <= node2) {
+        tuple.setFields(node1, node2);
+      } else {
+        tuple.setFields(node2, node1);
+      }
+      neighbours.add(tuple);
     }
     return neighbours;
   }

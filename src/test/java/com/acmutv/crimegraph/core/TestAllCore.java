@@ -27,7 +27,6 @@
 package com.acmutv.crimegraph.core;
 
 import com.acmutv.crimegraph.core.db.TestAllDb;
-import com.acmutv.crimegraph.core.sink.TestAllSink;
 import com.acmutv.crimegraph.core.tuple.TestAllTuple;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
@@ -38,13 +37,11 @@ import org.junit.runners.Suite;
  * @author Michele Porretta {@literal <mporretta@acm.org>}
  * @since 1.0
  * @see TestAllDb
- * @see TestAllSink
  * @see TestAllTuple
  */
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
     TestAllDb.class,
-    TestAllSink.class,
     TestAllTuple.class
 })
 public class TestAllCore {
