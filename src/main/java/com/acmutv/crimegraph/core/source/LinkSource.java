@@ -77,6 +77,7 @@ public class LinkSource extends RichSourceFunction<Link> {
   @Override
   public void run(SourceContext<Link> ctx) throws Exception {
     Path path = FileSystems.getDefault().getPath(this.filename);
+    System.out.println(path);
     this.reader = Files.newBufferedReader(path);
 
     String line;
