@@ -84,41 +84,56 @@
     RETURN u1 IS NOT NULL AS src,u2 IS NOT NULL AS dst,r IS NOT NULL AS arc
 
 
-## NODES TO UPDATE                        
-dato nodo x, restituisce la lista di archi (a,b) non in G, dove a e b sono nodi vicini di x.
-    
-    MATCH (n1:Person)-[:REAL]-(u:Person {id:{x}})-[:REAL]-(n2:Person)
-    WHERE id(n1) > id(n2)
-    RETURN collect([n1.id,n2.id]) as pairs
-
-
-## UPDATE TWICE                  
-dato nodo x, restituisce l'insieme Cx di archi (x,b) e (a,b) non in G, dove a e b sono nodi vicini di x.
-dato nodo y, restituisce l'insieme Cy di archi (y,b) e (a,b) non in G, dove a e b sono nodi vicini di y.
-restituisce l'unione di Cx e Cy
-
-    MATCH (n1:Person)-[:REAL]-(u1:Person {id:{x}})-[:REAL]-(n2:Person)
-    WHERE id(n1) > id(n2)
-    RETURN collect([n1.id,n2.id]) as pairs
+## NODES TO UPDATE    
+    MATCH (x:Person {id:{x}})-[:REAL*2]-(n:Person)
+    WHERE NOT (x)-[:REAL]-(n)
+    RETURN [x.id,n.id] AS pairs
     UNION ALL
-    MATCH (n3:Person)-[:REAL]-(u2:Person {id:{y}})-[:REAL]-(n4:Person)
-    WHERE id(n3) > id(n4)
-    RETURN collect([n3.id,n4.id]) as pairs
+    MATCH (n1:Person)-[:REAL*2]-(x:Person {id:{x}})-[:REAL*2]-(n2:Person)
+    WHERE id(n1) > id(n2) AND NOT (x)-[:REAL]-(n1) AND NOT (x)-[:REAL]-(n2)
+    RETURN [n1.id,n2.id] as pairs
 
 
-## UPDATE DISTANCE T             
-dato nodo x, restituisce la lista di archi (x,b) e (a,b) non in G, dove a e b sono nodi a distanza t da x.
+## UPDATE TWICE                 
+    MATCH (x:Person {id:{x}})-[:REAL*2]-(n:Person)
+    WHERE NOT (x)-[:REAL]-(n)
+    RETURN [x.id,n.id] AS pairs
+    UNION ALL
+    MATCH (n1:Person)-[:REAL*2]-(x:Person {id:{x}})-[:REAL*2]-(n2:Person)
+    WHERE id(n1) > id(n2) AND NOT (x)-[:REAL]-(n1) AND NOT (x)-[:REAL]-(n2)
+    RETURN [n1.id,n2.id] as pairs
+    UNION ALL
+    MATCH (y:Person {id:{y}})-[:REAL*2]-(n:Person)
+    WHERE NOT (y)-[:REAL]-(n)
+    RETURN [y.id,n.id] AS pairs
+    UNION ALL
+    MATCH (n1:Person)-[:REAL*2]-(y:Person {id:{y}})-[:REAL*2]-(n2:Person)
+    WHERE id(n1) > id(n2) AND NOT (y)-[:REAL]-(n1) AND NOT (y)-[:REAL]-(n2)
+    RETURN [n1.id,n2.id] as pairs
+    
+## NODES TO UPDATE WITHIN DISTANCE 
+    MATCH (x:Person {id:{x}})-[:REAL*%d]-(n:Person)
+    WHERE NOT (x)-[:REAL*%d]-(n)
+    RETURN [x.id,n.id] AS pairs
+    UNION ALL
+    MATCH (n1:Person)-[:REAL*%d]-(x:Person {id:{x}})-[:REAL*%d]-(n2:Person)
+    WHERE id(n1) > id(n2) AND NOT (x)-[:REAL*%d]-(n1) AND NOT (x)-[:REAL*%d]-(n2)
+    RETURN [n1.id,n2.id] as pairs
 
-    MATCH (n1:Person)-[:REAL*1..%d]-(u:Person {id:{x}})-[:REAL*1..%d]-(n2:Person)
-    WHERE id(n1) > id(n2)
-    RETURN collect([n1.id,n2.id]) as pairs
 
-
-## UPDATE TWICE DISTANCE T       
-dato nodo x, restituisce l'insieme Cx di archi (x,b) e (a,b) non in G, dove a e b sono nodi a distanza t da x.
-dato nodo y, restituisce l'insieme Cy di archi (y,b) e (a,b) non in G, dove a e b sono nodi a distanza t da y.
-restituisce l'unione di Cx e Cy
-
-    MATCH (n1:Person)-[:REAL*1..%d]-(u:Person {id:{x}})-[:REAL*1..%d]-(n2:Person)
-    WHERE id(n1) > id(n2)
-    RETURN collect([n1.id,n2.id]) as pairs
+## UPDATE TWICE WITHIN DISTANCE
+    MATCH (x:Person {id:{x}})-[:REAL*%d]-(n:Person)
+    WHERE NOT (x)-[:REAL*%d]-(n)
+    RETURN [x.id,n.id] AS pairs
+    UNION ALL
+    MATCH (n1:Person)-[:REAL*%d]-(x:Person {id:{x}})-[:REAL*%d]-(n2:Person)
+    WHERE id(n1) > id(n2) AND NOT (x)-[:REAL*%d]-(n1) AND NOT (x)-[:REAL*%d]-(n2)
+    RETURN [n1.id,n2.id] as pairs
+    UNION ALL
+    MATCH (y:Person {id:{y}})-[:REAL*%d]-(n:Person)
+    WHERE NOT (y)-[:REAL*%d]-(n)
+    RETURN [y.id,n.id] AS pairs
+    UNION ALL
+    MATCH (n1:Person)-[:REAL*%d]-(y:Person {id:{y}})-[:REAL*%d]-(n2:Person)
+    WHERE id(n1) > id(n2) AND NOT (y)-[:REAL*%d]-(n1) AND NOT (y)-[:REAL*%d]-(n2)
+    RETURN [n1.id,n2.id] as pairs
