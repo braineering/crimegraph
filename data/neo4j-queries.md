@@ -3,7 +3,6 @@
     CREATE CONSTRAINT ON (u:Person) IS UNIQUE n.id
 
 
-
 ## SAVE REAL LINK
     MERGE (u1:Person {id:{src}})
     MERGE (u2:Person {id:{dst}})
@@ -26,6 +25,11 @@
     MERGE (u1)-[r:HIDDEN]-(u2)
     ON CREATE SET r.weight={weight},r.created=timestamp(),r.updated=r.created
     ON MATCH SET r.weight={weight},r.updated=timestamp()
+    
+    
+## REMOVE LINK
+    MATCH (x:Person {id:{x}})-[r:%s]-(y:Person {id:{y}})
+    DELETE r
 
 
 ## NEIGHBOURS

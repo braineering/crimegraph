@@ -73,6 +73,13 @@ public class Neo4JManager {
           "ON MATCH SET r.weight={weight},r.updated=timestamp()";
 
   /**
+   * Query to remove a link.
+   */
+  private static final String REMOVE_LINK =
+      "MATCH (x:Person {id:{x}})-[r:%s]-(y:Person {id:{y}}) " +
+          "DELETE r";
+
+  /**
    * Query to match neighbours.
    */
   private static final String MATCH_NEIGHBOURS =
@@ -259,6 +266,19 @@ public class Neo4JManager {
       case HIDDEN: session.run(SAVE_LINK_HIDDEN, params); break;
       default: break;
     }
+  }
+
+  /**
+   * Removes a link.
+   * @param x the id of the first node.
+   * @param y the id of the second node.
+   * @param type the type of link.
+   */
+  public static void remove(Session session, long x, long y, LinkType type) {
+    Value params = parameters("x", x, "y", y);
+    String query = String.format(REMOVE_LINK, type.name());
+
+    session.run(query, params);
   }
 
   /**
