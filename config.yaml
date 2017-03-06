@@ -8,7 +8,7 @@
 #===============================================================================
 data.hostname: "127.0.0.1"
 data.port: 9000
-dataset: "crimegraph-dataset.txt"
+dataset: "/home/gmarciani/Workspace/crimegraph/data/dataset.txt"
 
 #===============================================================================
 # NEO4J

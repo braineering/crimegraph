@@ -32,9 +32,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.BufferedReader;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -76,7 +74,7 @@ public class LinkSource extends RichSourceFunction<Link> {
    */
   @Override
   public void run(SourceContext<Link> ctx) throws Exception {
-    Path path = FileSystems.getDefault().getPath(this.filename);
+    Path path = FileSystems.getDefault().getPath(this.filename).toAbsolutePath();
     System.out.println(path);
     this.reader = Files.newBufferedReader(path);
 

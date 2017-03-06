@@ -28,22 +28,17 @@ package com.acmutv.crimegraph;
 
 import com.acmutv.crimegraph.config.AppConfiguration;
 import com.acmutv.crimegraph.config.AppConfigurationService;
-import com.acmutv.crimegraph.core.operator.LinkParser;
-import com.acmutv.crimegraph.core.sink.LinkSink;
+import com.acmutv.crimegraph.core.db.Neo4JManager;
+import com.acmutv.crimegraph.core.operator.LinkStore;
+import com.acmutv.crimegraph.core.sink.ToStringSink;
 import com.acmutv.crimegraph.core.source.LinkSource;
 import com.acmutv.crimegraph.core.tuple.Link;
-import com.acmutv.crimegraph.core.tuple.LinkType;
 import com.acmutv.crimegraph.tool.runtime.RuntimeManager;
-import com.acmutv.crimegraph.tool.runtime.ShutdownHook;
+import com.acmutv.crimegraph.tool.runtime.DbRelease;
 import com.acmutv.crimegraph.ui.CliService;
 import org.apache.flink.streaming.api.datastream.DataStream;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
+import org.neo4j.driver.v1.Driver;
 
 /**
  * The app word-point for {@code Interactions} application.
@@ -58,8 +53,6 @@ import java.util.stream.Collectors;
  */
 public class Interactions {
 
-  private static final Logger LOGGER = LoggerFactory.getLogger(Interactions.class);
-
   /**
    * The app main method, executed when the program is launched.
    * @param args the command line arguments.
@@ -72,13 +65,13 @@ public class Interactions {
 
     AppConfiguration config = AppConfigurationService.getConfigurations();
 
-    RuntimeManager.registerShutdownHooks(new ShutdownHook());
-
     final StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
 
     DataStream<Link> links = env.addSource(new LinkSource(config.getDataset()));
 
-    links.addSink(new LinkSink(config.getNeo4jHostname(), config.getNeo4jUsername(), config.getNeo4jPassword()));
+    links.map(new LinkStore(config.getNeo4jHostname(), config.getNeo4jUsername(), config.getNeo4jPassword()));
+
+    links.addSink(new ToStringSink<>("crimegraph.out"));
 
     env.execute("Interactions to Neo4J");
   }

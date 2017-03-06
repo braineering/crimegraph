@@ -421,7 +421,7 @@ public class Neo4JManagerTest {
     // Check
     Map<Tuple2<Long,Long>,Set<Tuple3<Long,Long,Double>>> expectedMap = new HashMap<>();
     expectedMap.put(new Tuple2<>(2L,6L), new HashSet<Tuple3<Long,Long,Double>>(){{
-      add(new Tuple3<Long,Long,Double>(3L,3L,20D));
+      add(new Tuple3<>(3L, 3L, 20D));
     }});
     for (Tuple2<Long,Long> key : expectedMap.keySet()) {
       Set<Tuple3<Long,Long,Double>> actual = Neo4JManager.gammaIntersection(session, key.f0, key.f1);
