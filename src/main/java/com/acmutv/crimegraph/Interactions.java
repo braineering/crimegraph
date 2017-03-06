@@ -127,9 +127,9 @@ public class Interactions {
     data.add(new Link(1,2,10.0));
     data.add(new Link(2,3,20.0));
     data.add(new Link(1,4,30.0));
-    /*data.add(new Link(2,3,50.0));
+    data.add(new Link(2,3,50.0));
     data.add(new Link(3,4,100.0));
-    data.add(new Link(4,5,100.0));*/
+    data.add(new Link(4,5,100.0));
     return data.stream().map(Link::toString).collect(Collectors.toList());
   }
 }

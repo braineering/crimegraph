@@ -112,7 +112,8 @@ public class ScoreCalculator extends RichFlatMapFunction<NodePair, NodePairScore
         Set<Tuple2<Long,Long>> neighbours = Neo4JManager.commonNeighboursWithDegree(this.session, nodePair.f0, nodePair.f1);
 
         for (Tuple2<Long,Long> z : neighbours) {
-          potentialScore += (1 / z.f1);
+          System.out.println("computing ("+nodePair.f0 + ";"+nodePair.f1+")"+ " - neighbour id: " +z.f0.toString() +" with degree "+z.f1.toString() + " for potential");
+          potentialScore += (1.0 / z.f1);
         }
         //manca la gestione del timestamp
         NodePairScore potential = new NodePairScore(nodePair.f0, nodePair.f1, potentialScore, ScoreType.POTENTIAL, 1);
@@ -123,8 +124,8 @@ public class ScoreCalculator extends RichFlatMapFunction<NodePair, NodePairScore
         double hiddenScore = 0.0;
 
         Set<Tuple3<Long,Long,Double>> neighbours = Neo4JManager.gammaIntersection(this.session, nodePair.f0, nodePair.f1);
-
         for (Tuple3<Long,Long,Double> z : neighbours) {
+          System.out.println("computing ("+nodePair.f0 + ";"+nodePair.f1+")"+ " - neighbour id: " +z.f0.toString() +" with degree "+z.f1.toString() + " for hidden");
           hiddenScore += (z.f2 / z.f1);
         }
         //manca la gestione del timestamp
