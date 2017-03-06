@@ -41,8 +41,7 @@ public class LinkParser implements FlatMapFunction<String, Link> {
   @SuppressWarnings("unchecked")
   @Override
   public void flatMap(String value, Collector<Link> out) {
-    System.out.println("VALUE: " + value);
-    Link link = null;
+   Link link = null;
     try {
       link = Link.valueOf(value);
     } catch (IllegalArgumentException exc) {

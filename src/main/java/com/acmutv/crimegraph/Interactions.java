@@ -36,6 +36,7 @@ import com.acmutv.crimegraph.core.operator.LinkParser;
 import com.acmutv.crimegraph.tool.runtime.RuntimeManager;
 import com.acmutv.crimegraph.tool.runtime.ShutdownHook;
 import com.acmutv.crimegraph.ui.CliService;
+import org.apache.flink.streaming.api.TimeCharacteristic;
 import org.apache.flink.streaming.api.datastream.DataStream;
 import org.apache.flink.streaming.api.datastream.SplitStream;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
@@ -78,12 +79,14 @@ public class Interactions {
     final StreamExecutionEnvironment env =
         StreamExecutionEnvironment.getExecutionEnvironment();
 
+    //env.setStreamTimeCharacteristic(TimeCharacteristic.IngestionTime);
+
     // source
     DataStream<String> text = env.fromCollection(data());
 
-    // parsing
     DataStream<Link> interactions =
-            text.flatMap(new LinkParser()).shuffle();
+            text.flatMap(new LinkParser())
+            .shuffle();
 
     // links upload to Neo4J
     DataStream<NodePair> pairstoupdate =
@@ -104,27 +107,26 @@ public class Interactions {
 
     hidden.print();
     potential.print();
-
     env.execute("Interactions to Neo4J");
   }
 
-  private static List<NodePair> getPairs() {
+  /*private static List<NodePair> getPairs() {
     List<NodePair>  data = new ArrayList<>();
     data.add(new NodePair(1,2,UpdateType.BOTH));
     data.add(new NodePair(2,3,UpdateType.BOTH));
     data.add(new NodePair(3,4,UpdateType.BOTH));
     data.add(new NodePair(4,5,UpdateType.BOTH));
     return data.stream().collect(Collectors.toList());
-  }
+  }*/
 
   private static List<String> data() {
     List<Link> data = new ArrayList<>();
-    data.add(new Link(1,2,10.0, LinkType.REAL));
-    data.add(new Link(1,3,20.0, LinkType.REAL));
-    data.add(new Link(1,4,30.0, LinkType.REAL));
-    data.add(new Link(2,3,50.0, LinkType.REAL));
-    data.add(new Link(3,4,100.0, LinkType.REAL));
-    data.add(new Link(4,5,100.0, LinkType.REAL));
+    data.add(new Link(1,2,10.0));
+    data.add(new Link(2,3,20.0));
+    data.add(new Link(1,4,30.0));
+    /*data.add(new Link(2,3,50.0));
+    data.add(new Link(3,4,100.0));
+    data.add(new Link(4,5,100.0));*/
     return data.stream().map(Link::toString).collect(Collectors.toList());
   }
 }

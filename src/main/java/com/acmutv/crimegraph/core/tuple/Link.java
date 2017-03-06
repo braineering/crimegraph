@@ -99,7 +99,6 @@ public class Link extends Tuple4<Long,Long,Double,LinkType> {
    */
   public static Link valueOf(String string) throws IllegalArgumentException {
     if (string == null) throw new IllegalArgumentException();
-    System.out.println("STRING: "+ string);
     Matcher matcher = PATTERN.matcher(string);
     if (!matcher.matches()) throw new IllegalArgumentException(string);
     long src = Long.valueOf(matcher.group(1));

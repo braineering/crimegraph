@@ -109,8 +109,7 @@ public class ScoreCalculator extends RichFlatMapFunction<NodePair, NodePairScore
       if(type.equals(UpdateType.BOTH) || type.equals(UpdateType.POTENTIAL)){
         double potentialScore = 0.0;
 
-        Set<Tuple2<Long,Long>> neighbours;
-        neighbours = Neo4JManager.commonNeighboursWithDegree(this.session, nodePair.f0, nodePair.f1);
+        Set<Tuple2<Long,Long>> neighbours = Neo4JManager.commonNeighboursWithDegree(this.session, nodePair.f0, nodePair.f1);
 
         for (Tuple2<Long,Long> z : neighbours) {
           potentialScore += (1 / z.f1);
@@ -123,8 +122,7 @@ public class ScoreCalculator extends RichFlatMapFunction<NodePair, NodePairScore
       if(type.equals(UpdateType.BOTH) || type.equals(UpdateType.HIDDEN)){
         double hiddenScore = 0.0;
 
-        Set<Tuple3<Long,Long,Double>> neighbours;
-        neighbours = Neo4JManager.gammaIntersection(this.session, nodePair.f0, nodePair.f1);
+        Set<Tuple3<Long,Long,Double>> neighbours = Neo4JManager.gammaIntersection(this.session, nodePair.f0, nodePair.f1);
 
         for (Tuple3<Long,Long,Double> z : neighbours) {
           hiddenScore += (z.f2 / z.f1);

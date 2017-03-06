@@ -89,50 +89,45 @@ public class LinkUpload extends RichFlatMapFunction<Link, NodePair> {
   @Override
   public void flatMap(Link value, Collector<NodePair> out){
 
-    Link newLink;
-
-    // ORDINAMENTO DA PREVEDERE IN OUTPUT DA NEO4J
-    // Link's indexes sorting
-    if(value.f0 > value.f1)
-      newLink = new Link(value.f1,value.f0,value.f2);
-    else
-      newLink = value;
-
-    Tuple3<Boolean,Boolean,Boolean> check = Neo4JManager.checkExtremes(this.session,newLink.f0,newLink.f1);
-    Neo4JManager.save(this.session, newLink);
+    Tuple3<Boolean,Boolean,Boolean> check = Neo4JManager.checkExtremes(this.session,value.f0,value.f1);
+    Neo4JManager.save(this.session, value);
 
     // if x in G, y in G, and (x,y) in G
     if(check.f0 && check.f1 && check.f2){
-      Set<Tuple2<Long,Long>> pairs = Neo4JManager.pairsToUpdateTwice(this.session, newLink.f0, newLink.f1);
+      Set<Tuple2<Long,Long>> pairs = Neo4JManager.pairsToUpdateTwice(this.session, value.f0, value.f1);
       for(Tuple2<Long,Long> pair : pairs ) {
         NodePair update = new NodePair(pair.f0,pair.f1, UpdateType.HIDDEN);
+        System.out.println("NODE PAIR: "+ update.toString());
         out.collect(update);
       }
     }
 
     // if x in G, y in G, and (x,y) NOT in G
     else if (check.f0 && check.f1 && !check.f2){
-      Set<Tuple2<Long,Long>> pairs = Neo4JManager.pairsToUpdateTwice(this.session, newLink.f0, newLink.f1);
+      Set<Tuple2<Long,Long>> pairs = Neo4JManager.pairsToUpdateTwice(this.session, value.f0, value.f1);
       for(Tuple2<Long,Long> pair : pairs ) {
         NodePair update = new NodePair(pair.f0,pair.f1, UpdateType.BOTH);
+        System.out.println("NODE PAIR: "+ update.toString());
         out.collect(update);
       }
     }
 
     // if x NOT in G and y in G
     else if(!check.f0 && check.f1 && !check.f2){
-      Set<Tuple2<Long,Long>> pairs = Neo4JManager.pairsToUpdate(this.session, newLink.f0);
+      Set<Tuple2<Long,Long>> pairs = Neo4JManager.pairsToUpdate(this.session, value.f0);
       for(Tuple2<Long,Long> pair : pairs ) {
         NodePair update = new NodePair(pair.f0,pair.f1, UpdateType.BOTH);
+        System.out.println("NODE PAIR: "+ update.toString());
         out.collect(update);
       }
     }
 
     // if x in G and y NOT in G
     else if(check.f0 && !check.f1 && !check.f2) {
-      Set<Tuple2<Long,Long>> pairs = Neo4JManager.pairsToUpdate(this.session, newLink.f1);
+      Set<Tuple2<Long,Long>> pairs = Neo4JManager.pairsToUpdate(this.session, value.f1);
       for(Tuple2<Long,Long> pair : pairs ) {
         NodePair update = new NodePair(pair.f0,pair.f1, UpdateType.BOTH);
+        System.out.println("NODE PAIR: "+ update.toString());
         out.collect(update);
       }
     }
