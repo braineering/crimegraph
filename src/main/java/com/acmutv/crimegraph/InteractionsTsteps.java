@@ -30,12 +30,13 @@ import com.acmutv.crimegraph.config.AppConfiguration;
 import com.acmutv.crimegraph.config.AppConfigurationService;
 import com.acmutv.crimegraph.core.keyer.NodePairScoreKeyer;
 import com.acmutv.crimegraph.core.operator.*;
+import com.acmutv.crimegraph.core.sink.ToStringSink;
+import com.acmutv.crimegraph.core.source.LinkSource;
 import com.acmutv.crimegraph.core.tuple.Link;
 import com.acmutv.crimegraph.core.tuple.NodePair;
 import com.acmutv.crimegraph.core.tuple.NodePairScore;
 import com.acmutv.crimegraph.core.tuple.ScoreType;
 import com.acmutv.crimegraph.tool.runtime.RuntimeManager;
-import com.acmutv.crimegraph.tool.runtime.ShutdownHook;
 import com.acmutv.crimegraph.ui.CliService;
 import org.apache.flink.streaming.api.datastream.DataStream;
 import org.apache.flink.streaming.api.datastream.SplitStream;
@@ -74,20 +75,14 @@ public class InteractionsTsteps {
 
     AppConfiguration config = AppConfigurationService.getConfigurations();
 
-    RuntimeManager.registerShutdownHooks(new ShutdownHook());
-
     final StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
 
     // source
-    DataStream<String> text = env.fromCollection(data());
-
-    DataStream<Link> interactions =
-            text.flatMap(new LinkParser())
-            .shuffle();
+    DataStream<Link> links = env.addSource(new LinkSource(config.getDataset()));
 
     // links upload to Neo4J
     DataStream<NodePair> pairstoupdate =
-            interactions.flatMap(new LinkUpload(
+            links.flatMap(new LinkUpload(
                      config.getNeo4jHostname(), config.getNeo4jUsername(), config.getNeo4jPassword()
             )).shuffle();
 
@@ -101,22 +96,13 @@ public class InteractionsTsteps {
 
     DataStream<NodePairScore> hidden = split.select(ScoreType.HIDDEN.name());
     DataStream<NodePairScore> potential = split.select(ScoreType.POTENTIAL.name());
+    
+    hidden.addSink(new ToStringSink<>("resources/hidden.out"));
+    potential.addSink(new ToStringSink<>("resources/potential.out"));
 
-    hidden.print();
-    potential.print();
+
     env.execute("Interactions to Neo4J");
   }
 
   private static Long distance = 3L;
-
-  private static List<String> data() {
-    List<Link> data = new ArrayList<>();
-    data.add(new Link(1,2,10.0));
-    data.add(new Link(2,3,20.0));
-    data.add(new Link(1,4,30.0));
-    data.add(new Link(2,3,50.0));
-    data.add(new Link(3,4,100.0));
-    data.add(new Link(4,5,100.0));
-    return data.stream().map(Link::toString).collect(Collectors.toList());
-  }
 }

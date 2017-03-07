@@ -26,70 +26,62 @@
 
 package com.acmutv.crimegraph.core.sink;
 
-import com.acmutv.crimegraph.core.db.Neo4JManager;
-import com.acmutv.crimegraph.core.tuple.Link;
 import org.apache.flink.configuration.Configuration;
 import org.apache.flink.streaming.api.functions.sink.RichSinkFunction;
-import org.neo4j.driver.v1.*;
+
+import javax.annotation.Nonnull;
+import java.io.BufferedWriter;
+import java.io.IOException;
+import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 /**
- * A simple sink function based on ElasticSearch.
+ * A sink operator that writes tuples to a specific file.
  * @author Giacomo Marciani {@literal <gmarciani@acm.org>}
  * @author Michele Porretta {@literal <mporretta@acm.org>}
  * @since 1.0
  */
-public class LinkSink extends RichSinkFunction<Link> {
+public class ToStringSink<T> extends RichSinkFunction<T> {
 
   /**
-   * The hostname of the NEO4J instance.
+   * The output file path.
    */
-  private String hostname;
+  private String path;
 
   /**
-   * The username of the NEO4J instance.
+   * The writer to the output file.
    */
-  private String username;
+  private BufferedWriter writer;
 
   /**
-   * The password of the NEO4J instance.
+   * Creates a new sink.
+   * @param path the output file path.
+   * @throws IOException when file cannot be written.
    */
-  private String password;
-
-  /**
-   * The NEO4J driver.
-   */
-  private Driver driver;
-
-  /**
-   * The NEO4J session.
-   */
-  private Session session;
-
-  /**
-   * Constructs a new sink to write {@link Link} on a NEO4J instance.
-   * @param hostname the hostname of the NEO4J instance.
-   * @param username the username of the NEO4J instance.
-   * @param password the password of the NEO4J instance.
-   */
-  public LinkSink(String hostname, String username, String password) {
-    this.hostname = hostname;
-    this.username = username;
-    this.password = password;
+  public ToStringSink(@Nonnull final String path) throws IOException {
+    this.path = path;
   }
 
   @Override
-  public void invoke(Link value) throws Exception {
-    Neo4JManager.save(this.session, value);
+  public void open(Configuration conf) throws IOException {
+    Path path = Paths.get(this.path);
+    if (!Files.exists(path)) {
+      Files.createFile(path);
+    }
+    this.writer = Files.newBufferedWriter(path, Charset.defaultCharset());
   }
 
   @Override
-  public void open(Configuration parameters) throws Exception {
-    this.driver = Neo4JManager.open(this.hostname, this.username, this.password);
-    this.session = driver.session();
+  public void close() throws IOException {
+    this.writer.flush();
+    this.writer.close();
   }
 
   @Override
-  public void close() throws Exception {
-    Neo4JManager.close(this.session, this.driver);
+  public void invoke(T elem) throws Exception {
+    this.writer.write(elem.toString());
+    this.writer.newLine();
   }
 }

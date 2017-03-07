@@ -30,6 +30,7 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import java.io.*;
+import java.util.ArrayList;
 
 /**
  * JUnit tests for {@link AppConfigurationService} and {@link AppConfiguration}.
@@ -63,6 +64,15 @@ public class AppConfigurationServiceTest {
     expected.setDataHostname("CustomDataHostname");
     expected.setDataPort(3333);
     expected.setDataset("CustomDataset");
+    expected.setOutput("CustomOutput");
+    expected.setPotentialLocality(3);
+    expected.setPotentialWeight(new ArrayList<Double>(){{
+      add(0.6);
+      add(0.3);
+      add(0.1);
+    }});
+    expected.setPotentialThreshold(0.8);
+    expected.setHiddenThreshold(0.8);
     expected.setNeo4jHostname("CustomNeo4jHostname");
     expected.setNeo4jUsername("CustomNeo4jUsername");
     expected.setNeo4jPassword("CustomNeo4jPassword");
@@ -103,7 +113,7 @@ public class AppConfigurationServiceTest {
     InputStream in = AppConfigurationServiceTest.class.getResourceAsStream("/config/partial.yaml");
     AppConfiguration actual = AppConfigurationService.fromYaml(in);
     AppConfiguration expected = new AppConfiguration();
-    expected.setNeo4jHostname("CustomNeo4jHostname2");
+    expected.setNeo4jHostname("CustomNeo4jHostname");
     Assert.assertEquals(expected, actual);
   }
 

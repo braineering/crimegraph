@@ -32,19 +32,15 @@ import com.acmutv.crimegraph.core.keyer.NodePairScoreKeyer;
 import com.acmutv.crimegraph.core.operator.*;
 import com.acmutv.crimegraph.core.tuple.*;
 
+import com.acmutv.crimegraph.core.operator.LinkStore;
+import com.acmutv.crimegraph.core.sink.ToStringSink;
+import com.acmutv.crimegraph.core.source.LinkSource;
 import com.acmutv.crimegraph.core.tuple.Link;
 import com.acmutv.crimegraph.tool.runtime.RuntimeManager;
-import com.acmutv.crimegraph.tool.runtime.ShutdownHook;
 import com.acmutv.crimegraph.ui.CliService;
 import org.apache.flink.streaming.api.datastream.DataStream;
 import org.apache.flink.streaming.api.datastream.SplitStream;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * The app word-point for {@code Interactions} application.
@@ -59,8 +55,6 @@ import java.util.stream.Collectors;
  */
 public class Interactions {
 
-  private static final Logger LOGGER = LoggerFactory.getLogger(Interactions.class);
-
   /**
    * The app main method, executed when the program is launched.
    * @param args the command line arguments.
@@ -73,20 +67,14 @@ public class Interactions {
 
     AppConfiguration config = AppConfigurationService.getConfigurations();
 
-    RuntimeManager.registerShutdownHooks(new ShutdownHook());
-
     final StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
 
     // source
-    /*DataStream<String> text = env.fromCollection(data());
-
-    DataStream<Link> interactions =
-            text.flatMap(new LinkParser())
-            .shuffle();
+    DataStream<Link> links = env.addSource(new LinkSource(config.getDataset()));
 
     // links upload to Neo4J
     DataStream<NodePair> pairstoupdate =
-            interactions.flatMap(new LinkUpload(
+            links.flatMap(new LinkUpload(
                      config.getNeo4jHostname(), config.getNeo4jUsername(), config.getNeo4jPassword()
             )).shuffle();
 
@@ -101,46 +89,9 @@ public class Interactions {
     DataStream<NodePairScore> hidden = split.select(ScoreType.HIDDEN.name());
     DataStream<NodePairScore> potential = split.select(ScoreType.POTENTIAL.name());
 
-    hidden.print();
-    potential.print();
-    env.execute("Interactions to Neo4J");*/
-    // source
-    DataStream<String> text = env.fromCollection(data());
+    hidden.addSink(new ToStringSink<>("resources/hidden.out"));
+    potential.addSink(new ToStringSink<>("resources/potential.out"));
 
-    DataStream<Link> interactions =
-            text.flatMap(new LinkParser())
-                    .shuffle();
-
-    // links upload to Neo4J
-    DataStream<NodePair> pairstoupdate =
-            interactions.flatMap(new LinkUpload(
-                    config.getNeo4jHostname(), config.getNeo4jUsername(), config.getNeo4jPassword()
-            )).shuffle();
-
-    // Score Calculator
-    DataStream<NodePairScore> pairsscore =
-            pairstoupdate.flatMap(new ScoreCalculatorTSteps(
-                    config.getNeo4jHostname(), config.getNeo4jUsername(), config.getNeo4jPassword(),2L
-            )).keyBy(new NodePairScoreKeyer());
-
-    SplitStream<NodePairScore> split = pairsscore.split(new ScoreSplitter());
-
-    DataStream<NodePairScore> hidden = split.select(ScoreType.HIDDEN.name());
-    DataStream<NodePairScore> potential = split.select(ScoreType.POTENTIAL.name());
-
-    hidden.print();
-    potential.print();
     env.execute("Interactions to Neo4J");
-  }
-
-  private static List<String> data() {
-    List<Link> data = new ArrayList<>();
-    data.add(new Link(1,2,10.0));
-    data.add(new Link(2,3,20.0));
-    data.add(new Link(1,4,30.0));
-    data.add(new Link(2,3,50.0));
-    data.add(new Link(3,4,100.0));
-    data.add(new Link(4,5,100.0));
-    return data.stream().map(Link::toString).collect(Collectors.toList());
   }
 }

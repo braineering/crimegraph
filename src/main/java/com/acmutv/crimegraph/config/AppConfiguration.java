@@ -33,6 +33,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.yaml.snakeyaml.Yaml;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * The app configuration model.
  * @author Giacomo Marciani {@literal <gmarciani@acm.org>}
@@ -60,7 +63,32 @@ public class AppConfiguration {
   /**
    * Default value for property {@code dataset}.
    */
-  public static final String DATASET = "crimegraph-dataset.txt";
+  public static final String DATASET = "resources/crimegraph/data/crimegraph.data";
+
+  /**
+   * Default value for property {@code output}.
+   */
+  public static final String OUTPUT = "resources/crimegraph/out/crimegraph.out";
+
+  /**
+   * Default value for property {@code potentialLocality}.
+   */
+  public static final int POTENTIAL_LOCALITY = 1;
+
+  /**
+   * Default value for property {@code potentialWeight}.
+   */
+  public static final List<Double> POTENTIAL_WEIGHT = new ArrayList<>();
+
+  /**
+   * Default value for property {@code potentialThreshold}.
+   */
+  public static final double POTENTIAL_THRESHOLD = 0.5;
+
+  /**
+   * Default value for property {@code hiddenThreshold}.
+   */
+  public static final double HIDDEN_THRESHOLD = 0.5;
 
   /**
    * Default value for property {@code neo4jHostname}.
@@ -96,6 +124,36 @@ public class AppConfiguration {
   private String dataset = DATASET;
 
   /**
+   * The pathname of the file or directory containing the dataset.
+   * Default is: {@code crimegraph-dataset.txt}
+   */
+  private String output = OUTPUT;
+
+  /**
+   * The locality degree for potential link score.
+   * Default is: {@code 1}.
+   */
+  private int potentialLocality = POTENTIAL_LOCALITY;
+
+  /**
+   * The weight vector for potential link score.
+   * Dfault value is {@code []}.
+   */
+  private List<Double> potentialWeight = POTENTIAL_WEIGHT;
+
+  /**
+   * The threshold for the potential link score.
+   * Default is: {@code 0.5}
+   */
+  private double potentialThreshold = POTENTIAL_THRESHOLD;
+
+  /**
+   * The threshold for the hidden link score.
+   * Default is: {@code 0.5}
+   */
+  private double hiddenThreshold = HIDDEN_THRESHOLD;
+
+  /**
    * The hostname of the NEO4J instance.
    * Default is: {@code bolt://localhost:7474}.
    */
@@ -129,6 +187,10 @@ public class AppConfiguration {
     this.dataHostname = other.dataHostname;
     this.dataPort = other.dataPort;
     this.dataset = other.dataset;
+    this.potentialLocality = other.potentialLocality;
+    this.potentialWeight = new ArrayList<>(other.potentialWeight);
+    this.potentialThreshold = other.potentialThreshold;
+    this.hiddenThreshold = other.hiddenThreshold;
     this.neo4jHostname = other.neo4jHostname;
     this.neo4jUsername = other.neo4jUsername;
     this.neo4jPassword = other.neo4jPassword;
@@ -141,6 +203,10 @@ public class AppConfiguration {
     this.dataHostname = DATA_HOSTNAME;
     this.dataPort = DATA_PORT;
     this.dataset = DATASET;
+    this.potentialLocality = POTENTIAL_LOCALITY;
+    this.potentialWeight = POTENTIAL_WEIGHT;
+    this.potentialThreshold = POTENTIAL_THRESHOLD;
+    this.hiddenThreshold = HIDDEN_THRESHOLD;
     this.neo4jHostname = NEO4J_HOSTNAME;
     this.neo4jUsername = NEO4J_USERNAME;
     this.neo4jPassword = NEO4J_PASSWORD;

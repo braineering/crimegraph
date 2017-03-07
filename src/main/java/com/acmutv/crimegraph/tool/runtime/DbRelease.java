@@ -1,7 +1,7 @@
 /*
   The MIT License (MIT)
 
-  Copyright (c) 2017 Giacomo Marciani and Michele Porretta
+  Copyright (c) 2016 Giacomo Marciani and Michele Porretta
 
   Permission is hereby granted, free of charge, to any person obtaining a copy
   of this software and associated documentation files (the "Software"), to deal
@@ -24,51 +24,29 @@
   THE SOFTWARE.
  */
 
-package com.acmutv.crimegraph.data;
+package com.acmutv.crimegraph.tool.runtime;
 
-import com.acmutv.crimegraph.core.tuple.Link;
-import org.slf4j.Logger;
-
-import java.io.BufferedWriter;
-import java.io.IOException;
-import java.nio.charset.Charset;
-import java.nio.file.FileSystems;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.List;
+import lombok.Data;
+import lombok.NonNull;
+import org.neo4j.driver.v1.Driver;
 
 /**
- * A dataset generator.
+ * A shutdown hook that release all db related resources.
  * @author Giacomo Marciani {@literal <gmarciani@acm.org>}
  * @author Michele Porretta {@literal <mporretta@acm.org>}
  * @since 1.0
  */
-public class Datagen {
+@Data
+public class DbRelease implements Runnable {
 
-  private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(Datagen.class);
+  /**
+   * The Neo4J driver.
+   */
+  @NonNull
+  private Driver driver;
 
-  private static final String PATH = "dataset.txt";
-
-  public static void main(String[] args) {
-    String filename = (args.length > 0) ? args[0] : PATH;
-
-    Path path = FileSystems.getDefault().getPath(filename);
-
-    List<Link> data = data();
-
-    try (BufferedWriter writer = Files.newBufferedWriter(path, Charset.defaultCharset())) {
-     for (Link link : data) {
-       writer.append(link.toString() + "\n");
-     }
-    } catch (IOException exc) {
-      LOGGER.error(exc.getMessage());
-    }
-  }
-
-  public static List<Link> data() {
-    List<Link> data = new ArrayList<>();
-    data.add(new Link(1L, 2L, 20.0));
-    return data;
+  @Override
+  public void run() {
+    this.driver.close();
   }
 }

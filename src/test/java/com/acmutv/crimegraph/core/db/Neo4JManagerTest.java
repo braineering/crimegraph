@@ -409,7 +409,7 @@ public class Neo4JManagerTest {
   }
 
   /**
-   * Tests finding of gamma intersection and details related to score formulas.
+   * Tests finding of Gamma-intersection and details related to score formulas.
    * @throws IOException when operator cannot be managed.
    */
   @Test
@@ -421,11 +421,36 @@ public class Neo4JManagerTest {
     // Check
     Map<Tuple2<Long,Long>,Set<Tuple3<Long,Long,Double>>> expectedMap = new HashMap<>();
     expectedMap.put(new Tuple2<>(2L,6L), new HashSet<Tuple3<Long,Long,Double>>(){{
-      add(new Tuple3<Long,Long,Double>(3L,3L,20D));
+      add(new Tuple3<>(3L, 3L, 20.0));
     }});
     for (Tuple2<Long,Long> key : expectedMap.keySet()) {
       Set<Tuple3<Long,Long,Double>> actual = Neo4JManager.gammaIntersection(session, key.f0, key.f1);
       Set<Tuple3<Long,Long,Double>> expected = expectedMap.get(key);
+      Assert.assertEquals(expected, actual);
+    }
+
+    session.close();
+  }
+
+  /**
+   * Tests finding of H-intersection and details related to score formulas.
+   * @throws IOException when operator cannot be managed.
+   */
+  @Test
+  public void test_hIntersection() throws Exception {
+    Session session = DRIVER.session();
+
+    for (Link link : DATA) Neo4JManager.save(session, link);
+
+    // Check
+    Map<Tuple3<Long,Long,Long>,Set<Tuple2<Long,Long>>> expectedMap = new HashMap<>();
+    expectedMap.put(new Tuple3<>(3L,5L,1L), new HashSet<Tuple2<Long,Long>>(){{}});
+    expectedMap.put(new Tuple3<>(3L,5L,2L), new HashSet<Tuple2<Long,Long>>(){{
+      add(new Tuple2<>(2L,3L));
+    }});
+    for (Tuple3<Long,Long,Long> key : expectedMap.keySet()) {
+      Set<Tuple2<Long,Long>> actual = Neo4JManager.hIntersection(session, key.f0, key.f1, key.f2);
+      Set<Tuple2<Long,Long>> expected = expectedMap.get(key);
       Assert.assertEquals(expected, actual);
     }
 

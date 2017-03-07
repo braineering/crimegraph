@@ -24,21 +24,26 @@
   THE SOFTWARE.
  */
 
-package com.acmutv.crimegraph.core.sink;
+package com.acmutv.crimegraph.core.operator;
 
 import com.acmutv.crimegraph.core.db.Neo4JManager;
 import com.acmutv.crimegraph.core.tuple.Link;
+import org.apache.flink.api.common.functions.RichMapFunction;
 import org.apache.flink.configuration.Configuration;
-import org.apache.flink.streaming.api.functions.sink.RichSinkFunction;
-import org.neo4j.driver.v1.*;
+import org.neo4j.driver.v1.Driver;
+import org.neo4j.driver.v1.Session;
+
+import java.io.IOException;
 
 /**
- * A simple sink function based on ElasticSearch.
+ * A map operator that saves the flowing links to Neo4J.
  * @author Giacomo Marciani {@literal <gmarciani@acm.org>}
  * @author Michele Porretta {@literal <mporretta@acm.org>}
  * @since 1.0
  */
-public class LinkSink extends RichSinkFunction<Link> {
+public class LinkStore extends RichMapFunction<Link,Link> {
+
+  private static final long serialVersionUID = 1L;
 
   /**
    * The hostname of the NEO4J instance.
@@ -71,15 +76,25 @@ public class LinkSink extends RichSinkFunction<Link> {
    * @param username the username of the NEO4J instance.
    * @param password the password of the NEO4J instance.
    */
-  public LinkSink(String hostname, String username, String password) {
+  public LinkStore(String hostname, String username, String password) {
     this.hostname = hostname;
     this.username = username;
     this.password = password;
   }
 
+  /**
+   * The mapping method. Takes an element from the input data set and transforms
+   * it into exactly one element.
+   *
+   * @param value The input value.
+   * @return The transformed value
+   * @throws Exception This method may throw exceptions. Throwing an exception will cause the operation
+   *                   to fail and may trigger recovery.
+   */
   @Override
-  public void invoke(Link value) throws Exception {
+  public Link map(Link value) throws Exception {
     Neo4JManager.save(this.session, value);
+    return value;
   }
 
   @Override
@@ -89,7 +104,7 @@ public class LinkSink extends RichSinkFunction<Link> {
   }
 
   @Override
-  public void close() throws Exception {
+  public void close() throws IOException {
     Neo4JManager.close(this.session, this.driver);
   }
 }
