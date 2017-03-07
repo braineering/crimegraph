@@ -35,6 +35,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * This class realizes the JSON deserializer for {@link AppConfiguration}.
@@ -88,6 +91,37 @@ public class AppConfigurationDeserializer extends StdDeserializer<AppConfigurati
     if (node.hasNonNull("dataset")) {
       final String dataset = node.get("dataset").asText();
       config.setDataset(dataset);
+    }
+
+    if (node.hasNonNull("output")) {
+      final String output = node.get("output").asText();
+      config.setOutput(output);
+    }
+
+    if (node.hasNonNull("potential.locality")) {
+      final int potentialLocality = node.get("potential.locality").asInt();
+      config.setPotentialLocality(potentialLocality);
+    }
+
+    if (node.hasNonNull("potential.weight")) {
+      List<Double> potentialWeight = new ArrayList<>();
+      Iterator<JsonNode> iter = node.get("potential.weight").elements();
+      while (iter.hasNext()) {
+        double w = iter.next().asDouble();
+        potentialWeight.add(w);
+
+      }
+      config.setPotentialWeight(potentialWeight);
+    }
+
+    if (node.hasNonNull("potential.threshold")) {
+      final double potentialThreshold = node.get("potential.threshold").asDouble();
+      config.setPotentialThreshold(potentialThreshold);
+    }
+
+    if (node.hasNonNull("hidden.threshold")) {
+      final double hiddenThreshold = node.get("hidden.threshold").asDouble();
+      config.setHiddenThreshold(hiddenThreshold);
     }
 
     if (node.hasNonNull("neo4j.hostname")) {
