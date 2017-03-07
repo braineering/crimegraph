@@ -86,7 +86,7 @@ public class Datagen {
    * @param path the file to write onto.
    * @param data the dataset to write.
    */
-  private static final void writeDataset(Path path, List<Link> data) {
+  private static void writeDataset(Path path, List<Link> data) {
 
     Charset charset = Charset.defaultCharset();
     try (BufferedWriter writer = Files.newBufferedWriter(path, charset)) {

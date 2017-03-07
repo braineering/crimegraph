@@ -75,7 +75,7 @@ public class NodePair extends Tuple3<Long,Long,UpdateType> {
   }
 
   /**
-   * Parses {@nodepair NodePair} from string.
+   * Parses {@link NodePair} from string.
    * @param string the string to parse.
    * @return the parsed {@link NodePair}.
    * @throws IllegalArgumentException when {@code string} cannot be parsed.

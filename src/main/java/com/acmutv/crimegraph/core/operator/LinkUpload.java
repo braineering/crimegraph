@@ -37,7 +37,6 @@ import org.apache.flink.api.java.tuple.Tuple3;
 import org.apache.flink.configuration.Configuration;
 import org.apache.flink.util.Collector;
 import org.neo4j.driver.v1.*;
-import scala.collection.script.Update;
 
 import java.util.Set;
 

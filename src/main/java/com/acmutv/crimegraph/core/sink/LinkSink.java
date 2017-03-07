@@ -38,6 +38,7 @@ import org.neo4j.driver.v1.*;
  * @author Michele Porretta {@literal <mporretta@acm.org>}
  * @since 1.0
  */
+@Deprecated
 public class LinkSink extends RichSinkFunction<Link> {
 
   /**

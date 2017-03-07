@@ -45,7 +45,7 @@ public class NodePairTest {
   private static final Logger LOGGER = LoggerFactory.getLogger(NodePairTest.class);
 
   /**
-   * Tests serialization of {@nodepair NodePair}.
+   * Tests serialization of {@link NodePair}.
    */
   @Test
   public void test_serialize() throws Exception {

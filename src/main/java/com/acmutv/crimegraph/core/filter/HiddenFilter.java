@@ -35,6 +35,7 @@ import org.apache.flink.api.common.functions.FilterFunction;
  * @author Michele Porretta {@literal <mporretta@acm.org>}
  * @since 1.0
  */
+@Deprecated
 public class HiddenFilter implements FilterFunction<NodePairScore> {
 
   /**

@@ -40,7 +40,6 @@ import org.apache.flink.util.Collector;
 import org.neo4j.driver.v1.Driver;
 import org.neo4j.driver.v1.Session;
 
-import java.util.HashSet;
 import java.util.Set;
 
 /**
@@ -56,70 +55,70 @@ public class ScoreCalculator extends RichFlatMapFunction<NodePair, NodePairScore
    */
   private DbConfiguration dbconfig;
 
-    /**
-     * The NEO4J driver.
-     */
-    private Driver driver;
+  /**
+   * The NEO4J driver.
+   */
+  private Driver driver;
 
-    /**
-     * The NEO4J session.
-     */
-    private Session session;
+  /**
+   * The NEO4J session.
+   */
+  private Session session;
 
-    /**
-     * Constructs a new PotentialScoreOperator to compute the score
-     * for a node pair stored in NodePair.
-     * This operator required access to the NEO4J instance.
-     * @param dbconfig the Neo4J configuration.
-     */
-    public ScoreCalculator(DbConfiguration dbconfig) {
-      this.dbconfig = dbconfig;
-    }
+  /**
+   * Constructs a new PotentialScoreOperator to compute the score
+   * for a node pair stored in NodePair.
+   * This operator required access to the NEO4J instance.
+   * @param dbconfig the Neo4J configuration.
+   */
+  public ScoreCalculator(DbConfiguration dbconfig) {
+    this.dbconfig = dbconfig;
+  }
 
-    @Override
-    public void open(Configuration parameters) throws Exception {
-      String hostname = this.dbconfig.getHostname();
-      String username = this.dbconfig.getUsername();
-      String password = this.dbconfig.getPassword();
-      this.driver = Neo4JManager.open(hostname, username, password);
-      this.session = driver.session();
-    }
+  @Override
+  public void open(Configuration parameters) throws Exception {
+    String hostname = this.dbconfig.getHostname();
+    String username = this.dbconfig.getUsername();
+    String password = this.dbconfig.getPassword();
+    this.driver = Neo4JManager.open(hostname, username, password);
+    this.session = driver.session();
+  }
 
-    @Override
-    public void close() throws Exception {
-        Neo4JManager.close(this.session, this.driver);
-    }
+  @Override
+  public void close() throws Exception {
+      Neo4JManager.close(this.session, this.driver);
+  }
 
-    @SuppressWarnings("unchecked")
-    @Override
-    public void flatMap(NodePair nodePair, Collector<NodePairScore> out) {
+  @SuppressWarnings("unchecked")
+  @Override
+  public void flatMap(NodePair nodePair, Collector<NodePairScore> out) {
 
-      UpdateType type = nodePair.f2;
+    UpdateType type = nodePair.f2;
 
-      if(type.equals(UpdateType.BOTH) || type.equals(UpdateType.POTENTIAL)){
-        double potentialScore = 0.0;
+    if(type.equals(UpdateType.BOTH) || type.equals(UpdateType.POTENTIAL)){
+      double potentialScore = 0.0;
 
-        Set<Tuple2<Long,Long>> neighbours = Neo4JManager.commonNeighboursWithDegree(this.session, nodePair.f0, nodePair.f1);
+      Set<Tuple2<Long,Long>> neighbours = Neo4JManager.commonNeighboursWithDegree(this.session, nodePair.f0, nodePair.f1);
 
-        for (Tuple2<Long,Long> z : neighbours) {
-          System.out.println("computing ("+nodePair.f0 + ";"+nodePair.f1+")"+ " - neighbour id: " +z.f0.toString() +" with degree "+z.f1.toString() + " for potential");
-          potentialScore += (1.0 / z.f1);
-        }
-        NodePairScore potential = new NodePairScore(nodePair.f0, nodePair.f1, potentialScore, ScoreType.POTENTIAL);
-        out.collect(potential);
+      for (Tuple2<Long,Long> z : neighbours) {
+        System.out.println("computing ("+nodePair.f0 + ";"+nodePair.f1+")"+ " - neighbour id: " +z.f0.toString() +" with degree "+z.f1.toString() + " for potential");
+        potentialScore += (1.0 / z.f1);
       }
-
-      if(type.equals(UpdateType.BOTH) || type.equals(UpdateType.HIDDEN)){
-        double hiddenScore = 0.0;
-
-        Set<Tuple3<Long,Long,Double>> neighbours = Neo4JManager.gammaIntersection(this.session, nodePair.f0, nodePair.f1);
-        for (Tuple3<Long,Long,Double> z : neighbours) {
-          System.out.println("computing ("+nodePair.f0 + ";"+nodePair.f1+")"+ " - neighbour id: " +z.f0.toString() +" with degree "+z.f1.toString() + " for hidden");
-          hiddenScore += (z.f2 / z.f1);
-        }
-        NodePairScore hidden = new NodePairScore(nodePair.f0, nodePair.f1, hiddenScore, ScoreType.HIDDEN);
-        out.collect(hidden);
-      }
-
+      NodePairScore potential = new NodePairScore(nodePair.f0, nodePair.f1, potentialScore, ScoreType.POTENTIAL);
+      out.collect(potential);
     }
+
+    if(type.equals(UpdateType.BOTH) || type.equals(UpdateType.HIDDEN)){
+      double hiddenScore = 0.0;
+
+      Set<Tuple3<Long,Long,Double>> neighbours = Neo4JManager.gammaIntersection(this.session, nodePair.f0, nodePair.f1);
+      for (Tuple3<Long,Long,Double> z : neighbours) {
+        System.out.println("computing ("+nodePair.f0 + ";"+nodePair.f1+")"+ " - neighbour id: " +z.f0.toString() +" with degree "+z.f1.toString() + " for hidden");
+        hiddenScore += (z.f2 / z.f1);
+      }
+      NodePairScore hidden = new NodePairScore(nodePair.f0, nodePair.f1, hiddenScore, ScoreType.HIDDEN);
+      out.collect(hidden);
+    }
+
+  }
 }

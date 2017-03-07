@@ -27,8 +27,8 @@
 package com.acmutv.crimegraph.core.db;
 
 import lombok.Data;
+import lombok.NonNull;
 
-import javax.annotation.Nonnull;
 import java.io.Serializable;
 
 /**
@@ -40,21 +40,23 @@ import java.io.Serializable;
 @Data
 public class DbConfiguration implements Serializable {
 
+  private static final long serialVersionUID = 1L;
+
   /**
    * The hostname of the NEO4J instance.
    */
-  @Nonnull
+  @NonNull
   private String hostname;
 
   /**
    * The username of the NEO4J instance.
    */
-  @Nonnull
+  @NonNull
   private String username;
 
   /**
    * The password of the NEO4J instance.
    */
-  @Nonnull
+  @NonNull
   private String password;
 }

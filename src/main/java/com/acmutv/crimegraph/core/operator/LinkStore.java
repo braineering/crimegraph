@@ -41,9 +41,8 @@ import java.io.IOException;
  * @author Michele Porretta {@literal <mporretta@acm.org>}
  * @since 1.0
  */
+@Deprecated
 public class LinkStore extends RichMapFunction<Link,Link> {
-
-  private static final long serialVersionUID = 1L;
 
   /**
    * The hostname of the NEO4J instance.

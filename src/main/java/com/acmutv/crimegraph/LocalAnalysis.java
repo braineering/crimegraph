@@ -37,10 +37,7 @@ import com.acmutv.crimegraph.core.sink.HiddenSink;
 import com.acmutv.crimegraph.core.sink.PotentialSink;
 import com.acmutv.crimegraph.core.tuple.*;
 
-import com.acmutv.crimegraph.core.operator.LinkStore;
-import com.acmutv.crimegraph.core.sink.ToStringSink;
 import com.acmutv.crimegraph.core.source.LinkSource;
-import com.acmutv.crimegraph.core.tuple.Link;
 import com.acmutv.crimegraph.tool.runtime.RuntimeManager;
 import com.acmutv.crimegraph.ui.CliService;
 import org.apache.flink.streaming.api.datastream.DataStream;

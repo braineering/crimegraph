@@ -37,11 +37,9 @@ import org.apache.flink.api.java.tuple.Tuple2;
  * @since 1.0
  */
 public class NodePairScoreKeyer implements KeySelector<NodePairScore, Tuple2<Long,Long>> {
-  private static final long serialVersionUID = 1L;
 
   @Override
   public Tuple2<Long,Long> getKey(NodePairScore event) throws Exception {
-    Tuple2<Long,Long> key = new Tuple2<>(event.f0,event.f1);
-    return key;
+    return new Tuple2<>(event.f0,event.f1);
   }
 }

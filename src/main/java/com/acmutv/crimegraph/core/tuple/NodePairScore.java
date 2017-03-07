@@ -77,7 +77,7 @@ public class NodePairScore extends Tuple4<Long,Long,Double,ScoreType> {
     }
 
     /**
-     * Parses {@nodepairscore NodePairScore} from string.
+     * Parses {@link NodePairScore} from string.
      * @param string the string to parse.
      * @return the parsed {@link NodePair}.
      * @throws IllegalArgumentException when {@code string} cannot be parsed.
