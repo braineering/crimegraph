@@ -63,12 +63,12 @@ public class AppConfiguration {
   /**
    * Default value for property {@code dataset}.
    */
-  public static final String DATASET = "resources/crimegraph.data";
+  public static final String DATASET = "resources/crimegraph/data/crimegraph.data";
 
   /**
    * Default value for property {@code output}.
    */
-  public static final String OUTPUT = "resources/crimegraph.out";
+  public static final String OUTPUT = "resources/crimegraph/out/crimegraph.out";
 
   /**
    * Default value for property {@code potentialLocality}.

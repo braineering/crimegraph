@@ -70,20 +70,15 @@ public class Datagen {
 
     writeDataset(path, data);
 
-    /*
-
     String flinkHome = System.getenv("FLINK_HOME");
 
     if (flinkHome != null) {
-      path = FileSystems.getDefault().getPath(flinkHome + "/resources/crimegraph/crimegraph.data");
-      System.out.println(path);
-      System.out.println(path.getParent());
-      if (!Files.isDirectory(path.getParent())) {
-        Files.createDirectories(path.getParent());
+      Path flinkPath = FileSystems.getDefault().getPath(flinkHome + "/resources/crimegraph/data/crimegraph.data");
+      if (!Files.isDirectory(flinkPath.getParent())) {
+        Files.createDirectories(flinkPath.getParent());
       }
-      Files.copy(path, path);
+      Files.copy(path, flinkPath);
     }
-    */
   }
 
   /**

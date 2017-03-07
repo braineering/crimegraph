@@ -7,12 +7,12 @@
 #===============================================================================
 data.hostname: "127.0.0.1"
 data.port: 9000
-dataset: "resources/crimegraph.data"
+dataset: "resources/crimegraph/data/crimegraph.data"
 
 #===============================================================================
 # OUTPUT
 #===============================================================================
-output: "resources/crimegraph.out"
+output: "resources/crimegraph/out/crimegraph.out"
 
 #===============================================================================
 # POTENTIAL LINKS
