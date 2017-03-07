@@ -142,8 +142,16 @@
     WHERE id(n1) > id(n2) AND NOT (y)-[:REAL*%d]-(n1) AND NOT (y)-[:REAL*%d]-(n2)
     RETURN [n1.id,n2.id] as pairs
     
-## POTENTIAL/HIDDEN LINK FORMULA
+    
+## GAMMA-INTERSECTION
     MATCH (u1:Person {id:{x}})-[r1:REAL]-(n:Person)-[r2:REAL]-(u2:Person {id:{y}})
     WITH DISTINCT n,r1,r2
     MATCH (n)-[r:REAL]-()
     RETURN n.id AS id,COUNT(r) AS deg, (r1.weight+r2.weight) AS weight
+    
+    
+## H-INTERSECTION
+    MATCH (u1:Person {id:{src}})-[:REAL*%d]-(n:Person)-[:REAL*%d]-(u2:Person {id:{dst}})
+    WITH DISTINCT n
+    MATCH (n)-[r:REAL]-()
+    RETURN n.id AS id,COUNT(r) AS deg

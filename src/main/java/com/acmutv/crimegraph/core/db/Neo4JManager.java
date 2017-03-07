@@ -225,6 +225,15 @@ public class Neo4JManager {
           "RETURN n.id AS id,COUNT(r) AS deg, (r1.weight+r2.weight) AS weight";
 
   /**
+   * Query to find common nodes at fixed distance and related details for score formulas.
+   */
+  private static final String H_INTERSECTION =
+      "MATCH (u1:Person {id:{x}})-[:REAL*%d]-(n:Person)-[:REAL*%d]-(u2:Person {id:{y}}) " +
+          "WITH DISTINCT n " +
+          "MATCH (n)-[r:REAL]-() " +
+          "RETURN n.id AS id,COUNT(r) AS deg";
+
+  /**
    * Opens a NEO4J connection.
    * @param hostname the instance hostname.
    * @param username the username for the authentication.
@@ -563,7 +572,7 @@ public class Neo4JManager {
   }
 
   /**
-   * Finds gamma intersection and related details for score formulas.
+   * Finds Gamma-intersection and related details for score formulas.
    * @param session the NEO4J open session.
    * @param x the id of the first node to update.
    * @param y the id of the second node to update.
@@ -578,6 +587,27 @@ public class Neo4JManager {
       Long degree = rec.get("deg").asLong();
       Double weight = rec.get("weight").asDouble();
       neighbours.add(new Tuple3<>(node, degree, weight));
+    }
+    return neighbours;
+  }
+
+  /**
+   * Finds H-intersection and related details for score formulas.
+   * @param session the NEO4J open session.
+   * @param x the id of the first node to update.
+   * @param y the id of the second node to update.
+   * @param dist the distance.
+   */
+  public static Set<Tuple2<Long,Long>> hIntersection(Session session, long x, long y, long dist) {
+    Value params = parameters("x", x, "y", y);
+    String query = String.format(H_INTERSECTION, dist, dist);
+    StatementResult result = session.run(query, params);
+    Set<Tuple2<Long,Long>> neighbours = new HashSet<>();
+    while (result.hasNext()) {
+      Record rec = result.next();
+      Long node = rec.get("id").asLong();
+      Long degree = rec.get("deg").asLong();
+      neighbours.add(new Tuple2<>(node, degree));
     }
     return neighbours;
   }
