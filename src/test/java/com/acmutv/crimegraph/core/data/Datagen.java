@@ -34,9 +34,8 @@ import org.slf4j.LoggerFactory;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.nio.charset.Charset;
-import java.nio.file.FileSystems;
-import java.nio.file.Files;
-import java.nio.file.Path;
+import java.nio.file.*;
+import java.nio.file.attribute.PosixFilePermissions;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -55,7 +54,17 @@ public class Datagen {
    */
   @Test
   public void simple() throws Exception {
-    String filename = "data/dataset.txt";
+    Path path = FileSystems.getDefault().getPath("data/resources/crimegraph.data");
+
+    if (!Files.isDirectory(path.getParent())) {
+      Files.createDirectories(path.getParent());
+    }
+
+    String flinkHome = System.getenv("FLINK_HOME");
+
+    System.out.println(flinkHome);
+
+    LOGGER.info(flinkHome);
 
     List<Link> data = new ArrayList<>();
     data.add(new Link(1,2,10.0));
@@ -66,17 +75,18 @@ public class Datagen {
     data.add(new Link(4,5,10.0));
     data.add(new Link(6,7,10.0));
 
-    writeDataset(filename, data);
+    writeDataset(path, data);
   }
 
   /**
-   * Writes the dataset {@code data} into {@code filename}.
-   * @param filename the filename to write onto.
+   * Writes the dataset {@code data} into {@code path}.
+   * @param path the file to write onto.
    * @param data the dataset to write.
    */
-  private static final void writeDataset(String filename, List<Link> data) {
-    Path path = FileSystems.getDefault().getPath(filename);
-    try (BufferedWriter writer = Files.newBufferedWriter(path, Charset.defaultCharset())) {
+  private static final void writeDataset(Path path, List<Link> data) {
+
+    Charset charset = Charset.defaultCharset();
+    try (BufferedWriter writer = Files.newBufferedWriter(path, charset)) {
       for (Link link : data) {
         writer.append(link.toString()).append("\n");
       }
