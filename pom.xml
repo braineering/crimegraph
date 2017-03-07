@@ -307,6 +307,16 @@
       </properties>
     </profile>
 
+    <profile>
+      <id>crimegraphtsteps</id>
+      <activation>
+        <activeByDefault>false</activeByDefault>
+      </activation>
+      <properties>
+        <project.main>com.acmutv.crimegraph.InteractionsTsteps</project.main>
+      </properties>
+    </profile>
+
       <!-- PROFILE: skip-tests -->
       <profile>
         <id>skip-tests</id>

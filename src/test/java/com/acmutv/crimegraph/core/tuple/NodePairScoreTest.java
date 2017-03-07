@@ -50,10 +50,10 @@ public class NodePairScoreTest {
   @Test
   public void test_serialize() throws Exception {
     List<NodePairScore>  data = new ArrayList<>();
-    data.add(new NodePairScore(1,2,0.1,ScoreType.HIDDEN,1));
-    data.add(new NodePairScore(4,3,0.1,ScoreType.POTENTIAL,2));
-    data.add(new NodePairScore(3,5,0.1,ScoreType.POTENTIAL,3));
-    data.add(new NodePairScore(4,5,0.1,ScoreType.HIDDEN,4));
+    data.add(new NodePairScore(1,2,0.1,ScoreType.HIDDEN));
+    data.add(new NodePairScore(4,3,0.1,ScoreType.POTENTIAL));
+    data.add(new NodePairScore(3,5,0.1,ScoreType.POTENTIAL));
+    data.add(new NodePairScore(4,5,0.1,ScoreType.HIDDEN));
 
     for (NodePairScore expected : data) {
       LOGGER.debug("NodePairScore serialized: " + expected);

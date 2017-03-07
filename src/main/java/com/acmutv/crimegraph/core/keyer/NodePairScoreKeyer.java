@@ -1,7 +1,7 @@
 /*
   The MIT License (MIT)
 
-  Copyright (c) 2017 Giacomo Marciani and Michele Porretta
+  Copyright (c) 2016 Giacomo Marciani and Michele Porretta
 
   Permission is hereby granted, free of charge, to any person obtaining a copy
   of this software and associated documentation files (the "Software"), to deal
@@ -24,11 +24,11 @@
   THE SOFTWARE.
  */
 
-package com.acmutv.crimegraph.core.operator;
+package com.acmutv.crimegraph.core.keyer;
 
-import com.acmutv.crimegraph.core.tuple.Link;
-import org.apache.flink.api.common.functions.FlatMapFunction;
-import org.apache.flink.util.Collector;
+import com.acmutv.crimegraph.core.tuple.NodePairScore;
+import org.apache.flink.api.java.functions.KeySelector;
+import org.apache.flink.api.java.tuple.Tuple2;
 
 /**
  * This operator parses interactions from input datastream.
@@ -36,18 +36,12 @@ import org.apache.flink.util.Collector;
  * @author Michele Porretta {@literal <mporretta@acm.org>}
  * @since 1.0
  */
-public class LinkParser implements FlatMapFunction<String, Link> {
+public class NodePairScoreKeyer implements KeySelector<NodePairScore, Tuple2<Long,Long>> {
+  private static final long serialVersionUID = 1L;
 
-  @SuppressWarnings("unchecked")
   @Override
-  public void flatMap(String value, Collector<Link> out) {
-   Link link = null;
-    try {
-      link = Link.valueOf(value);
-      System.out.println("SOURCE PAIR: "+link.toString());
-    } catch (IllegalArgumentException exc) {
-      System.out.println(exc.getMessage());
-    }
-    out.collect(link);
+  public Tuple2<Long,Long> getKey(NodePairScore event) throws Exception {
+    Tuple2<Long,Long> key = new Tuple2<>(event.f0,event.f1);
+    return key;
   }
 }

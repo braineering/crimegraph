@@ -26,7 +26,7 @@
 
 package com.acmutv.crimegraph.core.tuple;
 
-import org.apache.flink.api.java.tuple.Tuple5;
+import org.apache.flink.api.java.tuple.Tuple4;
 
 import java.util.Locale;
 import java.util.regex.Matcher;
@@ -39,13 +39,13 @@ import java.util.stream.Stream;
  * @author Michele Porretta {@literal <mporretta@acm.org>}
  * @since 1.0
  */
-public class NodePairScore extends Tuple5<Long,Long,Double,ScoreType,Long> {
+public class NodePairScore extends Tuple4<Long,Long,Double,ScoreType> {
 
     /**
      * The regular expression
      */
     private static final String REGEXP =
-            String.format("^\\(([0-9]+),([0-9]+),([0-9]+\\.*[0-9]+),(%s),([0-9]+)\\)$",
+            String.format("^\\(([0-9]+),([0-9]+),([0-9]+\\.*[0-9]+),(%s)\\)$",
                     Stream.of(UpdateType.values())
                             .map(UpdateType::toString).collect(Collectors.joining("|")));
 
@@ -60,10 +60,9 @@ public class NodePairScore extends Tuple5<Long,Long,Double,ScoreType,Long> {
      * @param dst the id of the destination node.
      * @param score the score of (src,dst) edge
      * @param type the type of the score
-     * @param ts the ts of the compute score
      */
-    public NodePairScore(long src, long dst, double score, ScoreType type, long ts) {
-        super(src, dst, score, type,ts);
+    public NodePairScore(long src, long dst, double score, ScoreType type) {
+        super(src, dst, score, type);
     }
 
     /**
@@ -74,7 +73,7 @@ public class NodePairScore extends Tuple5<Long,Long,Double,ScoreType,Long> {
 
     @Override
     public String toString() {
-        return String.format(Locale.ROOT,"(%d,%d,%.3f,%s,%d)", super.f0, super.f1, super.f2, super.f3, super.f4);
+        return String.format(Locale.ROOT,"(%d,%d,%.3f,%s)", super.f0, super.f1, super.f2, super.f3);
     }
 
     /**
@@ -91,8 +90,7 @@ public class NodePairScore extends Tuple5<Long,Long,Double,ScoreType,Long> {
         long dst = Long.valueOf(matcher.group(2));
         double score = Double.valueOf(matcher.group(3));
         ScoreType type = ScoreType.valueOf(matcher.group(4));
-        long ts = Long.valueOf(matcher.group(5));
-        return new NodePairScore(src, dst, score, type,ts);
+        return new NodePairScore(src, dst, score, type);
     }
 
 }

@@ -30,9 +30,10 @@ import com.acmutv.crimegraph.config.AppConfiguration;
 import com.acmutv.crimegraph.config.AppConfigurationService;
 import com.acmutv.crimegraph.core.keyer.NodePairScoreKeyer;
 import com.acmutv.crimegraph.core.operator.*;
-import com.acmutv.crimegraph.core.tuple.*;
-
 import com.acmutv.crimegraph.core.tuple.Link;
+import com.acmutv.crimegraph.core.tuple.NodePair;
+import com.acmutv.crimegraph.core.tuple.NodePairScore;
+import com.acmutv.crimegraph.core.tuple.ScoreType;
 import com.acmutv.crimegraph.tool.runtime.RuntimeManager;
 import com.acmutv.crimegraph.tool.runtime.ShutdownHook;
 import com.acmutv.crimegraph.ui.CliService;
@@ -57,9 +58,9 @@ import java.util.stream.Collectors;
  * @see AppConfigurationService
  * @see RuntimeManager
  */
-public class Interactions {
+public class InteractionsTsteps {
 
-  private static final Logger LOGGER = LoggerFactory.getLogger(Interactions.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger(InteractionsTsteps.class);
 
   /**
    * The app main method, executed when the program is launched.
@@ -78,7 +79,7 @@ public class Interactions {
     final StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
 
     // source
-    /*DataStream<String> text = env.fromCollection(data());
+    DataStream<String> text = env.fromCollection(data());
 
     DataStream<Link> interactions =
             text.flatMap(new LinkParser())
@@ -92,35 +93,8 @@ public class Interactions {
 
     // Score Calculator
     DataStream<NodePairScore> pairsscore =
-            pairstoupdate.flatMap(new ScoreCalculator(
-                    config.getNeo4jHostname(), config.getNeo4jUsername(), config.getNeo4jPassword()
-            )).keyBy(new NodePairScoreKeyer());
-
-    SplitStream<NodePairScore> split = pairsscore.split(new ScoreSplitter());
-
-    DataStream<NodePairScore> hidden = split.select(ScoreType.HIDDEN.name());
-    DataStream<NodePairScore> potential = split.select(ScoreType.POTENTIAL.name());
-
-    hidden.print();
-    potential.print();
-    env.execute("Interactions to Neo4J");*/
-    // source
-    DataStream<String> text = env.fromCollection(data());
-
-    DataStream<Link> interactions =
-            text.flatMap(new LinkParser())
-                    .shuffle();
-
-    // links upload to Neo4J
-    DataStream<NodePair> pairstoupdate =
-            interactions.flatMap(new LinkUpload(
-                    config.getNeo4jHostname(), config.getNeo4jUsername(), config.getNeo4jPassword()
-            )).shuffle();
-
-    // Score Calculator
-    DataStream<NodePairScore> pairsscore =
             pairstoupdate.flatMap(new ScoreCalculatorTSteps(
-                    config.getNeo4jHostname(), config.getNeo4jUsername(), config.getNeo4jPassword(),2L
+                    config.getNeo4jHostname(), config.getNeo4jUsername(), config.getNeo4jPassword(), distance
             )).keyBy(new NodePairScoreKeyer());
 
     SplitStream<NodePairScore> split = pairsscore.split(new ScoreSplitter());
@@ -132,6 +106,8 @@ public class Interactions {
     potential.print();
     env.execute("Interactions to Neo4J");
   }
+
+  private static Long distance = 3L;
 
   private static List<String> data() {
     List<Link> data = new ArrayList<>();

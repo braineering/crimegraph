@@ -29,8 +29,8 @@ package com.acmutv.crimegraph.core.operator;
 import com.acmutv.crimegraph.core.db.Neo4JManager;
 import com.acmutv.crimegraph.core.tuple.NodePair;
 import com.acmutv.crimegraph.core.tuple.NodePairScore;
-import com.acmutv.crimegraph.core.tuple.UpdateType;
 import com.acmutv.crimegraph.core.tuple.ScoreType;
+import com.acmutv.crimegraph.core.tuple.UpdateType;
 import org.apache.flink.api.common.functions.RichFlatMapFunction;
 import org.apache.flink.api.java.tuple.Tuple2;
 import org.apache.flink.api.java.tuple.Tuple3;
@@ -39,7 +39,6 @@ import org.apache.flink.util.Collector;
 import org.neo4j.driver.v1.Driver;
 import org.neo4j.driver.v1.Session;
 
-import java.util.HashSet;
 import java.util.Set;
 
 /**
@@ -48,7 +47,7 @@ import java.util.Set;
  * @author Michele Porretta {@literal <mporretta@acm.org>}
  * @since 1.0
  */
-public class ScoreCalculator extends RichFlatMapFunction<NodePair, NodePairScore> {
+public class ScoreCalculatorTSteps extends RichFlatMapFunction<NodePair, NodePairScore> {
 
     /**
      * The hostname of the NEO4J instance.
@@ -76,6 +75,11 @@ public class ScoreCalculator extends RichFlatMapFunction<NodePair, NodePairScore
     private Session session;
 
     /**
+     * The distance between nodes
+     */
+    private Long distance;
+
+    /**
      * Constructs a new PotentialScoreOperator to compute the score
      * for a node pair stored in NodePair.
      * This operator required access to the NEO4J instance.
@@ -83,10 +87,11 @@ public class ScoreCalculator extends RichFlatMapFunction<NodePair, NodePairScore
      * @param username the username of the NEO4J instance.
      * @param password the password of the NEO4J instance.
      */
-    public ScoreCalculator(String hostname, String username, String password) {
+    public ScoreCalculatorTSteps(String hostname, String username, String password,Long distance) {
       this.hostname = hostname;
       this.username = username;
       this.password = password;
+      this.distance = distance;
     }
 
     @Override
@@ -109,12 +114,18 @@ public class ScoreCalculator extends RichFlatMapFunction<NodePair, NodePairScore
       if(type.equals(UpdateType.BOTH) || type.equals(UpdateType.POTENTIAL)){
         double potentialScore = 0.0;
 
-        Set<Tuple2<Long,Long>> neighbours = Neo4JManager.commonNeighboursWithDegree(this.session, nodePair.f0, nodePair.f1);
+        Long totalDegree = 0L;
+        for(long i = 1; i<= distance;i++) {
 
-        for (Tuple2<Long,Long> z : neighbours) {
-          System.out.println("computing ("+nodePair.f0 + ";"+nodePair.f1+")"+ " - neighbour id: " +z.f0.toString() +" with degree "+z.f1.toString() + " for potential");
-          potentialScore += (1.0 / z.f1);
+          Set<Tuple2<Long, Long>> neighbours = Neo4JManager.commonNeighboursWithDegreeWithinDistance(this.session, nodePair.f0, nodePair.f1, i);
+
+          for (Tuple2<Long, Long> z : neighbours) {
+            System.out.println("computing (" + nodePair.f0 + ";" + nodePair.f1 + ")" + " - neighbour id: " + z.f0.toString() + " with degree " + z.f1.toString() + " for potential");
+            potentialScore += (1.0 / z.f1);
+            totalDegree += z.f1;
+          }
         }
+        potentialScore /= totalDegree;
         NodePairScore potential = new NodePairScore(nodePair.f0, nodePair.f1, potentialScore, ScoreType.POTENTIAL);
         out.collect(potential);
       }
