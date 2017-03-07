@@ -73,7 +73,7 @@ public class AppConfiguration {
   /**
    * Default value for property {@code potentialLocality}.
    */
-  public static final int POTENTIAL_LOCALITY = 1;
+  public static final long POTENTIAL_LOCALITY = 1;
 
   /**
    * Default value for property {@code potentialWeight}.
@@ -133,7 +133,7 @@ public class AppConfiguration {
    * The locality degree for potential link score.
    * Default is: {@code 1}.
    */
-  private int potentialLocality = POTENTIAL_LOCALITY;
+  private long potentialLocality = POTENTIAL_LOCALITY;
 
   /**
    * The weight vector for potential link score.

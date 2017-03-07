@@ -111,7 +111,7 @@
     <!-- General -->
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-    <project.main>com.acmutv.crimegraph.Interactions</project.main>
+    <project.main>com.acmutv.crimegraph.LocalAnalysis</project.main>
 
     <!-- Core  -->
     <flink.version>1.2.0</flink.version>
@@ -296,24 +296,25 @@
   </dependencies>
 
   <profiles>
-    <!-- PROFILE: crimegraph -->
+    <!-- PROFILE: local -->
     <profile>
-      <id>crimegraph</id>
+      <id>local</id>
       <activation>
         <activeByDefault>true</activeByDefault>
       </activation>
       <properties>
-        <project.main>com.acmutv.crimegraph.Interactions</project.main>
+        <project.main>com.acmutv.crimegraph.LocalAnalysis</project.main>
       </properties>
     </profile>
 
     <profile>
-      <id>crimegraphtsteps</id>
+      <!-- PROFILE: quasilocal -->
+      <id>quasi-local</id>
       <activation>
         <activeByDefault>false</activeByDefault>
       </activation>
       <properties>
-        <project.main>com.acmutv.crimegraph.InteractionsTsteps</project.main>
+        <project.main>com.acmutv.crimegraph.QuasiLocalAnalysis</project.main>
       </properties>
     </profile>
 

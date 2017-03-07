@@ -161,10 +161,11 @@ public class CliService {
   /**
    * Print the splash message to {@code stdout}.
    */
-  public static void printSplash() {
+  public static void printSplash(String subtitle) {
     System.out.println();
     System.out.println("#=========================================================================");
-    System.out.println("# CRIMEGRAPH                                                              ");
+    System.out.println("# CRIMEGRAPH");
+    System.out.format ("# %s", subtitle);
     System.out.println("#=========================================================================");
   }
 

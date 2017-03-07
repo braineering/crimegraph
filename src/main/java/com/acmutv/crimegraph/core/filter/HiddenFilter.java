@@ -24,29 +24,46 @@
   THE SOFTWARE.
  */
 
-package com.acmutv.crimegraph.core.operator;
+package com.acmutv.crimegraph.core.filter;
 
-import org.apache.flink.api.common.functions.FlatMapFunction;
-import org.apache.flink.api.java.tuple.Tuple2;
-import org.apache.flink.util.Collector;
+import com.acmutv.crimegraph.core.tuple.NodePairScore;
+import org.apache.flink.api.common.functions.FilterFunction;
 
 /**
- * This operator splits the incoming string into words.
+ * A threshold filter for hidden links.
  * @author Giacomo Marciani {@literal <gmarciani@acm.org>}
  * @author Michele Porretta {@literal <mporretta@acm.org>}
  * @since 1.0
  */
-public class LineSplitter implements FlatMapFunction<String, Tuple2<String,Integer>> {
+public class HiddenFilter implements FilterFunction<NodePairScore> {
 
-  @SuppressWarnings("unchecked")
+  /**
+   * The threshold for hidden links score.
+   */
+  private double threshold;
+
+  /**
+   * Creates a new threshold filter for hidden links score.
+   * @param threshold the score threshold.
+   */
+  public HiddenFilter(double threshold) {
+    this.threshold = threshold;
+  }
+
+  /**
+   * The filter function that evaluates the predicate.
+   * <p>
+   * <strong>IMPORTANT:</strong> The system assumes that the function does not
+   * modify the elements on which the predicate is applied. Violating this assumption
+   * can lead to incorrect results.
+   *
+   * @param value The value to be filtered.
+   * @return True for values that should be retained, false for values to be filtered out.
+   * @throws Exception This method may throw exceptions. Throwing an exception will cause the operation
+   *                   to fail and may trigger recovery.
+   */
   @Override
-  public void flatMap(String value, Collector<Tuple2<String,Integer>> out) {
-    String[] words = value.toLowerCase().split("\\W+");
-    for (String word : words) {
-      if (word.length() > 0) {
-        System.out.println(word);
-        out.collect(new Tuple2(word, 1));
-      }
-    }
+  public boolean filter(NodePairScore value) throws Exception {
+    return value.f2 >= this.threshold;
   }
 }

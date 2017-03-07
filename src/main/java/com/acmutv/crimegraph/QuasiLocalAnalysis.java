@@ -28,8 +28,12 @@ package com.acmutv.crimegraph;
 
 import com.acmutv.crimegraph.config.AppConfiguration;
 import com.acmutv.crimegraph.config.AppConfigurationService;
+import com.acmutv.crimegraph.core.filter.HiddenFilter;
+import com.acmutv.crimegraph.core.filter.PotentialFilter;
 import com.acmutv.crimegraph.core.keyer.NodePairScoreKeyer;
 import com.acmutv.crimegraph.core.operator.*;
+import com.acmutv.crimegraph.core.sink.HiddenSink;
+import com.acmutv.crimegraph.core.sink.PotentialSink;
 import com.acmutv.crimegraph.core.sink.ToStringSink;
 import com.acmutv.crimegraph.core.source.LinkSource;
 import com.acmutv.crimegraph.core.tuple.Link;
@@ -44,12 +48,8 @@ import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
-
 /**
- * The app word-point for {@code Interactions} application.
+ * The app word-point for {@code LocalAnalysis} application.
  * Before starting the application, it is necessary to open the socket, running
  * {@code $> ncat 127.0.0.1 9000 -l}
  * and start typing tuples.
@@ -59,9 +59,9 @@ import java.util.stream.Collectors;
  * @see AppConfigurationService
  * @see RuntimeManager
  */
-public class InteractionsTsteps {
+public class QuasiLocalAnalysis {
 
-  private static final Logger LOGGER = LoggerFactory.getLogger(InteractionsTsteps.class);
+  private static final String ANALYSIS = "Quasi-Local Analysis";
 
   /**
    * The app main method, executed when the program is launched.
@@ -69,7 +69,7 @@ public class InteractionsTsteps {
    */
   public static void main(String[] args) throws Exception {
 
-    CliService.printSplash();
+    CliService.printSplash(ANALYSIS);
 
     CliService.handleArguments(args);
 
@@ -77,32 +77,34 @@ public class InteractionsTsteps {
 
     final StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
 
-    // source
     DataStream<Link> links = env.addSource(new LinkSource(config.getDataset()));
 
-    // links upload to Neo4J
-    DataStream<NodePair> pairstoupdate =
-            links.flatMap(new LinkUpload(
-                     config.getNeo4jHostname(), config.getNeo4jUsername(), config.getNeo4jPassword()
-            )).shuffle();
+    DataStream<NodePair> updates = links.flatMap(
+        new LinkUpload(config.getNeo4jHostname(), config.getNeo4jUsername(), config.getNeo4jPassword()
+    )).shuffle();
 
-    // Score Calculator
-    DataStream<NodePairScore> pairsscore =
-            pairstoupdate.flatMap(new ScoreCalculatorTSteps(
-                    config.getNeo4jHostname(), config.getNeo4jUsername(), config.getNeo4jPassword(), distance
-            )).keyBy(new NodePairScoreKeyer());
+    DataStream<NodePairScore> scores = updates.flatMap(
+        new ScoreCalculatorTSteps(
+            config.getNeo4jHostname(), config.getNeo4jUsername(), config.getNeo4jPassword(),
+            config.getPotentialLocality()
+        )).keyBy(new NodePairScoreKeyer());
 
-    SplitStream<NodePairScore> split = pairsscore.split(new ScoreSplitter());
+    SplitStream<NodePairScore> split = scores.split(new ScoreSplitter());
 
-    DataStream<NodePairScore> hidden = split.select(ScoreType.HIDDEN.name());
-    DataStream<NodePairScore> potential = split.select(ScoreType.POTENTIAL.name());
-    
-    hidden.addSink(new ToStringSink<>("resources/hidden.out"));
-    potential.addSink(new ToStringSink<>("resources/potential.out"));
+    DataStream<NodePairScore> hiddenScores = split.select(ScoreType.HIDDEN.name());
 
+    DataStream<NodePairScore> potentialScores = split.select(ScoreType.POTENTIAL.name());
 
-    env.execute("Interactions to Neo4J");
+    hiddenScores.addSink(new HiddenSink(
+        config.getNeo4jHostname(), config.getNeo4jUsername(), config.getNeo4jPassword(),
+        config.getHiddenThreshold()
+    ));
+
+    potentialScores.addSink(new PotentialSink(
+        config.getNeo4jHostname(), config.getNeo4jUsername(), config.getNeo4jPassword(),
+        config.getPotentialThreshold()
+    ));
+
+    env.execute(ANALYSIS);
   }
-
-  private static Long distance = 3L;
 }

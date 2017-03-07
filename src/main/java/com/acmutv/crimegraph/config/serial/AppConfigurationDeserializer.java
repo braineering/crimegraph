@@ -99,7 +99,7 @@ public class AppConfigurationDeserializer extends StdDeserializer<AppConfigurati
     }
 
     if (node.hasNonNull("potential.locality")) {
-      final int potentialLocality = node.get("potential.locality").asInt();
+      final long potentialLocality = node.get("potential.locality").asLong();
       config.setPotentialLocality(potentialLocality);
     }
 
