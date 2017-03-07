@@ -26,6 +26,7 @@
 
 package com.acmutv.crimegraph.core.sink;
 
+import com.acmutv.crimegraph.core.db.DbConfiguration;
 import com.acmutv.crimegraph.core.db.Neo4JManager;
 import com.acmutv.crimegraph.core.tuple.Link;
 import com.acmutv.crimegraph.core.tuple.LinkType;
@@ -45,19 +46,9 @@ import org.neo4j.driver.v1.Session;
 public class HiddenSink extends RichSinkFunction<NodePairScore> {
 
   /**
-   * The hostname of the NEO4J instance.
+   * The Neo4J configuration.
    */
-  private String hostname;
-
-  /**
-   * The username of the NEO4J instance.
-   */
-  private String username;
-
-  /**
-   * The password of the NEO4J instance.
-   */
-  private String password;
+  private DbConfiguration dbconfig;
 
   /**
    * The hidden score threshold.
@@ -76,15 +67,11 @@ public class HiddenSink extends RichSinkFunction<NodePairScore> {
 
   /**
    * Constructs a new sink.
-   * @param hostname the hostname of the NEO4J instance.
-   * @param username the username of the NEO4J instance.
-   * @param password the password of the NEO4J instance.
+   * @param dbconfig the Neo4J configuration.
    * @param threshold the hidden score threshold.
    */
-  public HiddenSink(String hostname, String username, String password, double threshold) {
-    this.hostname = hostname;
-    this.username = username;
-    this.password = password;
+  public HiddenSink(DbConfiguration dbconfig, double threshold) {
+    this.dbconfig = dbconfig;
     this.threshold = threshold;
   }
 
@@ -100,7 +87,10 @@ public class HiddenSink extends RichSinkFunction<NodePairScore> {
 
   @Override
   public void open(Configuration parameters) throws Exception {
-    this.driver = Neo4JManager.open(this.hostname, this.username, this.password);
+    String hostname = this.dbconfig.getHostname();
+    String username = this.dbconfig.getUsername();
+    String password = this.dbconfig.getPassword();
+    this.driver = Neo4JManager.open(hostname, username, password);
     this.session = driver.session();
   }
 

@@ -35,19 +35,17 @@ import com.acmutv.crimegraph.core.keyer.NodePairScoreKeyer;
 import com.acmutv.crimegraph.core.operator.*;
 import com.acmutv.crimegraph.core.sink.HiddenSink;
 import com.acmutv.crimegraph.core.sink.PotentialSink;
+import com.acmutv.crimegraph.core.tuple.*;
+
+import com.acmutv.crimegraph.core.operator.LinkStore;
 import com.acmutv.crimegraph.core.sink.ToStringSink;
 import com.acmutv.crimegraph.core.source.LinkSource;
 import com.acmutv.crimegraph.core.tuple.Link;
-import com.acmutv.crimegraph.core.tuple.NodePair;
-import com.acmutv.crimegraph.core.tuple.NodePairScore;
-import com.acmutv.crimegraph.core.tuple.ScoreType;
 import com.acmutv.crimegraph.tool.runtime.RuntimeManager;
 import com.acmutv.crimegraph.ui.CliService;
 import org.apache.flink.streaming.api.datastream.DataStream;
 import org.apache.flink.streaming.api.datastream.SplitStream;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * The app word-point for {@code LocalAnalysis} application.
@@ -60,9 +58,9 @@ import org.slf4j.LoggerFactory;
  * @see AppConfigurationService
  * @see RuntimeManager
  */
-public class QuasiLocalAnalysis {
+public class LocalAnalysis {
 
-  private static final String ANALYSIS = "Quasi-Local Analysis";
+  private static final String ANALYSIS = "Local Analysis";
 
   /**
    * The app main method, executed when the program is launched.
@@ -86,14 +84,18 @@ public class QuasiLocalAnalysis {
 
     DataStream<NodePair> updates = links.flatMap(new LinkUpload(dbconf)).shuffle();
 
-    DataStream<NodePairScore> scores = updates.flatMap(new ScoreCalculatorTSteps(
-        dbconf, config.getPotentialLocality())).keyBy(new NodePairScoreKeyer());
+    DataStream<NodePairScore> scores = updates.flatMap(new ScoreCalculator(dbconf))
+        .keyBy(new NodePairScoreKeyer());
 
     SplitStream<NodePairScore> split = scores.split(new ScoreSplitter());
 
     DataStream<NodePairScore> hiddenScores = split.select(ScoreType.HIDDEN.name());
 
     DataStream<NodePairScore> potentialScores = split.select(ScoreType.POTENTIAL.name());
+
+    DataStream<NodePairScore> hidden = hiddenScores.filter(new HiddenFilter(config.getHiddenThreshold()));
+
+    DataStream<NodePairScore> potential = potentialScores.filter(new PotentialFilter(config.getPotentialThreshold()));
 
     hiddenScores.addSink(new HiddenSink(dbconf, config.getHiddenThreshold()));
 

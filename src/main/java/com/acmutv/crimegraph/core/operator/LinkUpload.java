@@ -26,6 +26,7 @@
 
 package com.acmutv.crimegraph.core.operator;
 
+import com.acmutv.crimegraph.core.db.DbConfiguration;
 import com.acmutv.crimegraph.core.db.Neo4JManager;
 import com.acmutv.crimegraph.core.tuple.Link;
 import com.acmutv.crimegraph.core.tuple.NodePair;
@@ -49,19 +50,9 @@ import java.util.Set;
 public class LinkUpload extends RichFlatMapFunction<Link, NodePair> {
 
   /**
-   * The hostname of the NEO4J instance.
+   * The Neo4J configuration.
    */
-  private String hostname;
-
-  /**
-   * The username of the NEO4J instance.
-   */
-  private String username;
-
-  /**
-   * The password of the NEO4J instance.
-   */
-  private String password;
+  private DbConfiguration dbconfig;
 
   /**
    * The NEO4J driver.
@@ -75,14 +66,10 @@ public class LinkUpload extends RichFlatMapFunction<Link, NodePair> {
 
   /**
    * Constructs for load edge to write {@link Link} on a NEO4J instance.
-   * @param hostname the hostname of the NEO4J instance.
-   * @param username the username of the NEO4J instance.
-   * @param password the password of the NEO4J instance.
+   * @param dbconfig the Neo4J configuration.
    */
-  public LinkUpload(String hostname, String username, String password) {
-    this.hostname = hostname;
-    this.username = username;
-    this.password = password;
+  public LinkUpload(DbConfiguration dbconfig) {
+    this.dbconfig = dbconfig;
   }
 
   @SuppressWarnings("unchecked")
@@ -135,7 +122,10 @@ public class LinkUpload extends RichFlatMapFunction<Link, NodePair> {
 
   @Override
   public void open(Configuration parameters) throws Exception {
-    this.driver = Neo4JManager.open(this.hostname, this.username, this.password);
+    String hostname = this.dbconfig.getHostname();
+    String username = this.dbconfig.getUsername();
+    String password = this.dbconfig.getPassword();
+    this.driver = Neo4JManager.open(hostname, username, password);
     this.session = driver.session();
   }
 

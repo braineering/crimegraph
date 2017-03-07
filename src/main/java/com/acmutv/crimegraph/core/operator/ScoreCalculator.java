@@ -26,6 +26,7 @@
 
 package com.acmutv.crimegraph.core.operator;
 
+import com.acmutv.crimegraph.core.db.DbConfiguration;
 import com.acmutv.crimegraph.core.db.Neo4JManager;
 import com.acmutv.crimegraph.core.tuple.NodePair;
 import com.acmutv.crimegraph.core.tuple.NodePairScore;
@@ -50,20 +51,10 @@ import java.util.Set;
  */
 public class ScoreCalculator extends RichFlatMapFunction<NodePair, NodePairScore> {
 
-    /**
-     * The hostname of the NEO4J instance.
-     */
-    private String hostname;
-
-    /**
-     * The username of the NEO4J instance.
-     */
-    private String username;
-
-    /**
-     * The password of the NEO4J instance.
-     */
-    private String password;
+  /**
+   * The Neo4J configuration.
+   */
+  private DbConfiguration dbconfig;
 
     /**
      * The NEO4J driver.
@@ -79,19 +70,18 @@ public class ScoreCalculator extends RichFlatMapFunction<NodePair, NodePairScore
      * Constructs a new PotentialScoreOperator to compute the score
      * for a node pair stored in NodePair.
      * This operator required access to the NEO4J instance.
-     * @param hostname the hostname of the NEO4J instance.
-     * @param username the username of the NEO4J instance.
-     * @param password the password of the NEO4J instance.
+     * @param dbconfig the Neo4J configuration.
      */
-    public ScoreCalculator(String hostname, String username, String password) {
-      this.hostname = hostname;
-      this.username = username;
-      this.password = password;
+    public ScoreCalculator(DbConfiguration dbconfig) {
+      this.dbconfig = dbconfig;
     }
 
     @Override
     public void open(Configuration parameters) throws Exception {
-      this.driver = Neo4JManager.open(this.hostname, this.username, this.password);
+      String hostname = this.dbconfig.getHostname();
+      String username = this.dbconfig.getUsername();
+      String password = this.dbconfig.getPassword();
+      this.driver = Neo4JManager.open(hostname, username, password);
       this.session = driver.session();
     }
 
