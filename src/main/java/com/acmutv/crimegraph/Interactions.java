@@ -28,17 +28,14 @@ package com.acmutv.crimegraph;
 
 import com.acmutv.crimegraph.config.AppConfiguration;
 import com.acmutv.crimegraph.config.AppConfigurationService;
-import com.acmutv.crimegraph.core.db.Neo4JManager;
 import com.acmutv.crimegraph.core.operator.LinkStore;
 import com.acmutv.crimegraph.core.sink.ToStringSink;
 import com.acmutv.crimegraph.core.source.LinkSource;
 import com.acmutv.crimegraph.core.tuple.Link;
 import com.acmutv.crimegraph.tool.runtime.RuntimeManager;
-import com.acmutv.crimegraph.tool.runtime.DbRelease;
 import com.acmutv.crimegraph.ui.CliService;
 import org.apache.flink.streaming.api.datastream.DataStream;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
-import org.neo4j.driver.v1.Driver;
 
 /**
  * The app word-point for {@code Interactions} application.

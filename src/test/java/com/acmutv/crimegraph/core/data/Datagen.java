@@ -35,7 +35,6 @@ import java.io.BufferedWriter;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.*;
-import java.nio.file.attribute.PosixFilePermissions;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -54,17 +53,11 @@ public class Datagen {
    */
   @Test
   public void simple() throws Exception {
-    Path path = FileSystems.getDefault().getPath("data/resources/crimegraph.data");
+    Path path = FileSystems.getDefault().getPath("data/crimegraph.data");
 
     if (!Files.isDirectory(path.getParent())) {
       Files.createDirectories(path.getParent());
     }
-
-    String flinkHome = System.getenv("FLINK_HOME");
-
-    System.out.println(flinkHome);
-
-    LOGGER.info(flinkHome);
 
     List<Link> data = new ArrayList<>();
     data.add(new Link(1,2,10.0));
@@ -76,6 +69,21 @@ public class Datagen {
     data.add(new Link(6,7,10.0));
 
     writeDataset(path, data);
+
+    /*
+
+    String flinkHome = System.getenv("FLINK_HOME");
+
+    if (flinkHome != null) {
+      path = FileSystems.getDefault().getPath(flinkHome + "/resources/crimegraph/crimegraph.data");
+      System.out.println(path);
+      System.out.println(path.getParent());
+      if (!Files.isDirectory(path.getParent())) {
+        Files.createDirectories(path.getParent());
+      }
+      Files.copy(path, path);
+    }
+    */
   }
 
   /**
