@@ -1,0 +1,9 @@
+---
+- name: test echo
+  shell: echo Hello world "{{ test_var }}"
+  changed_when: false
+  register: testecho
+
+- name: test echo output
+  debug: msg={{ testecho.stdout }}
+  notify: test handler
