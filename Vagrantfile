@@ -2,7 +2,7 @@ Vagrant.require_version ">= 1.9.1"
 
 Vagrant.configure("2") do |config|
 
-  config.vm.define "dropletCrimegraph" do |config|
+  config.vm.define "crimegraph" do |config|
     config.vm.provider :digital_ocean do |provider, override|
       override.ssh.private_key_path = "~/.ssh/gmarciani@crimegraph.digitalocean.com"
       override.vm.box = "digital_ocean"
