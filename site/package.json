@@ -1,29 +1,46 @@
 {
-  "name": "creative",
-  "title": "Creative",
-  "version": "3.3.7+1",
-  "homepage": "http://startbootstrap.com/template-overviews/creative",
-  "author": "Start Bootstrap",
-  "license": {
-    "type": "MIT",
-    "url": "https://github.com/BlackrockDigital/startbootstrap/blob/gh-pages/LICENSE"
+  "name": "crimegraphcontroller",
+  "version": "1.0.0",
+  "description": "A controller for Crimegraph",
+  "keywords": [
+    "computer science, social network analysis, criminal network, algorithms"
+  ],
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "devDependencies": {
-    "bootstrap": "^3.3.7",
-    "browser-sync": "^2.13.0",
-    "font-awesome": "^4.6.3",
-    "gulp": "^3.9.1",
-    "gulp-clean-css": "^2.0.10",
-    "gulp-header": "^1.8.7",
-    "gulp-less": "^3.1.0",
-    "gulp-rename": "^1.2.2",
-    "gulp-uglify": "^1.5.4",
-    "jquery": "^1.11.3",
-    "magnific-popup": "^1.1.0",
-    "scrollreveal": "^3.1.4"
+  "repository": "gitlab:braineering/crimegraph",
+  "bugs": {
+    "url": "https://gitlab.com/braineering/crimegraph/issues",
+    "email": "mporretta@acm.org"
   },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/BlackrockDigital/startbootstrap-creative.git"
-  }
+  "contributors": [
+    {
+      "name": "Giacomo Marciani",
+      "email": "gmarciani@acm.org",
+      "url": "http://gmarciani.com/"
+    },
+    {
+      "name": "Michele Porretta",
+      "email": "mporretta@acm.org",
+      "url": "http://micheleporretta.com/"
+    }
+  ],
+  "license": "MIT",
+  "dependencies": {
+    "body-parser": "^1.16.0",
+    "express": "^4.14.0",
+    "fs": "0.0.1-security",
+    "fs-extra": "^2.0.0",
+    "jsonfile": "^2.4.0",
+    "winston": "^2.3.1",
+    "yargs": "^6.6.0",
+    "neo4j":"^1.0.0",
+    "child_process":"^1.0.2",
+    "util":"^0.10.3",
+    "opn":"^4.0.2",
+    "neo4j-driver":"^1.0.0"
+  },
+  "private": true
 }
