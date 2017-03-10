@@ -4,7 +4,7 @@ Vagrant.configure("2") do |config|
 
   config.vm.define "crimegraph" do |config|
     config.vm.provider :digital_ocean do |provider, override|
-      override.ssh.private_key_path = "~/.ssh/gmarciani@crimegraph.digitalocean.com"
+      override.ssh.private_key_path = "~/.ssh/crimegraph.digitalocean.com"
       override.vm.box = "digital_ocean"
       override.vm.box_url = "https://github.com/devops-group-io/vagrant-digitalocean/raw/master/box/digital_ocean.box"
       provider.token = "d9367e99a669643ad233106acdcceb38d6046844f2e4bceeb14063a3812bd587"
@@ -32,8 +32,14 @@ Vagrant.configure("2") do |config|
     type: "rsync",
     create: true
 
+  config.vm.synced_folder "site/", "/vagrant/site",
+    id: "target",
+    disabled: false,
+    type: "rsync",
+    create: true
+
   config.vm.provision "ansible" do |ansible|
-    ansible.playbook = "vagrant/playbook.yml"
+    ansible.playbook = "ansible/playbook.yml"
   end
 
 end

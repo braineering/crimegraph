@@ -1,0 +1,26 @@
+---
+# file: nginx/tasks/main.yml
+- name: install nginx
+  apt:
+    name: nginx
+    state: latest
+
+- name: configure nginx default
+  template:
+    src: default.conf
+    dest: /etc/nginx/sites-available/default
+
+- name: configure nginx app
+  template:
+    src: app.conf
+    dest: /etc/nginx/sites-available/app
+
+- name: enabling nginx configurations
+  file:
+    src: "/etc/nginx/sites-available/{{ item }}"
+    dest: "/etc/nginx/sites-enabled/{{ item }}"
+    state: link
+  with_items:
+    - "default"
+    - "app"
+  notify: restart nginx

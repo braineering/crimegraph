@@ -1,0 +1,4 @@
+---
+# file: app/tasks/main.yml
+- name: start Node.js app
+  shell: node "{{ app_main }}" --port "{{ app_port }}" --flink_port "{{ flink_port }}" --neo4j_port "{{ neo4j_http_port }}" 

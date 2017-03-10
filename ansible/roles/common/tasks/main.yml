@@ -1,0 +1,23 @@
+---
+# file: common/tasks/main.yml
+- name: configure hosts
+  template:
+    src: hosts.txt
+    dest: /etc/hosts
+
+- name: system update cache
+  apt:
+    update_cache: yes
+    upgrade: dist
+
+- name: system upgrade packages
+  apt:
+    upgrade: full
+
+- name: install required packages
+  apt:
+    name: "{{ item }}"
+    state: latest
+  with-items:
+    - build-essentials
+    - htop

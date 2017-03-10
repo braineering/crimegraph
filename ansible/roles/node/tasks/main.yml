@@ -1,0 +1,17 @@
+---
+# file: node/tasks/main.yml
+- name: ensure the system can use the HTTPS transport for APT
+  stat:
+    path: /usr/lib/apt/methods/https
+  register: apt_https_transport
+
+- name: install HTTPS transport for APT
+  apt:
+    pkg: apt-transport-https
+    state: installed
+  when: not apt_https_transport.stat.exists
+
+- name: install Node.js
+  apt:
+    name: nodejs
+    state: latest

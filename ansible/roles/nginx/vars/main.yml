@@ -1,0 +1,5 @@
+---
+# file: nginx/vars/main.yml
+
+# Default
+nginx_default_root: /vagrant/site

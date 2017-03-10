@@ -1,0 +1,12 @@
+---
+- name: Install Crimegraph
+  hosts: all
+  remote_user: root
+  roles:
+    - common
+    - nginx
+    - java
+    - node
+    - flink
+    - neo4j
+    - app

@@ -1,0 +1,38 @@
+---
+# file: java/tasks/main.yml
+- name: download Java
+  get_url:
+    url: "{{ java_download }}"
+    headers: 'Cookie:oraclelicense=accept-securebackup-cookie'
+    dest: "{{ java_archive_path }}"
+
+- name: unarchive Java
+  unarchive:
+    src: "{{ java_archive_path }}"
+    dest: "{{ java_home | dirname }}"
+    remote_src: True
+    mode: u+rwx
+
+- name: remove archive Java
+  file:
+    path: "{{ java_archive_path }}"
+    state: absent
+
+- name: update alternatives Java
+  alternatives:
+    name: "{{ item }}"
+    path: "{{ java_home }}/bin/{{ item }}"
+    priority: 100
+  with_items:
+    - java
+    - javac
+    - javaws
+
+- name: configure envars Java
+  lineinfile:
+    path: /etc/profile.d/crimegraph-env.sh
+    regexp: "^JAVA_HOME="
+    line: "JAVA_HOME={{ java_home }}"
+    state: present
+    insertbefore: BOF
+    create: yes

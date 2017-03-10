@@ -1,0 +1,51 @@
+---
+# file: neo4j/tasks/main.yml
+- name: download Neo4J
+  get_url:
+    url: "{{ neo4j_download }}"
+    dest: "{{ neo4j_archive_path }}"
+
+- name: unarchive Neo4J
+  unarchive:
+    src: "{{ neo4j_archive_path }}"
+    dest: "{{ neo4j_home | dirname }}"
+    remote_src: True
+    mode: 755
+
+- name: remove archive Neo4J
+  file:
+    path: "{{ neo4j_archive_path }}"
+    state: absent
+
+- name: configure envars Neo4J
+  lineinfile:
+    path: /etc/profile.d/crimegraph-env.sh
+    regexp: "^NEO4J_HOME="
+    line: "NEO4J_HOME={{ neo4j_home }}"
+    state: present
+    insertbefore: BOF
+    create: yes
+
+- name: configure Neo4J (main)
+  template:
+    src: neo4j.conf
+    dest: "{{ neo4j_home }}/conf/neo4j.conf"
+
+- name: configure Neo4J (authentication)
+  shell: "{{ neo4j_home }}"/bin/neo4j-admin set-initial-password {{ neo4j_password }}
+
+- name: create service Neo4J
+  template:
+    src: neo4j-service.sh
+    dest: /etc/init.d/neo4j.sh
+    mode: 755
+
+- name: enable service Neo4J
+  service:
+    name: neo4j
+    enabled: yes
+
+- name: start service Neo4J
+  service:
+    name: neo4j
+    state: started

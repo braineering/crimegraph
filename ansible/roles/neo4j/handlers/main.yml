@@ -1,0 +1,7 @@
+---
+# file: neo4j/handlers/main.yml
+- name: restart Neo4J
+  service:
+    name: neo4j
+    state: restarted
+    enabled: yes

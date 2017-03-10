@@ -1,0 +1,7 @@
+---
+# file: flink/vars/mail.yml
+flink_download: http://apache.panu.it/flink/flink-1.2.0/flink-1.2.0-bin-hadoop2-scala_2.11.tgz
+flink_archive_path: /tmp/flink-1.2.0-bin-hadoop2-scala_2.11.tgz
+flink_home: /opt/flink
+flink_hostname: localhost
+flink_port: 8081

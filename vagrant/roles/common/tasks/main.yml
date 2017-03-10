@@ -1,3 +1,0 @@
----
-- name: configure environment variables
-  template: src=environment.sh dest=/etc/profile.d/crimegraph-env.sh

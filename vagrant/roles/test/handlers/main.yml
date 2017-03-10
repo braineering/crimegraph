@@ -1,3 +1,0 @@
----
-- name: test handler
-  debug: msg="This is a debug message from [test handler]"

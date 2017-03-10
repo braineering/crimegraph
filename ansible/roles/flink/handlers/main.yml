@@ -1,0 +1,7 @@
+---
+# file: flink/handlers/main.yml
+- name: restart Flink
+  service:
+    name: flink
+    state: restarted
+    enabled: yes

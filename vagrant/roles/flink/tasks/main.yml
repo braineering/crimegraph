@@ -1,8 +1,0 @@
----
-- name: Copy Flink configuration
-  template: src=flink-conf.yaml dest=/etc/flink/conf/flink-conf.yaml
-  template: src=log4j.properties dest=/etc/flink/conf/log4j.properties
-  template: src=log4j-cli.properties dest=/etc/flink/conf/log4j-cli.properties
-  template: src=masters.txt dest=/etc/flink/conf/masters
-  template: src=slaves.txt dest=/etc/flink/conf/slaves
-  notify: restart flink

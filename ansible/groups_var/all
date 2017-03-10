@@ -1,0 +1,10 @@
+---
+# Node
+app_server_name: localhost
+app_port: 3000
+
+# Flink
+flink_port: 8081
+
+# Neo4j
+neo4j_http_port: 7474
