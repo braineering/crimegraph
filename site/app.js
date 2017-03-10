@@ -3,11 +3,11 @@
 ******************************************************************************/
 var express    = require('express');
 var argv       = require('yargs').argv;
+var path       = require('path');
+var winston    = require('winston');
 var bodyParser = require('body-parser');
 var fs         = require('fs-extra');
 var jsonFile   = require('jsonfile');
-var path       = require('path');
-var winston    = require('winston');
 var neo4j      = require('neo4j-driver').v1;
 var exec       = require('child_process').exec;
 var opn        = require('opn');
@@ -27,8 +27,11 @@ app.use(bodyParser.json());
 ******************************************************************************/
 
 const port = argv.port || 3000;
-
-winston.level = (argv.verbose) ? 'verbose' : 'info';
+const flinkPort = argv.flink_port || 8081;
+const neo4jPort = argv.neo4j_port || 7474;
+const neo4jBoltPort = argv.neo4jbolt_port || 7687;
+const neo4jUser = argv.neo4j_user || "neo4j";
+const neo4jPass = argv.neo4j_pass || "password";
 
 /******************************************************************************
 * HANDLERS
@@ -38,11 +41,11 @@ function fnCrimegraphPage(req, res) {
 }
 
 function fnFlinkDashboard(req,res) {
-  res.redirect('http://localhost:8081');
+  res.redirect('http://localhost:'+ flinkPort);
 }
 
 function fnNeo4JDashboard(req,res) {
-  res.redirect('http://localhost:7474');
+  res.redirect('http://localhost:'+ neo4jPort);
 }
 
 function fnStart(req, res) {
@@ -76,11 +79,11 @@ function fnStart(req, res) {
   restart.on('close',function(){
     console.log('command executed');
     // open flink and neo4j dashboards
-    opn("http://localhost:8081", "_blank");
-    opn("http://localhost:7474", "_blank");
+    opn("http://localhost:"+flinkPort, "_blank");
+    opn("http://localhost:"+neo4jPort, "_blank");
   });
 
-  var driver = neo4j.driver("bolt://localhost:7687", neo4j.auth.basic("neo4j", "password"));
+  var driver = neo4j.driver("bolt://localhost:"+neo4jBoltPort, neo4j.auth.basic(neo4jUser, neo4jPass));
 
   // emptying neo4j
   var session = driver.session();
