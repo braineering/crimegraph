@@ -1,4 +1,17 @@
 ---
 # file: app/tasks/main.yml
-- name: start Node.js app
-  shell: node "{{ app_main }}" --port "{{ app_port }}" --flink_port "{{ flink_port }}" --neo4j_port "{{ neo4j_http_port }}" 
+- name: create service Crimegraph
+  template:
+    src: crimegraph.service
+    dest: /etc/systemd/system/crimegraph.service
+    mode: 644
+
+- name: enable service Crimegraph
+  service:
+    name: crimegraph.service
+    enabled: yes
+
+- name: start service Crimegraph
+  service:
+    name: crimegraph.service
+    state: started

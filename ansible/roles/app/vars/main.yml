@@ -2,3 +2,6 @@
 # file: app/vars/main.yml
 app_main: /vagrant/site/app.js
 app_port: 3333
+
+flink_port: 8081
+neo4j_http_port: 7474

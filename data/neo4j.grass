@@ -25,34 +25,6 @@ node.Person {
   diameter: 50px;
 }
 
-node.Movie {
-  color: #6DCE9E;
-  border-color: #60B58B;
-  text-color-internal: #FFFFFF;
-  caption: '{title}';
-}
-
-node.Database {
-  color: #FF756E;
-  border-color: #E06760;
-  text-color-internal: #FFFFFF;
-  caption: '{name}';
-}
-
-node.Node {
-  color: #68BDF6;
-  border-color: #5CA8DB;
-  text-color-internal: #FFFFFF;
-  caption: '<id>';
-}
-
-node.User {
-  color: #DE9BF9;
-  border-color: #BF85D6;
-  text-color-internal: #FFFFFF;
-  caption: '{name}';
-}
-
 relationship.REAL {
   color: #A5ABB6;
   border-color: #9AA1AC;

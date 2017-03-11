@@ -37,24 +37,24 @@ jobmanager.rpc.address: localhost
 jobmanager.rpc.port: 6123
 
 
-# The heap size for the JobManager JVM
+# The heap size for the JobManager JVM (default si 256)
 
-jobmanager.heap.mb: 256
-
-
-# The heap size for the TaskManager JVM
-
-taskmanager.heap.mb: 512
+jobmanager.heap.mb: {{ flink_jobmanager_heap_mb }}
 
 
-# The number of task slots that each TaskManager offers. Each slot runs one parallel pipeline.
+# The heap size for the TaskManager JVM (default is 512)
 
-taskmanager.numberOfTaskSlots: 2
+taskmanager.heap.mb: {{ flink_taskmanager_heap_mb }}
+
+
+# The number of task slots that each TaskManager offers. Each slot runs one parallel pipeline. (default si 2)
+
+taskmanager.numberOfTaskSlots: {{ flink_taskmanager_slots }}
 
 # Specify whether TaskManager memory should be allocated when starting up (true) or when
 # memory is required in the memory manager (false)
 
-taskmanager.memory.preallocate: false
+taskmanager.memory.preallocate: {{ flink_taskmanager_memory_preallocate }}
 
 # The parallelism used for programs that did not specify and other parallelism.
 
@@ -72,7 +72,7 @@ parallelism.default: 1
 # The port under which the web-based runtime monitor listens.
 # A value of -1 deactivates the web server.
 
-jobmanager.web.port: 8081
+jobmanager.web.port: {{ flink_port }}
 
 # Flag to specify whether job submission is enabled from the web-based
 # runtime monitor. Uncomment to disable.

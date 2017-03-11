@@ -1,7 +1,6 @@
 ---
 # file: flink/handlers/main.yml
 - name: restart Flink
-  service:
-    name: flink
+  systemd:
+    name: flink.service
     state: restarted
-    enabled: yes

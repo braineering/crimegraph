@@ -10,7 +10,7 @@ Vagrant.configure("2") do |config|
       provider.token = "d9367e99a669643ad233106acdcceb38d6046844f2e4bceeb14063a3812bd587"
       provider.image = "debian-8-x64"
       provider.region = "ams2"
-      provider.size = "512mb"
+      provider.size = "8gb"
     end
   end
 

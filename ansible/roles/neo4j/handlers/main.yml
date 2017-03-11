@@ -1,7 +1,6 @@
 ---
 # file: neo4j/handlers/main.yml
 - name: restart Neo4J
-  service:
-    name: neo4j
+  systemd:
+    name: neo4j.service
     state: restarted
-    enabled: yes

@@ -1,6 +1,4 @@
----
 # Node
-app_server_name: localhost
 app_port: 3000
 
 # Flink

@@ -3,8 +3,12 @@
   "version": "1.0.0",
   "description": "The crimegraph project website.",
   "keywords": [
-    "computer science", "social network analysis", "criminal networks",
-    "distributed systems", "distributed algorithms", "data stream processing"
+    "computer science",
+    "social network analysis",
+    "criminal networks",
+    "distributed systems",
+    "distributed algorithms",
+    "data stream processing"
   ],
   "main": "app.js",
   "scripts": {
@@ -31,6 +35,7 @@
   "license": "MIT",
   "dependencies": {
     "body-parser": "^1.16.0",
+    "browser-storage": "0.0.2",
     "express": "^4.14.0",
     "fs": "0.0.1-security",
     "fs-extra": "^2.0.0",

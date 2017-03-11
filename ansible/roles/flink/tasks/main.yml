@@ -1,53 +1,87 @@
 ---
 # file: flink/tasks/main.yml
+- name: check Flink (binary)
+  stat:
+    path: "{{ flink_home }}/bin/flink"
+  register: flinkBin
+
 - name: download Flink
   get_url:
     url: "{{ flink_download }}"
     dest: "{{ flink_archive_path }}"
+  when: not flinkBin.stat.exists
+
+- name: check Flink (archive)
+  stat:
+    path: "{{ flink_archive_path }}"
+  register: flinkArchive
 
 - name: unarchive Flink
   unarchive:
     src: "{{ flink_archive_path }}"
     dest: "{{ flink_home | dirname }}"
     remote_src: True
-    mode: u+rwx
+    mode: 755
+  when: flinkArchive.stat.exists
 
 - name: remove archive Flink
   file:
     path: "{{ flink_archive_path }}"
     state: absent
 
+- name: configure permissions for Flink
+  file:
+    path: "{{ flink_home }}/bin/{{ item }}"
+    mode: 755
+  with_items:
+    - flink
+    - start-local.sh
+    - stop-local.sh
+
 - name: update alternatives Flink
   alternatives:
     name: "{{ item }}"
     path: "{{ flink_home }}/bin/{{ item }}"
+    link: "/usr/bin/{{ item }}"
     priority: 100
   with_items:
     - flink
 
 - name: configure envars Flink
   lineinfile:
-    path: /etc/profile.d/crimegraph-env.sh
+    name: /etc/profile.d/crimegraph-env.sh
     regexp: "^FLINK_HOME="
     line: "FLINK_HOME={{ flink_home }}"
     state: present
     insertbefore: BOF
     create: yes
 
-- name: create service Flink
-  template:
-    src: flink-service.sh
-    dest: /etc/init.d/flink.sh
+- name: create directory for manager Flink
+  file:
+    path: "{{ flink_manager_path | dirname }}"
+    state: directory
     mode: 755
 
+- name: create manager Flink
+  template:
+    src: flink-manager.sh
+    dest: "{{ flink_manager_path }}"
+    mode: 755
+
+- name: create service Flink
+  template:
+    src: flink.service
+    dest: /etc/systemd/system/flink.service
+    mode: 644
+
 - name: enable service Flink
-  service:
-    name: flink
+  systemd:
+    name: flink.service
     enabled: yes
 
 - name: start service Flink
-  service:
-    name: flink
+  systemd:
+    name: flink.service
     state: started
 
 - block:
@@ -77,7 +111,6 @@
       dest: "{{ flink_home }}/conf/slaves"
 
   - name: restart Flink
-    service:
-      name: flink
+    systemd:
+      name: flink.service
       state: restarted
-      enabled: yes

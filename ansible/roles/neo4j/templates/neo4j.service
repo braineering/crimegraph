@@ -1,0 +1,15 @@
+[Unit]
+Description=Neo4J service
+After=network.target
+
+[Service]
+Type=forking
+ExecStart={{ neo4j_manager_path }} start
+ExecStop={{ neo4j_manager_path }} stop
+Restart=always
+StandardOutput=syslog
+StandardError=syslog
+SyslogIdentifier=flink
+
+[Install]
+WantedBy=multi-user.target
