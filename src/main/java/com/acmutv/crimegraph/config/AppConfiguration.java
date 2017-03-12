@@ -73,12 +73,12 @@ public class AppConfiguration {
   /**
    * Default value for property {@code potentialLocality}.
    */
-  public static final long POTENTIAL_LOCALITY = 1;
+  public static final long POTENTIAL_LOCALITY = 2;
 
   /**
    * Default value for property {@code potentialWeight}.
    */
-  public static final List<Double> POTENTIAL_WEIGHT = new ArrayList<>();
+  public static final List<Double> POTENTIAL_WEIGHT = new ArrayList<Double>(){{add(1.0);add(0.0);}};
 
   /**
    * Default value for property {@code potentialThreshold}.

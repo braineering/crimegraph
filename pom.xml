@@ -318,6 +318,17 @@
       </properties>
     </profile>
 
+    <profile>
+      <!-- PROFILE: quasilocal -->
+      <id>quasi-local-weighted</id>
+      <activation>
+        <activeByDefault>false</activeByDefault>
+      </activation>
+      <properties>
+        <project.main>com.acmutv.crimegraph.QuasiLocalAnalysisWithWeights</project.main>
+      </properties>
+    </profile>
+
       <!-- PROFILE: skip-tests -->
       <profile>
         <id>skip-tests</id>

@@ -17,8 +17,8 @@ output: "resources/crimegraph/out/crimegraph.out"
 #===============================================================================
 # POTENTIAL LINKS
 #===============================================================================
-potential.locality: 1
-potential.weight: []
+potential.locality: 2
+potential.weight: [1.0,0.0]
 potential.threshold: 0.5
 
 #===============================================================================
