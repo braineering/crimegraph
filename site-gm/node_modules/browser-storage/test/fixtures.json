@@ -1,0 +1,19 @@
+[
+  {
+    "key": "aStringKey",
+    "value": "bar",
+    "expected": "bar"
+  },
+  {
+    "key": "aNumberKey",
+    "value": 1,
+    "expected": "1"
+  },
+  {
+    "key": "aObjectKey",
+    "value": {
+      "inner": 1
+    },
+    "expected": "[object Object]"
+  }
+]
