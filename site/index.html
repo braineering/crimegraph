@@ -80,7 +80,7 @@
                     <h2 class="section-heading">What is it?</h2>
                     <hr class="light">
                     <p class="text-faded">Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim. Donec pede justo, fringilla vel, aliquet nec, vulputate eget, arcu. In enim justo, rhoncus ut, imperdiet a, venenatis vitae, justo. Nullam dictum felis eu pede mollis pretium. Integer tincidunt.</p>
-                    <a href="#services" class="page-scroll btn btn-default btn-xl sr-button">Get Started!</a>
+                    <a href="#metrics" class="page-scroll btn btn-default btn-xl sr-button">Get Started!</a>
                 </div>
             </div>
         </div>
@@ -90,34 +90,35 @@
         <div class="container-fluid">
             <div class="row no-gutter popup-gallery">
                 <div class="col-lg-6 col-sm-6">
-                    <a href="graphics/img/portfolio/fullsize/1.jpg" class="portfolio-box">
+                    <!--<a href="graphics/img/portfolio/fullsize/1.jpg" class="portfolio-box">-->
+                    <div class="portfolio-box">
                         <img src="graphics/img/portfolio/thumbnails/1.jpg" class="img-responsive" alt="">
                         <div class="portfolio-box-caption">
                             <div class="portfolio-box-caption-content">
                                 <div class="project-category text-faded">
-                                    Category
+                                    Description
                                 </div>
                                 <div class="project-name">
-                                    Project Name
+                                    Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim. Donec pede justo, fringilla vel, aliquet nec, vulputate eget, arcu. In enim justo, rhoncus ut, imperdiet a, venenatis vitae, justo. Nullam dictum felis eu pede mollis pretium. Integer tincidunt.
                                 </div>
                             </div>
                         </div>
-                    </a>
+                    </div>
                 </div>
                 <div class="col-lg-6 col-sm-6">
-                    <a href="graphics/img/portfolio/fullsize/2.jpg" class="portfolio-box">
+                    <div class="portfolio-box">
                         <img src="graphics/img/portfolio/thumbnails/2.jpg" class="img-responsive" alt="">
                         <div class="portfolio-box-caption">
                             <div class="portfolio-box-caption-content">
                                 <div class="project-category text-faded">
-                                    Category
+                                    Description
                                 </div>
                                 <div class="project-name">
-                                    Project Name
+                                    Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim. Donec pede justo, fringilla vel, aliquet nec, vulputate eget, arcu. In enim justo, rhoncus ut, imperdiet a, venenatis vitae, justo. Nullam dictum felis eu pede mollis pretium. Integer tincidunt.
                                 </div>
                             </div>
                         </div>
-                    </a>
+                    </div>
                 </div>
             </div>
         </div>
@@ -181,6 +182,15 @@
                 <div class="col-lg-3 col-md-6 text-center">
                     <br>
                     <br>
+                    <h3>Select hidden metric:</h3>
+                    <br>
+                    <select class="combobox" id="hidden_combobox" onchange="changeFunction('hidden_combobox');">
+                      <option value="Local">Local</option>
+                    </select>
+                </div>
+                <div class="col-lg-3 col-md-6 text-center">
+                    <br>
+                    <br>
                     <h3>Select potential metric:</h3>
                     <br>
                     <select class="combobox" id="potential_combobox" onchange="changeFunction('potential_combobox');">
@@ -199,16 +209,6 @@
                         <h6>Weights</h6>
                         <input type="textbox" id="weightedsteps" placeholder="0.6;0.4">
                     </div>
-                </div>
-                <div class="col-lg-3 col-md-6 text-center">
-                    <br>
-                    <br>
-                    <h3>Select hidden metric:</h3>
-                    <br>
-                    <select class="combobox" id="hidden_combobox" onchange="changeFunction('hidden_combobox');">
-                      <option value="Local">Local</option>
-                      <option value="QuasiLocal">Quasi Local</option>
-                    </select>
                 </div>
                 <div class="col-lg-3 col-md-6 text-center">
                     <br>

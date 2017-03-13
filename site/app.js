@@ -55,7 +55,7 @@ function fnStart(req, res) {
 
   var dataset = COMMAND.dataset;     // type: S, M, L
   var potential = COMMAND.potential; // type: Local, QuasiLocal, WeightedQuasiLocal
-  var hidden = COMMAND.hidden; // type: Local, QuasiLocal
+  var hidden = COMMAND.hidden; // type: Local
   var steps = 1;
   var weights = new Array();
 
