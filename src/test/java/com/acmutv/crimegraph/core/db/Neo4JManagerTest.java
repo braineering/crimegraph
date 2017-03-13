@@ -30,10 +30,7 @@ import com.acmutv.crimegraph.core.tuple.Link;
 import com.acmutv.crimegraph.core.tuple.LinkType;
 import org.apache.flink.api.java.tuple.Tuple2;
 import org.apache.flink.api.java.tuple.Tuple3;
-import org.junit.AfterClass;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.*;
 import org.neo4j.driver.v1.*;
 
 import java.io.IOException;
@@ -75,12 +72,26 @@ public class Neo4JManagerTest {
 
   @BeforeClass
   public static void init() {
-    DRIVER = GraphDatabase.driver(HOSTNAME, AuthTokens.basic(USERNAME, PASSWORD), CONFIG);
+    boolean neo4jActive = true;
+    Session testSession = null;
+    try {
+      DRIVER = GraphDatabase.driver(HOSTNAME, AuthTokens.basic(USERNAME, PASSWORD), CONFIG);
+      testSession = DRIVER.session();
+    } catch (Exception exc) {
+      neo4jActive = false;
+    } finally {
+      if (testSession != null) {
+        testSession.close();
+      }
+    }
+    Assume.assumeTrue(neo4jActive);
   }
 
   @AfterClass
   public static void deinit() {
-    DRIVER.close();
+    if (DRIVER != null) {
+      DRIVER.close();
+    }
   }
 
   /**
