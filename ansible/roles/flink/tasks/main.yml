@@ -74,15 +74,11 @@
     dest: /etc/systemd/system/flink.service
     mode: 644
 
-- name: enable service Flink
-  systemd:
-    name: flink.service
-    enabled: yes
-
 - name: start service Flink
   systemd:
     name: flink.service
     state: started
+    enabled: yes
 
 - block:
   - name: configure Flink (main)

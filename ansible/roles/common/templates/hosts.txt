@@ -1,8 +1,6 @@
 # Default hostnames
 127.0.0.1 localhost
-
 127.0.1.1 debian.debian debian
-127.0.0.1 crimegraph.localhost
 
 # The following lines are desirable for IPv6 capable hosts
 ::1     localhost ip6-localhost ip6-loopback

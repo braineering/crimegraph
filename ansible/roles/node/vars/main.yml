@@ -1,2 +1,5 @@
 ---
-# file: node/vars/main.yml
+# file: nodejs/vars/mail.yml
+node_download: https://nodejs.org/dist/v6.10.0/node-v6.10.0-linux-x64.tar.xz
+node_archive_path: /tmp/node-v6.10.0-linux-x64.tar.xz
+node_home: /opt/node-v6.10.0-linux-x64

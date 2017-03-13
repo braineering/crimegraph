@@ -5,5 +5,5 @@
 nginx_default_root: /vagrant/site
 
 # App
-app_server_name: localhost
-app_port: 3000
+app_server_name: crimegraph.braineering.it
+app_port: 3333

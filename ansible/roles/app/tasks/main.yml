@@ -6,12 +6,8 @@
     dest: /etc/systemd/system/crimegraph.service
     mode: 644
 
-- name: enable service Crimegraph
-  service:
-    name: crimegraph.service
-    enabled: yes
-
 - name: start service Crimegraph
-  service:
+  systemd:
     name: crimegraph.service
     state: started
+    enabled: yes

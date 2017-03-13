@@ -5,8 +5,6 @@ var express    = require('express');
 var argv       = require('yargs').argv;
 var path       = require('path');
 var winston    = require('winston');
-//var ls         = require('browser-ls');
-//var LStorage   = require('node-localstorage').LocalStorage;
 
 /******************************************************************************
 * APP SETUP
@@ -23,44 +21,6 @@ const flinkPort = argv.flink_port || 8081
 const neo4jPort = argv.neo4j_port || 7474
 
 /******************************************************************************
-* LOCAL STORAGE
-******************************************************************************/
-/*
-var localStorage = require('localStorage');
-var myValue = { foo: 'bar', baz: 'quux' };
-localStorage.setItem('myKey', JSON.stringify(myValue));
-myValue = localStorage.getItem('myKey');
-*/
-
-/*
-var store = require('store');
-store.set('user', { name:'Marcus' });
-*/
-
-/*
-ls.setJson('somejson', {
-  name: 'Bruce Wayne',
-  aka: 'Batman'
-}, function (err) {
-  if (err) {
-    alert('Failed to write to localStorage');
-  } else {
-    ls.getJson('somejson', function(err, json) {
-      if (err) {
-        alert('Failed to get item from localStorage')
-      } else {
-        alert('We stored and retrieved JSON from localStorage!');
-        alert('Result: ' + JSON.stringify(json));
-      }
-    });
-  }
-});
-*/
-/*
-var localStorage = new LStorage('./scratch');
-localStorage.setItem('myFirstKey', 'myFirstValue');
-*/
-/******************************************************************************
 * HANDLERS
 ******************************************************************************/
 function fnLandingPage(req, res) {
@@ -68,11 +28,13 @@ function fnLandingPage(req, res) {
 }
 
 function fnFlinkDashboard(req, res) {
-  res.redirect('http://localhost:' + flinkPort);
+  var ip = req.header('x-forwarded-for') || req.connection.remoteAddress;
+  res.redirect('http://127.0.0.1:' + flinkPort);
 }
 
 function fnNeo4JDashboard(req, res) {
-  res.redirect('http://localhost:' + neo4jPort);
+  var ip = req.header('x-forwarded-for') || req.connection.remoteAddress;
+  res.redirect('http://127.0.0.1:' + neo4jPort);
 }
 
 /******************************************************************************

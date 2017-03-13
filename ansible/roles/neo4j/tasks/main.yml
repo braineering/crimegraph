@@ -63,18 +63,14 @@
 - name: create service Neo4J
   template:
     src: neo4j.service
-    dest: /etc/systemd/system/flink.service
+    dest: /etc/systemd/system/neo4j.service
     mode: 644
-
-- name: enable service Neo4J
-  systemd:
-    name: neo4j.service
-    enabled: yes
 
 - name: start service Neo4J
   systemd:
     name: neo4j
     state: started
+    enabled: yes
 
 - name: configure Neo4J (main)
   template:
