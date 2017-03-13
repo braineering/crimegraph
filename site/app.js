@@ -30,8 +30,8 @@ const port = argv.port || 3000;
 const flinkPort = argv.flink_port || 8081;
 const neo4jPort = argv.neo4j_http_port || 7474;
 const neo4jBoltPort = argv.neo4j_bolt_port || 7687;
-const neo4jUser = argv.neo4j_username || "neo4j";
-const neo4jPass = argv.neo4j_password || "password";
+const neo4jUsername = argv.neo4j_username || "neo4j";
+const neo4jPassword = argv.neo4j_password || "password";
 
 /******************************************************************************
 * HANDLERS
@@ -53,18 +53,19 @@ function fnStart(req, res) {
   var COMMAND = req.body;
   winston.info('New command submitted: ', JSON.stringify(COMMAND));
 
-  var dataset = COMMAND.dataset;     // type: S, M, L
-  switch(COMMAND.dataset) {
-    case S:
+  var dataset;
+  switch(COMMAND.dataset) { // S, M, L
+    case 'S':
       dataset = '/vagrant/data/small.data';
       break;
-    case M:
+    case 'M':
       dataset = '/vagrant/data/medium.data';
       break;
-    case L:
+    case 'L':
       dataset = '/vagrant/data/large.data';
       break;
     default:
+      dataset = '/vagrant/data/small.data';
       break;
   }
 
@@ -78,15 +79,21 @@ function fnStart(req, res) {
   var potentialLocality = COMMAND.potentialLocality | 1;
   var potentialWeights = COMMAND.potentialWeights | [1.0];
 
-  var resetcommand = 'service restart flink --dataset ${dataset} ' +
-      '--hidden ${hiddenMetric} ' +
-      '--hidden-locality ${hiddenLocality} ' +
-      '--hidden-weights ${hiddenWeights} ' +
-      '--hidden-threshold ${hiddenThreshold} ' +
-      '--potential ${potentialMetric}  ' +
-      '--potential-locality ${potentialLocality} ' +
-      '--potential-weights ${potentialWeights} ' +
-      '--potential-threshold ${potentialThreshold}';
+  var resetcommand = 'service restart crimegraph ' +
+      '--dataset ${dataset} ' +
+      '--hiddenMetric ${hiddenMetric} ' +
+      '--hiddenLocality ${hiddenLocality} ' +
+      '--hiddenWeights ${hiddenWeights} ' +
+      '--hiddenThreshold ${hiddenThreshold} ' +
+      '--potentialMetric ${potentialMetric}  ' +
+      '--potentialLocality ${potentialLocality} ' +
+      '--potentialWeights ${potentialWeights} ' +
+      '--potentialThreshold ${potentialThreshold} ' +
+      '--neo4jHostname ${neo4jHostname} ' +
+      '--neo4jHostname ${neo4jUsername} ' +
+      '--neo4jPassword ${neo4jPassword}';
+
+  winston.info('Executing command ${resetCommand}');
 
   var restart = exec(resetcommand, function (error, stdout, stderr) {
     console.log(stdout);
@@ -103,7 +110,7 @@ function fnStart(req, res) {
     opn("http://crimegraph.braineering.it:"+neo4jPort, "_blank");
   });
 
-  var driver = neo4j.driver("bolt://crimegraph.braineering.it:"+neo4jBoltPort, neo4j.auth.basic(neo4jUser, neo4jPass));
+  var driver = neo4j.driver("bolt://crimegraph.braineering.it:"+neo4jBoltPort, neo4j.auth.basic(neo4jUsername, neo4jPassword));
 
   // emptying neo4j
   var session = driver.session();
