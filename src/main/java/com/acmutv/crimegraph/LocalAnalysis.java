@@ -91,10 +91,6 @@ public class LocalAnalysis {
 
     DataStream<NodePairScore> potentialScores = split.select(ScoreType.POTENTIAL.name());
 
-    DataStream<NodePairScore> hidden = hiddenScores.filter(new HiddenFilter(config.getHiddenThreshold()));
-
-    DataStream<NodePairScore> potential = potentialScores.filter(new PotentialFilter(config.getPotentialThreshold()));
-
     hiddenScores.addSink(new HiddenSink(dbconf, config.getHiddenThreshold()));
 
     potentialScores.addSink(new PotentialSink(dbconf, config.getPotentialThreshold()));

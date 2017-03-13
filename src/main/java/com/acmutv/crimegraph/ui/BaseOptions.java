@@ -57,6 +57,51 @@ public class BaseOptions extends Options {
   private static final String DESCRIPTION_CONFIG = "Custom configuration.";
 
   /**
+   * The CLI description for the option `dataset`.
+   */
+  private static final String DESCRIPTION_DATASET = "The path of the dataset.";
+
+  /**
+   * The CLI description for the option `output`.
+   */
+  private static final String DESCRIPTION_OUTPUT = "The path of the output file.";
+
+  /**
+   * The CLI description for the option `potential-locality`.
+   */
+  private static final String DESCRIPTION_POTENTIAL_LOCALITY = "The locality degree for potential link metric. The number must be an integer grater than 0.";
+
+  /**
+   * The CLI description for the option `potential-weight`.
+   */
+  private static final String DESCRIPTION_POTENTIAL_WEIGHT = "The weught vector for potential link metric. The sum of weights must be in (0,1).";
+
+  /**
+   * The CLI description for the option `potential-threshold`.
+   */
+  private static final String DESCRIPTION_POTENTIAL_THRESHOLD = "The threshold for potential link metric. The number must be in (0,1).";
+
+  /**
+   * The CLI description for the option `hidden-threshold`.
+   */
+  private static final String DESCRIPTION_HIDDEN_THRESHOLD = "The threshold for hidden link metric. The number must be in (0,1).";
+
+  /**
+   * The CLI description for the option `neo4j-hostname`.
+   */
+  private static final String DESCRIPTION_NEO4J_HOSTNAME = "The Neo4J hostname.";
+
+  /**
+   * The CLI description for the option `neo4j-username`.
+   */
+  private static final String DESCRIPTION_NEO4J_USERNAME = "The Neo4J username.";
+
+  /**
+   * The CLI description for the option `neo4j-password`.
+   */
+  private static final String DESCRIPTION_NEO4J_PASSWORD = "The Neo4J password.";
+
+  /**
    * The singleton instance of {@link BaseOptions}.
    */
   private static BaseOptions instance;
@@ -79,10 +124,28 @@ public class BaseOptions extends Options {
     Option version = this.optVersion();
     Option help = this.optHelp();
     Option config = this.optConfig();
+    Option dataset = this.optDataset();
+    Option output = this.optOutput();
+    Option potentialLocality = this.optPotentialLocality();
+    Option potentialWeight = this.optPotentialWeight();
+    Option potentialThreshold = this.optPotentialThreshold();
+    Option hiddenThreshold = this.optHiddenThreshold();
+    Option neo4jHostname = this.optNeo4jHostname();
+    Option neo4jUsername = this.optNeo4JUsername();
+    Option neo4jPassword = this.optNeo4JPassword();
 
     super.addOption(version);
     super.addOption(help);
     super.addOption(config);
+    super.addOption(dataset);
+    super.addOption(output);
+    super.addOption(potentialLocality);
+    super.addOption(potentialWeight);
+    super.addOption(potentialThreshold);
+    super.addOption(hiddenThreshold);
+    super.addOption(neo4jHostname);
+    super.addOption(neo4jUsername);
+    super.addOption(neo4jPassword);
   }
 
   /**
@@ -127,43 +190,13 @@ public class BaseOptions extends Options {
   }
 
   /**
-   * Builds the option `data-hostname`.
-   * @return the option.
-   */
-  private Option optDataHostname() {
-    return Option.builder("H")
-        .longOpt("data-hostname")
-        .desc("Insert here description")
-        .required(false)
-        .hasArg(true)
-        .numberOfArgs(1)
-        .argName("IP ADDRESS")
-        .build();
-  }
-
-  /**
-   * Builds the option `data-port`.
-   * @return the option.
-   */
-  private Option optDataPort() {
-    return Option.builder("P")
-        .longOpt("data-port")
-        .desc("Insert here description")
-        .required(false)
-        .hasArg(true)
-        .numberOfArgs(1)
-        .argName("PORT NUMBER")
-        .build();
-  }
-
-  /**
    * Builds the option `dataset`.
    * @return the option.
    */
   private Option optDataset() {
     return Option.builder("D")
         .longOpt("dataset")
-        .desc("Insert here description")
+        .desc(DESCRIPTION_DATASET)
         .required(false)
         .hasArg(true)
         .numberOfArgs(1)
@@ -178,7 +211,7 @@ public class BaseOptions extends Options {
   private Option optOutput() {
     return Option.builder("O")
         .longOpt("output")
-        .desc("Insert here description")
+        .desc(DESCRIPTION_OUTPUT)
         .required(false)
         .hasArg(true)
         .numberOfArgs(1)
@@ -187,17 +220,32 @@ public class BaseOptions extends Options {
   }
 
   /**
-   * Builds the option `locality`.
+   * Builds the option `potential-locality`.
    * @return the option.
    */
-  private Option optLocality() {
+  private Option optPotentialLocality() {
     return Option.builder("L")
-        .longOpt("locality")
-        .desc("Insert here description")
+        .longOpt("potential-locality")
+        .desc(DESCRIPTION_POTENTIAL_LOCALITY)
         .required(false)
         .hasArg(true)
         .numberOfArgs(1)
         .argName("NUMBER")
+        .build();
+  }
+
+  /**
+   * Builds the option `potential-weight`.
+   * @return the option.
+   */
+  private Option optPotentialWeight() {
+    return Option.builder("W")
+        .longOpt("potential-weight")
+        .desc(DESCRIPTION_POTENTIAL_WEIGHT)
+        .required(false)
+        .hasArg(true)
+        .numberOfArgs(1)
+        .argName("NUMBER,NUMBER,...")
         .build();
   }
 
@@ -208,7 +256,7 @@ public class BaseOptions extends Options {
   private Option optPotentialThreshold() {
     return Option.builder("P")
         .longOpt("potential-threshold")
-        .desc("Insert here description")
+        .desc(DESCRIPTION_POTENTIAL_THRESHOLD)
         .required(false)
         .hasArg(true)
         .numberOfArgs(1)
@@ -221,9 +269,9 @@ public class BaseOptions extends Options {
    * @return the option.
    */
   private Option optHiddenThreshold() {
-    return Option.builder("P")
+    return Option.builder("H")
         .longOpt("hidden-threshold")
-        .desc("Insert here description")
+        .desc(DESCRIPTION_HIDDEN_THRESHOLD)
         .required(false)
         .hasArg(true)
         .numberOfArgs(1)
@@ -236,13 +284,13 @@ public class BaseOptions extends Options {
    * @return the option.
    */
   private Option optNeo4jHostname() {
-    return Option.builder("N")
+    return Option.builder("n")
         .longOpt("neo4j-hostname")
-        .desc("Insert here description")
+        .desc(DESCRIPTION_NEO4J_HOSTNAME)
         .required(false)
         .hasArg(true)
         .numberOfArgs(1)
-        .argName("HOST")
+        .argName("HOSTNAME")
         .build();
   }
 
@@ -251,9 +299,9 @@ public class BaseOptions extends Options {
    * @return the option.
    */
   private Option optNeo4JUsername() {
-    return Option.builder("U")
+    return Option.builder("u")
         .longOpt("neo4j-username")
-        .desc("Insert here description")
+        .desc(DESCRIPTION_NEO4J_USERNAME)
         .required(false)
         .hasArg(true)
         .numberOfArgs(1)
@@ -266,9 +314,9 @@ public class BaseOptions extends Options {
    * @return the option.
    */
   private Option optNeo4JPassword() {
-    return Option.builder("U")
+    return Option.builder("p")
         .longOpt("neo4j-password")
-        .desc("Insert here description")
+        .desc(DESCRIPTION_NEO4J_PASSWORD)
         .required(false)
         .hasArg(true)
         .numberOfArgs(1)
