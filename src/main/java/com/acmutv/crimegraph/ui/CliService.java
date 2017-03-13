@@ -103,7 +103,6 @@ public class CliService {
     if (!configured) {
       LOGGER.trace("Loading default configuration");
       AppConfigurationService.loadDefault();
-      //configured = true;
     }
 
     LOGGER.trace("Configuration loaded: {}",

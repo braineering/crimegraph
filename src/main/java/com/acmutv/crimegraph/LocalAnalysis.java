@@ -40,6 +40,7 @@ import com.acmutv.crimegraph.core.tuple.*;
 import com.acmutv.crimegraph.core.source.LinkSource;
 import com.acmutv.crimegraph.tool.runtime.RuntimeManager;
 import com.acmutv.crimegraph.ui.CliService;
+import org.apache.flink.api.java.utils.ParameterTool;
 import org.apache.flink.streaming.api.datastream.DataStream;
 import org.apache.flink.streaming.api.datastream.SplitStream;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;

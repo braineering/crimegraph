@@ -126,4 +126,154 @@ public class BaseOptions extends Options {
         .build();
   }
 
+  /**
+   * Builds the option `data-hostname`.
+   * @return the option.
+   */
+  private Option optDataHostname() {
+    return Option.builder("H")
+        .longOpt("data-hostname")
+        .desc("Insert here description")
+        .required(false)
+        .hasArg(true)
+        .numberOfArgs(1)
+        .argName("IP ADDRESS")
+        .build();
+  }
+
+  /**
+   * Builds the option `data-port`.
+   * @return the option.
+   */
+  private Option optDataPort() {
+    return Option.builder("P")
+        .longOpt("data-port")
+        .desc("Insert here description")
+        .required(false)
+        .hasArg(true)
+        .numberOfArgs(1)
+        .argName("PORT NUMBER")
+        .build();
+  }
+
+  /**
+   * Builds the option `dataset`.
+   * @return the option.
+   */
+  private Option optDataset() {
+    return Option.builder("D")
+        .longOpt("dataset")
+        .desc("Insert here description")
+        .required(false)
+        .hasArg(true)
+        .numberOfArgs(1)
+        .argName("FILE")
+        .build();
+  }
+
+  /**
+   * Builds the option `output`.
+   * @return the option.
+   */
+  private Option optOutput() {
+    return Option.builder("O")
+        .longOpt("output")
+        .desc("Insert here description")
+        .required(false)
+        .hasArg(true)
+        .numberOfArgs(1)
+        .argName("FILE")
+        .build();
+  }
+
+  /**
+   * Builds the option `locality`.
+   * @return the option.
+   */
+  private Option optLocality() {
+    return Option.builder("L")
+        .longOpt("locality")
+        .desc("Insert here description")
+        .required(false)
+        .hasArg(true)
+        .numberOfArgs(1)
+        .argName("NUMBER")
+        .build();
+  }
+
+  /**
+   * Builds the option `potential-threshold`.
+   * @return the option.
+   */
+  private Option optPotentialThreshold() {
+    return Option.builder("P")
+        .longOpt("potential-threshold")
+        .desc("Insert here description")
+        .required(false)
+        .hasArg(true)
+        .numberOfArgs(1)
+        .argName("NUMBER")
+        .build();
+  }
+
+  /**
+   * Builds the option `hidden-threshold`.
+   * @return the option.
+   */
+  private Option optHiddenThreshold() {
+    return Option.builder("P")
+        .longOpt("hidden-threshold")
+        .desc("Insert here description")
+        .required(false)
+        .hasArg(true)
+        .numberOfArgs(1)
+        .argName("NUMBER")
+        .build();
+  }
+
+  /**
+   * Builds the option `neo4j-hostname`.
+   * @return the option.
+   */
+  private Option optNeo4jHostname() {
+    return Option.builder("N")
+        .longOpt("neo4j-hostname")
+        .desc("Insert here description")
+        .required(false)
+        .hasArg(true)
+        .numberOfArgs(1)
+        .argName("HOST")
+        .build();
+  }
+
+  /**
+   * Builds the option `neo4j-username`.
+   * @return the option.
+   */
+  private Option optNeo4JUsername() {
+    return Option.builder("U")
+        .longOpt("neo4j-username")
+        .desc("Insert here description")
+        .required(false)
+        .hasArg(true)
+        .numberOfArgs(1)
+        .argName("USERNAME")
+        .build();
+  }
+
+  /**
+   * Builds the option `neo4j-password`.
+   * @return the option.
+   */
+  private Option optNeo4JPassword() {
+    return Option.builder("U")
+        .longOpt("neo4j-password")
+        .desc("Insert here description")
+        .required(false)
+        .hasArg(true)
+        .numberOfArgs(1)
+        .argName("PASSWORD")
+        .build();
+  }
+
 }
