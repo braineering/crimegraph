@@ -185,8 +185,24 @@
                     <h3>Select hidden metric:</h3>
                     <br>
                     <select class="combobox" id="hidden_combobox" onchange="changeFunction('hidden_combobox');">
-                      <option value="Local">Local</option>
+                      <option value="LOCAL">Local</option>
+                      <option value="QUASI_LOCAL">Quasi Local</option>
+                      <option value="WEIGHTED_QUASI_LOCAL">Weighted Quasi Local</option>
                     </select>
+                    <br>
+                    <br>
+                    <div class="" id="div_threshold_option_hidden">
+                        <h6>Threshold</h6>
+                        <input type="textbox" id="hiddenThreshold" placeholder="0.5">
+                    </div>
+                    <div class="" id="div_locality_option_hidden">
+                        <h6>Number of Steps</h6>
+                        <input type="number" id="hiddenLocality" placeholder="2" min='1'>
+                    </div>
+                    <div class="" id="div_weights_option_hidden">
+                        <h6>Weights</h6>
+                        <input type="textbox" id="hiddenWeights" placeholder="0.6;0.4">
+                    </div>
                 </div>
                 <div class="col-lg-3 col-md-6 text-center">
                     <br>
@@ -194,20 +210,23 @@
                     <h3>Select potential metric:</h3>
                     <br>
                     <select class="combobox" id="potential_combobox" onchange="changeFunction('potential_combobox');">
-                      <option value="Local">Local</option>
-                      <option value="QuasiLocal">Quasi Local</option>
-                      <option value="WeightedQuasiLocal">Weighted Quasi Local</option>
+                      <option value="LOCAL">Local</option>
+                      <option value="QUASI_LOCAL">Quasi Local</option>
+                      <option value="WEIGHTED_QUASI_LOCAL">Weighted Quasi Local</option>
                     </select>
                     <br>
                     <br>
-                    <div class="" id="div_steps_option">
-                        <h6>Number of Steps</h6>
-                        <input type="number" id="steps" placeholder="2" min='1'>
+                    <div class="" id="div_threshold_option_potential">
+                        <h6>Threshold</h6>
+                        <input type="textbox" id="potentialThreshold" placeholder="0.5">
                     </div>
-                    <br>
-                    <div class="" id="div_steps_weight_option">
+                    <div class="" id="div_locality_option_potential">
+                        <h6>Number of Steps</h6>
+                        <input type="number" id="potentialLocality" placeholder="2" min='1'>
+                    </div>
+                    <div class="" id="div_weights_option_potential">
                         <h6>Weights</h6>
-                        <input type="textbox" id="weightedsteps" placeholder="0.6;0.4">
+                        <input type="textbox" id="potentialWeights" placeholder="0.6;0.4">
                     </div>
                 </div>
                 <div class="col-lg-3 col-md-6 text-center">
@@ -272,9 +291,10 @@
     <!-- initialize page -->
     <script type="text/javascript">
         // hide elements
-        $('#div_steps_option').css("display","none");
-        $('#div_steps_weight_option').css("display","none");
-
+        $('#div_locality_option_potential').css("display","none");
+        $('#div_weights_option_potential').css("display","none");
+        $('#div_locality_option_hidden').css("display","none");
+        $('#div_weights_option_hidden').css("display","none");
         // block refresh
         /*window.onbeforeunload = function() {
             return "block";
