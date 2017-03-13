@@ -111,7 +111,7 @@
     <!-- General -->
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-    <project.main>com.acmutv.crimegraph.LocalAnalysis</project.main>
+    <project.main>com.acmutv.crimegraph.CrimegraphToplogy</project.main>
 
     <!-- Core  -->
     <flink.version>1.2.0</flink.version>
@@ -296,181 +296,159 @@
   </dependencies>
 
   <profiles>
-    <!-- PROFILE: local -->
+    <!-- PROFILE: crimegraph -->
     <profile>
-      <id>local</id>
+      <id>crimegraph</id>
       <activation>
         <activeByDefault>true</activeByDefault>
       </activation>
       <properties>
-        <project.main>com.acmutv.crimegraph.LocalAnalysis</project.main>
+        <project.main>com.acmutv.crimegraph.CrimegraphToplogy</project.main>
       </properties>
     </profile>
 
+    <!-- PROFILE: skip-tests -->
     <profile>
-      <!-- PROFILE: quasilocal -->
-      <id>quasi-local</id>
+      <id>skip-tests</id>
       <activation>
         <activeByDefault>false</activeByDefault>
       </activation>
       <properties>
-        <project.main>com.acmutv.crimegraph.QuasiLocalAnalysis</project.main>
+        <surefire.skipTests>true</surefire.skipTests>
       </properties>
     </profile>
 
+    <!-- PROFILE: build-jar (for Flink) -->
     <profile>
-      <!-- PROFILE: quasilocal -->
-      <id>quasi-local-weighted</id>
+      <id>build-jar</id>
+
       <activation>
         <activeByDefault>false</activeByDefault>
       </activation>
-      <properties>
-        <project.main>com.acmutv.crimegraph.QuasiLocalAnalysisWithWeights</project.main>
-      </properties>
+
+      <dependencies>
+        <dependency>
+          <groupId>org.apache.flink</groupId>
+          <artifactId>flink-java</artifactId>
+          <version>${flink.version}</version>
+          <scope>provided</scope>
+        </dependency>
+        <dependency>
+          <groupId>org.apache.flink</groupId>
+          <artifactId>flink-streaming-java_2.10</artifactId>
+          <version>${flink.version}</version>
+          <scope>provided</scope>
+        </dependency>
+        <dependency>
+          <groupId>org.apache.flink</groupId>
+          <artifactId>flink-clients_2.10</artifactId>
+          <version>${flink.version}</version>
+          <scope>provided</scope>
+        </dependency>
+        <!--
+        <dependency>
+          <groupId>org.apache.logging.log4j</groupId>
+          <artifactId>log4j-core</artifactId>
+          <version>${log4j.version}</version>
+        </dependency>
+        <dependency>
+          <groupId>org.apache.logging.log4j</groupId>
+          <artifactId>log4j-slf4j-impl</artifactId>
+          <version>${log4j.version}</version>
+        </dependency>
+        -->
+        <dependency>
+          <groupId>org.slf4j</groupId>
+          <artifactId>slf4j-log4j12</artifactId>
+          <version>${slf4j.version}</version>
+          <scope>provided</scope>
+        </dependency>
+        <dependency>
+          <groupId>log4j</groupId>
+          <artifactId>log4j</artifactId>
+          <version>${log4j.version}</version>
+          <scope>provided</scope>
+        </dependency>
+      </dependencies>
+
+      <build>
+        <plugins>
+          <!-- disable the exclusion rules -->
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-shade-plugin</artifactId>
+            <version>2.4.1</version>
+            <executions>
+              <execution>
+                <phase>package</phase>
+                <goals>
+                  <goal>shade</goal>
+                </goals>
+                <configuration>
+                  <artifactSet>
+                    <excludes combine.self="override"></excludes>
+                  </artifactSet>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
     </profile>
 
-      <!-- PROFILE: skip-tests -->
-      <profile>
-        <id>skip-tests</id>
-        <activation>
-          <activeByDefault>false</activeByDefault>
-        </activation>
-        <properties>
-          <surefire.skipTests>true</surefire.skipTests>
-        </properties>
-      </profile>
-
-      <!-- PROFILE: build-jar (for Flink) -->
-      <profile>
-        <id>build-jar</id>
-
-        <activation>
-          <activeByDefault>false</activeByDefault>
-        </activation>
-
-        <dependencies>
-          <dependency>
-            <groupId>org.apache.flink</groupId>
-            <artifactId>flink-java</artifactId>
-            <version>${flink.version}</version>
-            <scope>provided</scope>
-          </dependency>
-          <dependency>
-            <groupId>org.apache.flink</groupId>
-            <artifactId>flink-streaming-java_2.10</artifactId>
-            <version>${flink.version}</version>
-            <scope>provided</scope>
-          </dependency>
-          <dependency>
-            <groupId>org.apache.flink</groupId>
-            <artifactId>flink-clients_2.10</artifactId>
-            <version>${flink.version}</version>
-            <scope>provided</scope>
-          </dependency>
-          <!--
-          <dependency>
-            <groupId>org.apache.logging.log4j</groupId>
-            <artifactId>log4j-core</artifactId>
-            <version>${log4j.version}</version>
-          </dependency>
-          <dependency>
-            <groupId>org.apache.logging.log4j</groupId>
-            <artifactId>log4j-slf4j-impl</artifactId>
-            <version>${log4j.version}</version>
-          </dependency>
-          -->
-          <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-log4j12</artifactId>
-            <version>${slf4j.version}</version>
-            <scope>provided</scope>
-          </dependency>
-          <dependency>
-            <groupId>log4j</groupId>
-            <artifactId>log4j</artifactId>
-            <version>${log4j.version}</version>
-            <scope>provided</scope>
-          </dependency>
-        </dependencies>
-
-        <build>
-          <plugins>
-            <!-- disable the exclusion rules -->
-            <plugin>
-              <groupId>org.apache.maven.plugins</groupId>
-              <artifactId>maven-shade-plugin</artifactId>
-              <version>2.4.1</version>
-              <executions>
-                <execution>
-                  <phase>package</phase>
-                  <goals>
-                    <goal>shade</goal>
-                  </goals>
-                  <configuration>
-                    <artifactSet>
-                      <excludes combine.self="override"></excludes>
-                    </artifactSet>
-                  </configuration>
-                </execution>
-              </executions>
-            </plugin>
-          </plugins>
-        </build>
-      </profile>
-
-      <!-- PROFILE: optimize -->
-      <profile>
-        <id>optimize</id>
-        <activation>
-          <activeByDefault>false</activeByDefault>
-        </activation>
-        <build>
-          <plugins>
-            <!-- Proguard -->
-            <plugin>
-              <groupId>com.github.wvengen</groupId>
-              <artifactId>proguard-maven-plugin</artifactId>
-              <version>${proguard.version}</version>
-              <executions>
-                <execution>
-                  <id>obfuscation-packaging</id>
-                  <phase>package</phase>
-                  <goals>
-                      <goal>proguard</goal>
-                  </goals>
-                  <configuration>
-                    <proguardVersion>${proguard.tool.version}</proguardVersion>
-                    <obfuscate>true</obfuscate>
-                    <injar>${project.build.finalName}.jar</injar>
-                    <outjar>${project.build.finalName}-small.jar</outjar>
-                    <outputDirectory>${project.build.directory}</outputDirectory>
-                    <proguardInclude>${basedir}/proguard.conf</proguardInclude>
-                    <libs>
-                      <lib>${java.home}/lib/rt.jar</lib>
-                      <lib>${java.home}/lib/jsse.jar</lib>
-                    </libs>
-                    <options>
-                      <option>-allowaccessmodification</option>
-                      <option>-optimizationpasses 3</option>
-                      <option>-overloadaggressively</option>
-                      <option>-overloadaggressively</option>
-                      <option>-overloadaggressively</option>
-                      <option>-keep public class ${project.main} { public static void main(java.lang.String[]); }</option>
-                    </options>
-                  </configuration>
-                </execution>
-              </executions>
-              <dependencies>
-                <dependency>
-                  <groupId>net.sf.proguard</groupId>
-                  <artifactId>proguard-base</artifactId>
-                  <version>${proguard.tool.version}</version>
-                </dependency>
-              </dependencies>
-            </plugin>
-          </plugins>
-        </build>
-      </profile>
+    <!-- PROFILE: optimize -->
+    <profile>
+      <id>optimize</id>
+      <activation>
+        <activeByDefault>false</activeByDefault>
+      </activation>
+      <build>
+        <plugins>
+          <!-- Proguard -->
+          <plugin>
+            <groupId>com.github.wvengen</groupId>
+            <artifactId>proguard-maven-plugin</artifactId>
+            <version>${proguard.version}</version>
+            <executions>
+              <execution>
+                <id>obfuscation-packaging</id>
+                <phase>package</phase>
+                <goals>
+                    <goal>proguard</goal>
+                </goals>
+                <configuration>
+                  <proguardVersion>${proguard.tool.version}</proguardVersion>
+                  <obfuscate>true</obfuscate>
+                  <injar>${project.build.finalName}.jar</injar>
+                  <outjar>${project.build.finalName}-small.jar</outjar>
+                  <outputDirectory>${project.build.directory}</outputDirectory>
+                  <proguardInclude>${basedir}/proguard.conf</proguardInclude>
+                  <libs>
+                    <lib>${java.home}/lib/rt.jar</lib>
+                    <lib>${java.home}/lib/jsse.jar</lib>
+                  </libs>
+                  <options>
+                    <option>-allowaccessmodification</option>
+                    <option>-optimizationpasses 3</option>
+                    <option>-overloadaggressively</option>
+                    <option>-overloadaggressively</option>
+                    <option>-overloadaggressively</option>
+                    <option>-keep public class ${project.main} { public static void main(java.lang.String[]); }</option>
+                  </options>
+                </configuration>
+              </execution>
+            </executions>
+            <dependencies>
+              <dependency>
+                <groupId>net.sf.proguard</groupId>
+                <artifactId>proguard-base</artifactId>
+                <version>${proguard.tool.version}</version>
+              </dependency>
+            </dependencies>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
   </profiles>
 
   <build>

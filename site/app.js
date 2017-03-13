@@ -28,10 +28,10 @@ app.use(bodyParser.json());
 
 const port = argv.port || 3000;
 const flinkPort = argv.flink_port || 8081;
-const neo4jPort = argv.neo4j_port || 7474;
-const neo4jBoltPort = argv.neo4jbolt_port || 7687;
-const neo4jUser = argv.neo4j_user || "neo4j";
-const neo4jPass = argv.neo4j_pass || "password";
+const neo4jPort = argv.neo4j_http_port || 7474;
+const neo4jBoltPort = argv.neo4j_bolt_port || 7687;
+const neo4jUser = argv.neo4j_username || "neo4j";
+const neo4jPass = argv.neo4j_password || "password";
 
 /******************************************************************************
 * HANDLERS
@@ -41,11 +41,11 @@ function fnCrimegraphPage(req, res) {
 }
 
 function fnFlinkDashboard(req,res) {
-  res.redirect('http://localhost:'+ flinkPort);
+  res.redirect('http://crimegraph.braineering.it:'+ flinkPort);
 }
 
 function fnNeo4JDashboard(req,res) {
-  res.redirect('http://localhost:'+ neo4jPort);
+  res.redirect('http://crimegraph.braineering.it:'+ neo4jPort);
 }
 
 function fnStart(req, res) {
@@ -65,9 +65,22 @@ function fnStart(req, res) {
   if(COMMAND.hasOwnProperty('weights'))
     weights = COMMAND.weights;
 
+  switch(COMMAND.dataset) {
+    case S:
+      dataset = '/vagrant/data/small.data';
+      break;
+    case M:
+      dataset = '/vagrant/data/medium.data';
+      break;
+    case L:
+      dataset = '/vagrant/data/large.data';
+      break;
+    default:
+      break;
+  }
+
   //manca la gestione dei jar per le metriche desiderate
-  
-  var resetcommand = "neo4j stop; neo4j start; cd $FLINK_HOME/bin; ./stop-local.sh; ./start-local.sh;"
+  var resetcommand = 'service restart flink --dataset ${dataset} --potential ${potential} --hidden ${hidden} --potential-locality ${steps} --potential-weight ${weights}';
   var restart = exec(resetcommand, function (error, stdout, stderr) {
     console.log(stdout);
     if (error !== null) {
@@ -79,11 +92,11 @@ function fnStart(req, res) {
   restart.on('close',function(){
     console.log('command executed');
     // open flink and neo4j dashboards
-    opn("http://localhost:"+flinkPort, "_blank");
-    opn("http://localhost:"+neo4jPort, "_blank");
+    opn("http://crimegraph.braineering.it:"+flinkPort, "_blank");
+    opn("http://crimegraph.braineering.it:"+neo4jPort, "_blank");
   });
 
-  var driver = neo4j.driver("bolt://localhost:"+neo4jBoltPort, neo4j.auth.basic(neo4jUser, neo4jPass));
+  var driver = neo4j.driver("bolt://crimegraph.braineering.it:"+neo4jBoltPort, neo4j.auth.basic(neo4jUser, neo4jPass));
 
   // emptying neo4j
   var session = driver.session();

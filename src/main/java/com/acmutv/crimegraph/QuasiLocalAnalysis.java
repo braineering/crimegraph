@@ -45,7 +45,7 @@ import org.apache.flink.streaming.api.datastream.SplitStream;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 
 /**
- * The app word-point for {@code LocalAnalysis} application.
+ * The app word-point for {@code CrimegraphToplogy} application.
  * Before starting the application, it is necessary to open the socket, running
  * {@code $> ncat 127.0.0.1 9000 -l}
  * and start typing tuples.
@@ -55,6 +55,7 @@ import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
  * @see AppConfigurationService
  * @see RuntimeManager
  */
+@Deprecated
 public class QuasiLocalAnalysis {
 
   private static final String ANALYSIS = "Quasi-Local Analysis";
@@ -65,7 +66,7 @@ public class QuasiLocalAnalysis {
    */
   public static void main(String[] args) throws Exception {
 
-    CliService.printSplash(ANALYSIS);
+    CliService.printSplash();
 
     CliService.handleArguments(args);
 
@@ -79,7 +80,7 @@ public class QuasiLocalAnalysis {
 
     DataStream<Link> links = env.addSource(new LinkSource(config.getDataset()));
 
-    DataStream<NodePair> updates = links.flatMap(new LinkUpload(dbconf)).shuffle();
+    DataStream<NodePair> updates = links.flatMap(new GraphUpdate(dbconf)).shuffle();
 
     DataStream<NodePairScore> scores = updates.flatMap(new ScoreCalculatorTSteps(
         dbconf, config.getPotentialLocality())).keyBy(new NodePairScoreKeyer());

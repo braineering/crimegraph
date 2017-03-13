@@ -26,6 +26,8 @@
 
 package com.acmutv.crimegraph.config;
 
+import com.acmutv.crimegraph.core.metric.HiddenMetrics;
+import com.acmutv.crimegraph.core.metric.PotentialMetrics;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -61,24 +63,34 @@ public class AppConfiguration {
   public static final String OUTPUT = "resources/crimegraph/out/crimegraph.out";
 
   /**
-   * Default value for property {@code potentialLocality}.
+   * Default value for property {@code hidden-metric}.
    */
-  public static final long POTENTIAL_LOCALITY = 2;
-
-  /**
-   * Default value for property {@code potentialWeight}.
-   */
-  public static final List<Double> POTENTIAL_WEIGHT = new ArrayList<Double>(){{add(1.0);add(0.0);}};
-
-  /**
-   * Default value for property {@code potentialThreshold}.
-   */
-  public static final double POTENTIAL_THRESHOLD = 0.5;
+  public static final HiddenMetrics HIDDEN_METRIC = HiddenMetrics.LOCAL;
 
   /**
    * Default value for property {@code hiddenThreshold}.
    */
   public static final double HIDDEN_THRESHOLD = 0.5;
+
+  /**
+   * Default value for property {@code potential-metric}.
+   */
+  public static final PotentialMetrics POTENTIAL_METRIC = PotentialMetrics.LOCAL;
+
+  /**
+   * Default value for property {@code potentialLocality}.
+   */
+  public static final long POTENTIAL_LOCALITY = 1;
+
+  /**
+   * Default value for property {@code potentialWeight}.
+   */
+  public static final List<Double> POTENTIAL_WEIGHT = new ArrayList<Double>(){{add(1.0);}};
+
+  /**
+   * Default value for property {@code potentialThreshold}.
+   */
+  public static final double POTENTIAL_THRESHOLD = 0.5;
 
   /**
    * Default value for property {@code neo4jHostname}.
@@ -108,6 +120,24 @@ public class AppConfiguration {
   private String output = OUTPUT;
 
   /**
+   * The metric used to compute hidden links.
+   * Default is: {@code LOCAL}
+   */
+  private HiddenMetrics hiddenMetric = HIDDEN_METRIC;
+
+  /**
+   * The threshold for the hidden link score.
+   * Default is: {@code 0.5}
+   */
+  private double hiddenThreshold = HIDDEN_THRESHOLD;
+
+  /**
+   * The metric used to compute potential links.
+   * Default is: {@code LOCAL}
+   */
+  private PotentialMetrics potentialMetric = POTENTIAL_METRIC;
+
+  /**
    * The locality degree for potential link score.
    * Default is: {@code 1}.
    */
@@ -124,12 +154,6 @@ public class AppConfiguration {
    * Default is: {@code 0.5}
    */
   private double potentialThreshold = POTENTIAL_THRESHOLD;
-
-  /**
-   * The threshold for the hidden link score.
-   * Default is: {@code 0.5}
-   */
-  private double hiddenThreshold = HIDDEN_THRESHOLD;
 
   /**
    * The hostname of the NEO4J instance.
@@ -163,10 +187,13 @@ public class AppConfiguration {
    */
   public void copy(AppConfiguration other) {
     this.dataset = other.dataset;
+    this.output = other.output;
+    this.hiddenMetric = other.hiddenMetric;
+    this.hiddenThreshold = other.hiddenThreshold;
+    this.potentialMetric = other.potentialMetric;
     this.potentialLocality = other.potentialLocality;
     this.potentialWeight = new ArrayList<>(other.potentialWeight);
     this.potentialThreshold = other.potentialThreshold;
-    this.hiddenThreshold = other.hiddenThreshold;
     this.neo4jHostname = other.neo4jHostname;
     this.neo4jUsername = other.neo4jUsername;
     this.neo4jPassword = other.neo4jPassword;
@@ -177,10 +204,13 @@ public class AppConfiguration {
    */
   public void toDefault() {
     this.dataset = DATASET;
+    this.output = OUTPUT;
+    this.hiddenMetric = HIDDEN_METRIC;
+    this.hiddenThreshold = HIDDEN_THRESHOLD;
+    this.potentialMetric = POTENTIAL_METRIC;
     this.potentialLocality = POTENTIAL_LOCALITY;
     this.potentialWeight = POTENTIAL_WEIGHT;
     this.potentialThreshold = POTENTIAL_THRESHOLD;
-    this.hiddenThreshold = HIDDEN_THRESHOLD;
     this.neo4jHostname = NEO4J_HOSTNAME;
     this.neo4jUsername = NEO4J_USERNAME;
     this.neo4jPassword = NEO4J_PASSWORD;

@@ -26,6 +26,8 @@
 
 package com.acmutv.crimegraph.config;
 
+import com.acmutv.crimegraph.core.metric.HiddenMetrics;
+import com.acmutv.crimegraph.core.metric.PotentialMetrics;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -61,10 +63,11 @@ public class AppConfigurationServiceTest {
     InputStream in = AppConfigurationServiceTest.class.getResourceAsStream("/config/custom.yaml");
     AppConfiguration actual = AppConfigurationService.fromYaml(in);
     AppConfiguration expected = new AppConfiguration();
-    expected.setDataHostname("CustomDataHostname");
-    expected.setDataPort(3333);
     expected.setDataset("CustomDataset");
     expected.setOutput("CustomOutput");
+    expected.setHiddenMetric(HiddenMetrics.WEIGHTED_QUASI_LOCAL);
+    expected.setHiddenThreshold(0.8);
+    expected.setPotentialMetric(PotentialMetrics.WEIGHTED_QUASI_LOCAL);
     expected.setPotentialLocality(3);
     expected.setPotentialWeight(new ArrayList<Double>(){{
       add(0.6);
@@ -72,7 +75,6 @@ public class AppConfigurationServiceTest {
       add(0.1);
     }});
     expected.setPotentialThreshold(0.8);
-    expected.setHiddenThreshold(0.8);
     expected.setNeo4jHostname("CustomNeo4jHostname");
     expected.setNeo4jUsername("CustomNeo4jUsername");
     expected.setNeo4jPassword("CustomNeo4jPassword");

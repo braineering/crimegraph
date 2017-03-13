@@ -1,7 +1,7 @@
 /*
   The MIT License (MIT)
 
-  Copyright (c) 2016 Giacomo Marciani and Michele Porretta
+  Copyright (c) 2017 Giacomo Marciani and Michele Porretta
 
   Permission is hereby granted, free of charge, to any person obtaining a copy
   of this software and associated documentation files (the "Software"), to deal
@@ -24,30 +24,26 @@
   THE SOFTWARE.
  */
 
-package com.acmutv.crimegraph.config;
+package com.acmutv.crimegraph.core.metric;
 
-import org.junit.Assert;
-import org.junit.Test;
+import lombok.Getter;
 
 /**
- * JUnit tests for {@link AppConfiguration}.
+ * All metrics to computer potential links.
  * @author Giacomo Marciani {@literal <gmarciani@acm.org>}
  * @author Michele Porretta {@literal <mporretta@acm.org>}
  * @since 1.0
- * @see AppConfiguration
  */
-public class AppConfigurationTest {
+@Getter
+public enum PotentialMetrics {
 
-  /**
-   * Tests the restoring of default configuration.
-   */
-  @Test
-  public void test_toDefault() {
-    AppConfiguration actual = new AppConfiguration();
-    actual.setNeo4jHostname("Custom");
-    actual.toDefault();
-    final AppConfiguration expected = new AppConfiguration();
-    Assert.assertEquals(expected, actual);
+  LOCAL ("local"),
+  QUASI_LOCAL ("quasi-local"),
+  WEIGHTED_QUASI_LOCAL ("weighted-quasi-local");
+
+  private final String name;
+
+  PotentialMetrics(final String name) {
+    this.name = name;
   }
-
 }

@@ -29,6 +29,8 @@ package com.acmutv.crimegraph.ui;
 import com.acmutv.crimegraph.config.AppConfiguration;
 import com.acmutv.crimegraph.config.AppManifest;
 import com.acmutv.crimegraph.config.AppConfigurationService;
+import com.acmutv.crimegraph.core.metric.HiddenMetrics;
+import com.acmutv.crimegraph.core.metric.PotentialMetrics;
 import org.apache.commons.cli.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -122,6 +124,24 @@ public class CliService {
       config.setOutput(output);
     }
 
+    /* option: hidden-metric */
+    if (cmd.hasOption("hidden-metric")) {
+      final HiddenMetrics hiddenMetric = HiddenMetrics.valueOf(cmd.getOptionValue("hidden-metric"));
+      config.setHiddenMetric(hiddenMetric);
+    }
+
+    /* option: hidden-threshold */
+    if (cmd.hasOption("hidden-threshold")) {
+      final double hiddenThreshold = Double.valueOf(cmd.getOptionValue("hidden-threshold"));
+      config.setHiddenThreshold(hiddenThreshold);
+    }
+
+    /* option: potential-metric */
+    if (cmd.hasOption("potential-metric")) {
+      final PotentialMetrics potentialMetric = PotentialMetrics.valueOf(cmd.getOptionValue("potential-metric"));
+      config.setPotentialMetric(potentialMetric);
+    }
+
     /* option: potential-locality */
     if (cmd.hasOption("potential-locality")) {
       final long potentialLocality = Long.valueOf(cmd.getOptionValue("potential-locality"));
@@ -145,12 +165,6 @@ public class CliService {
     if (cmd.hasOption("potential-threshold")) {
       final double potentialThreshold = Double.valueOf(cmd.getOptionValue("potential-threshold"));
       config.setPotentialThreshold(potentialThreshold);
-    }
-
-    /* option: hidden-threshold */
-    if (cmd.hasOption("hidden-threshold")) {
-      final double hiddenThreshold = Double.valueOf(cmd.getOptionValue("hidden-threshold"));
-      config.setHiddenThreshold(hiddenThreshold);
     }
 
     /* option: neo4j-hostname */
@@ -226,11 +240,10 @@ public class CliService {
   /**
    * Print the splash message to {@code stdout}.
    */
-  public static void printSplash(String subtitle) {
+  public static void printSplash() {
     System.out.println();
     System.out.println("#=========================================================================");
     System.out.println("# CRIMEGRAPH");
-    System.out.format ("# %s", subtitle);
     System.out.println("#=========================================================================");
   }
 

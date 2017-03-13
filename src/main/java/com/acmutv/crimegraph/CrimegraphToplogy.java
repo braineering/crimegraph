@@ -30,16 +30,14 @@ import com.acmutv.crimegraph.config.AppConfiguration;
 import com.acmutv.crimegraph.config.AppConfigurationService;
 import com.acmutv.crimegraph.core.db.DbConfiguration;
 import com.acmutv.crimegraph.core.keyer.NodePairScoreKeyer;
-import com.acmutv.crimegraph.core.operator.GraphUpdate;
-import com.acmutv.crimegraph.core.operator.ScoreCalculatorTStepsWithWeights;
-import com.acmutv.crimegraph.core.operator.ScoreSplitter;
+import com.acmutv.crimegraph.core.metric.HiddenMetrics;
+import com.acmutv.crimegraph.core.metric.PotentialMetrics;
+import com.acmutv.crimegraph.core.operator.*;
 import com.acmutv.crimegraph.core.sink.HiddenSink;
 import com.acmutv.crimegraph.core.sink.PotentialSink;
+import com.acmutv.crimegraph.core.tuple.*;
+
 import com.acmutv.crimegraph.core.source.LinkSource;
-import com.acmutv.crimegraph.core.tuple.Link;
-import com.acmutv.crimegraph.core.tuple.NodePair;
-import com.acmutv.crimegraph.core.tuple.NodePairScore;
-import com.acmutv.crimegraph.core.tuple.ScoreType;
 import com.acmutv.crimegraph.tool.runtime.RuntimeManager;
 import com.acmutv.crimegraph.ui.CliService;
 import org.apache.flink.streaming.api.datastream.DataStream;
@@ -57,10 +55,9 @@ import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
  * @see AppConfigurationService
  * @see RuntimeManager
  */
-@Deprecated
-public class QuasiLocalAnalysisWithWeights {
+public class CrimegraphToplogy {
 
-  private static final String ANALYSIS = "Quasi-Local Analysis With Weights for Potential Metric";
+  private static final String ANALYSIS = "Local Analysis";
 
   /**
    * The app main method, executed when the program is launched.
@@ -84,8 +81,23 @@ public class QuasiLocalAnalysisWithWeights {
 
     DataStream<NodePair> updates = links.flatMap(new GraphUpdate(dbconf)).shuffle();
 
-    DataStream<NodePairScore> scores = updates.flatMap(new ScoreCalculatorTStepsWithWeights(
-        dbconf, config.getPotentialLocality(), config.getPotentialWeight())).keyBy(new NodePairScoreKeyer());
+    DataStream<NodePairScore> scores;
+
+    if (config.getHiddenMetric().equals(HiddenMetrics.LOCAL) &&
+        config.getPotentialMetric().equals(PotentialMetrics.LOCAL)) {
+      scores = updates.flatMap(new ScoreCalculator(dbconf))
+          .keyBy(new NodePairScoreKeyer());
+    } else if (config.getHiddenMetric().equals(HiddenMetrics.LOCAL) &&
+        config.getPotentialMetric().equals(PotentialMetrics.QUASI_LOCAL)) {
+      scores = updates.flatMap(new ScoreCalculatorTSteps(
+          dbconf, config.getPotentialLocality())).keyBy(new NodePairScoreKeyer());
+    } else if (config.getHiddenMetric().equals(HiddenMetrics.LOCAL) &&
+        config.getPotentialMetric().equals(PotentialMetrics.WEIGHTED_QUASI_LOCAL)) {
+      scores = updates.flatMap(new ScoreCalculatorTStepsWithWeights(
+          dbconf, config.getPotentialLocality(), config.getPotentialWeight())).keyBy(new NodePairScoreKeyer());
+    } else {
+      throw new IllegalArgumentException("Unrecognized metrics");
+    }
 
     SplitStream<NodePairScore> split = scores.split(new ScoreSplitter());
 

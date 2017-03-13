@@ -31,7 +31,7 @@ import com.acmutv.crimegraph.config.AppConfigurationService;
 import com.acmutv.crimegraph.core.db.DbConfiguration;
 import com.acmutv.crimegraph.core.keyer.NodePairScoreKeyer;
 import com.acmutv.crimegraph.core.operator.GraphUpdate;
-import com.acmutv.crimegraph.core.operator.ScoreCalculatorTStepsWithWeights;
+import com.acmutv.crimegraph.core.operator.ScoreCalculator;
 import com.acmutv.crimegraph.core.operator.ScoreSplitter;
 import com.acmutv.crimegraph.core.sink.HiddenSink;
 import com.acmutv.crimegraph.core.sink.PotentialSink;
@@ -58,9 +58,9 @@ import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
  * @see RuntimeManager
  */
 @Deprecated
-public class QuasiLocalAnalysisWithWeights {
+public class Crimegraph {
 
-  private static final String ANALYSIS = "Quasi-Local Analysis With Weights for Potential Metric";
+  private static final String NAME = "Crimegraph";
 
   /**
    * The app main method, executed when the program is launched.
@@ -68,11 +68,11 @@ public class QuasiLocalAnalysisWithWeights {
    */
   public static void main(String[] args) throws Exception {
 
-    CliService.printSplash();
-
     CliService.handleArguments(args);
 
     AppConfiguration config = AppConfigurationService.getConfigurations();
+
+    CliService.printSplash();
 
     final StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
 
@@ -84,8 +84,10 @@ public class QuasiLocalAnalysisWithWeights {
 
     DataStream<NodePair> updates = links.flatMap(new GraphUpdate(dbconf)).shuffle();
 
-    DataStream<NodePairScore> scores = updates.flatMap(new ScoreCalculatorTStepsWithWeights(
-        dbconf, config.getPotentialLocality(), config.getPotentialWeight())).keyBy(new NodePairScoreKeyer());
+
+
+    DataStream<NodePairScore> scores = updates.flatMap(new ScoreCalculator(dbconf))
+        .keyBy(new NodePairScoreKeyer());
 
     SplitStream<NodePairScore> split = scores.split(new ScoreSplitter());
 
@@ -97,6 +99,6 @@ public class QuasiLocalAnalysisWithWeights {
 
     potentialScores.addSink(new PotentialSink(dbconf, config.getPotentialThreshold()));
 
-    env.execute(ANALYSIS);
+    env.execute(NAME);
   }
 }

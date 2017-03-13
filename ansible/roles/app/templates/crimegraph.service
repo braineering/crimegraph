@@ -4,7 +4,7 @@ After=network.target
 
 [Service]
 Type=simple
-ExecStart={{ node_home }}/bin/node {{ app_main }} --port {{ app_port }} --flink_port {{ flink_port }} --neo4j_port {{ neo4j_http_port }}
+ExecStart={{ node_home }}/bin/node {{ app_main }} --port {{ app_port }} --flink_port {{ flink_port }} --neo4j_port {{ neo4j_http_port }} --neo4j_bolt_port {{ neo4j_bolt_port }} --neo4j_username {{ neo4j_username }} --neo4j_password {{ neo4j_password }}
 Restart=always
 StandardOutput=syslog
 StandardError=syslog

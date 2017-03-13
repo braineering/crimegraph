@@ -27,6 +27,8 @@
 package com.acmutv.crimegraph.config.serial;
 
 import com.acmutv.crimegraph.config.AppConfiguration;
+import com.acmutv.crimegraph.core.metric.HiddenMetrics;
+import com.acmutv.crimegraph.core.metric.PotentialMetrics;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -47,8 +49,6 @@ import java.util.List;
  * @see AppConfiguration
  */
 public class AppConfigurationDeserializer extends StdDeserializer<AppConfiguration> {
-
-  private static final Logger LOGGER = LoggerFactory.getLogger(AppConfigurationDeserializer.class);
 
   /**
    * The singleton of {@link AppConfigurationDeserializer}.
@@ -78,16 +78,6 @@ public class AppConfigurationDeserializer extends StdDeserializer<AppConfigurati
     AppConfiguration config = new AppConfiguration();
     JsonNode node = parser.getCodec().readTree(parser);
 
-    if (node.hasNonNull("data.hostname")) {
-      final String dataHostname = node.get("data.hostname").asText();
-      config.setDataHostname(dataHostname);
-    }
-
-    if (node.hasNonNull("data.port")) {
-      final int dataPort = node.get("data.port").asInt();
-      config.setDataPort(dataPort);
-    }
-
     if (node.hasNonNull("dataset")) {
       final String dataset = node.get("dataset").asText();
       config.setDataset(dataset);
@@ -96,6 +86,21 @@ public class AppConfigurationDeserializer extends StdDeserializer<AppConfigurati
     if (node.hasNonNull("output")) {
       final String output = node.get("output").asText();
       config.setOutput(output);
+    }
+
+    if (node.hasNonNull("hidden.metric")) {
+      final HiddenMetrics hiddenMetric = HiddenMetrics.valueOf(node.get("hidden.metric").asText());
+      config.setHiddenMetric(hiddenMetric);
+    }
+
+    if (node.hasNonNull("hidden.threshold")) {
+      final double hiddenThreshold = node.get("hidden.threshold").asDouble();
+      config.setHiddenThreshold(hiddenThreshold);
+    }
+
+    if (node.hasNonNull("potential.metric")) {
+      final PotentialMetrics potentialMetric = PotentialMetrics.valueOf(node.get("potential.metric").asText());
+      config.setPotentialMetric(potentialMetric);
     }
 
     if (node.hasNonNull("potential.locality")) {
@@ -117,11 +122,6 @@ public class AppConfigurationDeserializer extends StdDeserializer<AppConfigurati
     if (node.hasNonNull("potential.threshold")) {
       final double potentialThreshold = node.get("potential.threshold").asDouble();
       config.setPotentialThreshold(potentialThreshold);
-    }
-
-    if (node.hasNonNull("hidden.threshold")) {
-      final double hiddenThreshold = node.get("hidden.threshold").asDouble();
-      config.setHiddenThreshold(hiddenThreshold);
     }
 
     if (node.hasNonNull("neo4j.hostname")) {

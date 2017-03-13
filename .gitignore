@@ -11,7 +11,7 @@
 _ignore
 .vagrant
 ansible/playbook.retry
-site-gm/node_modules/
+site/node_modules/
 
 #==============================================================================#
 # TEX

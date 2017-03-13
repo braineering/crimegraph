@@ -1,12 +1,10 @@
 #===============================================================================
-# APP Configuration file
+# CRIMEGRAPH Configuration file
 #===============================================================================
 
 #===============================================================================
-# DATASOURCE
+# INPUT
 #===============================================================================
-data.hostname: "127.0.0.1"
-data.port: 9000
 dataset: "resources/crimegraph/data/crimegraph.data"
 
 #===============================================================================
@@ -15,16 +13,18 @@ dataset: "resources/crimegraph/data/crimegraph.data"
 output: "resources/crimegraph/out/crimegraph.out"
 
 #===============================================================================
-# POTENTIAL LINKS
+# LINK DETECTION
 #===============================================================================
-potential.locality: 1
-potential.weight: []
-potential.threshold: 0.5
+hidden.metric: "local"
+hidden.threshold: 0.5
 
 #===============================================================================
-# HIDDEN LINKS
+# LINK PREDICTION
 #===============================================================================
-hidden.threshold: 0.5
+potential.metric: "local"
+potential.locality: 1
+potential.weight: [1.0]
+potential.threshold: 0.5
 
 #===============================================================================
 # NEO4J
