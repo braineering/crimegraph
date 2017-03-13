@@ -1,0 +1,112 @@
+---
+# file: flink/tasks/main.yml
+- name: check Flink (binary)
+  stat:
+    path: "{{ flink_home }}/bin/flink"
+  register: flinkBin
+
+- name: download Flink
+  get_url:
+    url: "{{ flink_download }}"
+    dest: "{{ flink_archive_path }}"
+  when: not flinkBin.stat.exists
+
+- name: check Flink (archive)
+  stat:
+    path: "{{ flink_archive_path }}"
+  register: flinkArchive
+
+- name: unarchive Flink
+  unarchive:
+    src: "{{ flink_archive_path }}"
+    dest: "{{ flink_home | dirname }}"
+    remote_src: True
+    mode: 755
+  when: flinkArchive.stat.exists
+
+- name: remove archive Flink
+  file:
+    path: "{{ flink_archive_path }}"
+    state: absent
+
+- name: configure permissions for Flink
+  file:
+    path: "{{ flink_home }}/bin/{{ item }}"
+    mode: 755
+  with_items:
+    - flink
+    - start-local.sh
+    - stop-local.sh
+
+- name: update alternatives Flink
+  alternatives:
+    name: "{{ item }}"
+    path: "{{ flink_home }}/bin/{{ item }}"
+    link: "/usr/bin/{{ item }}"
+    priority: 100
+  with_items:
+    - flink
+
+- name: configure envars Flink
+  lineinfile:
+    name: /etc/profile.d/crimegraph-env.sh
+    regexp: "^FLINK_HOME="
+    line: "FLINK_HOME={{ flink_home }}"
+    state: present
+    insertbefore: BOF
+    create: yes
+
+- name: create directory for manager Flink
+  file:
+    path: "{{ flink_manager_path | dirname }}"
+    state: directory
+    mode: 755
+
+- name: create manager Flink
+  template:
+    src: flink-manager.sh
+    dest: "{{ flink_manager_path }}"
+    mode: 755
+
+- name: create service Flink
+  template:
+    src: flink.service
+    dest: /etc/systemd/system/flink.service
+    mode: 644
+
+- name: start service Flink
+  systemd:
+    name: flink.service
+    state: started
+    enabled: yes
+
+- block:
+  - name: configure Flink (main)
+    template:
+      src: flink-conf.yaml
+      dest: "{{ flink_home }}/conf/flink-conf.yaml"
+
+  - name: configure Flink (log4j)
+    template:
+      src: log4j.properties
+      dest: "{{ flink_home }}/conf/log4j.properties"
+
+  - name: configure Flink (log4j-cli)
+    template:
+      src: log4j-cli.properties
+      dest: "{{ flink_home }}/conf/log4j-cli.properties"
+
+  - name: configure Flink (masters)
+    template:
+      src: masters.txt
+      dest: "{{ flink_home }}/conf/masters"
+
+  - name: configure Flink (slaves)
+    template:
+      src: slaves.txt
+      dest: "{{ flink_home }}/conf/slaves"
+
+  - name: restart Flink
+    systemd:
+      name: flink.service
+      state: restarted

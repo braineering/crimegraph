@@ -1,0 +1,60 @@
+---
+# file: java/tasks/main.yml
+- name: check Java (binary)
+  stat:
+    path: "{{ java_home }}/bin/java"
+  register: javaBin
+
+- name: download Java
+  get_url:
+    url: "{{ java_download }}"
+    headers: 'Cookie:oraclelicense=accept-securebackup-cookie'
+    dest: "{{ java_archive_path }}"
+  when: not javaBin.stat.exists
+
+- name: check Java (archive)
+  stat:
+    path: "{{ java_archive_path }}"
+  register: javaArchive
+
+- name: unarchive Java
+  unarchive:
+    src: "{{ java_archive_path }}"
+    dest: "{{ java_home | dirname }}"
+    remote_src: True
+    mode: 755
+  when: javaArchive.stat.exists
+
+- name: remove archive Java
+  file:
+    path: "{{ java_archive_path }}"
+    state: absent
+
+- name: configure permissions for Java
+  file:
+    path: "{{ java_home }}/bin/{{ item }}"
+    mode: 755
+  with_items:
+    - java
+    - javac
+    - javaws
+
+- name: update alternatives Java
+  alternatives:
+    name: "{{ item }}"
+    path: "{{ java_home }}/bin/{{ item }}"
+    link: "/usr/bin/{{ item }}"
+    priority: 100
+  with_items:
+    - java
+    - javac
+    - javaws
+
+- name: configure envars Java
+  lineinfile:
+    name: /etc/profile.d/crimegraph-env.sh
+    regexp: "^JAVA_HOME="
+    line: "JAVA_HOME={{ java_home }}"
+    state: present
+    insertbefore: BOF
+    create: yes

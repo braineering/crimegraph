@@ -1,0 +1,13 @@
+---
+# file: app/tasks/main.yml
+- name: create service Crimegraph
+  template:
+    src: crimegraph.service
+    dest: /etc/systemd/system/crimegraph.service
+    mode: 644
+
+- name: start service Crimegraph
+  systemd:
+    name: crimegraph.service
+    state: started
+    enabled: yes

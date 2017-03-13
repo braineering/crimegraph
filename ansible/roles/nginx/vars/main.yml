@@ -1,0 +1,9 @@
+---
+# file: nginx/vars/main.yml
+
+# Default
+nginx_default_root: /vagrant/site
+
+# App
+app_server_name: crimegraph.braineering.it
+app_port: 3333

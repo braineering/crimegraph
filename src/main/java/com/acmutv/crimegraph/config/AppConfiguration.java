@@ -51,16 +51,6 @@ public class AppConfiguration {
   private static final Logger LOGGER = LoggerFactory.getLogger(AppConfiguration.class);
 
   /**
-   * Default value for property {@code dataHostname}.
-   */
-  public static final String DATA_HOSTNAME = "127.0.0.1";
-
-  /**
-   * Default value for property {@code dataPort}.
-   */
-  public static final int DATA_PORT = 9000;
-
-  /**
    * Default value for property {@code dataset}.
    */
   public static final String DATASET = "resources/crimegraph/data/crimegraph.data";
@@ -104,18 +94,6 @@ public class AppConfiguration {
    * Default value for property {@code neo4jPassword}.
    */
   public static final String NEO4J_PASSWORD = "password";
-
-  /**
-   * The hostname of the data stream socket.
-   * Default is: {@code 127.0.0.1}.
-   */
-  private String dataHostname = DATA_HOSTNAME;
-
-  /**
-   * The port number of the data stream socket.
-   * Default is: {@code 9000}.
-   */
-  private int dataPort = DATA_PORT;
 
   /**
    * The pathname of the file or directory containing the dataset.
@@ -184,8 +162,6 @@ public class AppConfiguration {
    * @param other the configuration to copy.
    */
   public void copy(AppConfiguration other) {
-    this.dataHostname = other.dataHostname;
-    this.dataPort = other.dataPort;
     this.dataset = other.dataset;
     this.potentialLocality = other.potentialLocality;
     this.potentialWeight = new ArrayList<>(other.potentialWeight);
@@ -200,8 +176,6 @@ public class AppConfiguration {
    * Restores the default configuration settings.
    */
   public void toDefault() {
-    this.dataHostname = DATA_HOSTNAME;
-    this.dataPort = DATA_PORT;
     this.dataset = DATASET;
     this.potentialLocality = POTENTIAL_LOCALITY;
     this.potentialWeight = POTENTIAL_WEIGHT;

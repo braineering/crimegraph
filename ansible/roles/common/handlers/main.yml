@@ -1,0 +1,4 @@
+---
+# file: common/handlers/main.yml
+- name: reload environment
+  shell: env

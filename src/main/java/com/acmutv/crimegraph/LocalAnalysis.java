@@ -40,6 +40,7 @@ import com.acmutv.crimegraph.core.tuple.*;
 import com.acmutv.crimegraph.core.source.LinkSource;
 import com.acmutv.crimegraph.tool.runtime.RuntimeManager;
 import com.acmutv.crimegraph.ui.CliService;
+import org.apache.flink.api.java.utils.ParameterTool;
 import org.apache.flink.streaming.api.datastream.DataStream;
 import org.apache.flink.streaming.api.datastream.SplitStream;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
@@ -89,10 +90,6 @@ public class LocalAnalysis {
     DataStream<NodePairScore> hiddenScores = split.select(ScoreType.HIDDEN.name());
 
     DataStream<NodePairScore> potentialScores = split.select(ScoreType.POTENTIAL.name());
-
-    DataStream<NodePairScore> hidden = hiddenScores.filter(new HiddenFilter(config.getHiddenThreshold()));
-
-    DataStream<NodePairScore> potential = potentialScores.filter(new PotentialFilter(config.getPotentialThreshold()));
 
     hiddenScores.addSink(new HiddenSink(dbconf, config.getHiddenThreshold()));
 
