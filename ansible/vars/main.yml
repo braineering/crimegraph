@@ -1,0 +1,8 @@
+# Node
+node_port: 3000
+
+# Flink
+flink_port: 8081
+
+# Neo4j
+neo4j_port: 7474

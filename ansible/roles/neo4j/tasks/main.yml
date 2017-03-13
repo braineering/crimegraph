@@ -1,0 +1,79 @@
+---
+# file: neo4j/tasks/main.yml
+- name: check Neo4J (binary)
+  stat:
+    path: "{{ neo4j_home }}/bin/neo4j"
+  register: neo4jBin
+
+- name: download Neo4J
+  get_url:
+    url: "{{ neo4j_download }}"
+    dest: "{{ neo4j_archive_path }}"
+  when: not neo4jBin.stat.exists
+
+- name: check Neo4J (archive)
+  stat:
+    path: "{{ neo4j_archive_path }}"
+  register: neo4jArchive
+
+- name: unarchive Neo4J
+  unarchive:
+    src: "{{ neo4j_archive_path }}"
+    dest: "{{ neo4j_home | dirname }}"
+    remote_src: True
+    mode: 755
+  when: neo4jArchive.stat.exists
+
+- name: remove archive Neo4J
+  file:
+    path: "{{ neo4j_archive_path }}"
+    state: absent
+
+- name: configure permissions for Neo4J
+  file:
+    path: "{{ neo4j_home }}/bin/{{ item }}"
+    mode: 755
+  with_items:
+    - neo4j
+
+- name: configure envars Neo4J
+  lineinfile:
+    name: /etc/profile.d/crimegraph-env.sh
+    regexp: "^NEO4J_HOME="
+    line: "NEO4J_HOME={{ neo4j_home }}"
+    state: present
+    insertbefore: BOF
+    create: yes
+
+- name: configure Neo4J (authentication)
+  shell: "{{ neo4j_home }}/bin/neo4j-admin set-initial-password {{ neo4j_password }}"
+
+- name: create directory for manager Neo4J
+  file:
+    path: "{{ neo4j_manager_path | dirname }}"
+    state: directory
+    mode: 755
+
+- name: create manager Neo4J
+  template:
+    src: neo4j-manager.sh
+    dest: "{{ neo4j_manager_path }}"
+    mode: 755
+
+- name: create service Neo4J
+  template:
+    src: neo4j.service
+    dest: /etc/systemd/system/neo4j.service
+    mode: 644
+
+- name: start service Neo4J
+  systemd:
+    name: neo4j
+    state: started
+    enabled: yes
+
+- name: configure Neo4J (main)
+  template:
+    src: neo4j.conf
+    dest: "{{ neo4j_home }}/conf/neo4j.conf"
+  notify: restart Neo4J

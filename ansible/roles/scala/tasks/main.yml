@@ -1,0 +1,59 @@
+---
+# file: scala/tasks/main.yml
+- name: check Scala (binary)
+  stat:
+    path: "{{ scala_home }}/bin/scala"
+  register: scalaBin
+
+- name: download Scala
+  get_url:
+    url: "{{ scala_download }}"
+    dest: "{{ scala_archive_path }}"
+  when: not scalaBin.stat.exists
+
+- name: check Scala (archive)
+  stat:
+    path: "{{ scala_archive_path }}"
+  register: scalaArchive
+
+- name: unarchive Scala
+  unarchive:
+    src: "{{ scala_archive_path }}"
+    dest: "{{ scala_home | dirname }}"
+    remote_src: True
+    mode: 755
+  when: scalaArchive.stat.exists
+
+- name: remove archive Scala
+  file:
+    path: "{{ scala_archive_path }}"
+    state: absent
+
+- name: configure permissions for Scala
+  file:
+    path: "{{ scala_home }}/bin/{{ item }}"
+    mode: 755
+  with_items:
+    - scala
+    - scalac
+    - scalap
+
+- name: update alternatives Scala
+  alternatives:
+    name: "{{ item }}"
+    path: "{{ scala_home }}/bin/{{ item }}"
+    link: "/usr/bin/{{ item }}"
+    priority: 100
+  with_items:
+    - scala
+    - scalac
+    - scalap
+
+- name: configure envars Scala
+  lineinfile:
+    name: /etc/profile.d/crimegraph-env.sh
+    regexp: "^SCALA_HOME="
+    line: "SCALA_HOME={{ scala_home }}"
+    state: present
+    insertbefore: BOF
+    create: yes

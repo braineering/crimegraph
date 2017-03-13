@@ -1,0 +1,8 @@
+{
+  "hostname"  : "localhost",
+  "port"      : 4444,
+  "browsers"  : [{
+    "name"    : "chrome",
+    "url": "http://localhost:54741/index.html"
+  }]
+}

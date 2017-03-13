@@ -4,52 +4,90 @@
 
 Social Network Analysis (SNA) applied to criminal networks leveraging Apache Flink.
 
+## Requirements
+To execute the app locally you need the following to be installed to your system:
+
+* Java
+* Maven
+* Flink
+* Neo4J
+
+To deploy the app to a Digital Ocean droplet, you need the following to be installed on your system:
+* Vagrant
+* Vagrant plugin for Digital Ocean
+* Ansible
+
 
 ## Build
 The app building is provided by Apache Maven. To build the app you need to run
 
-    $app> mvn clean package -P build-jar
-    
-If you want to skip tests:
+    $app> mvn clean package -P [YOUR-SNA-CLASS]
 
-    $app> mvn clean package -P skip-tests
-    
-If you want to build with code optimization:
+where *[YOUR-SNA-CLASS]* could be one of the following:
 
-    $app> mvn clean package -P optimize
+* `local`: potential and hidden links are evaluated using local metrics.
+
+* `quasi-local`: potential links are evaluated using quasi-local metrics, whereas hidden links are evaluated using local metrics.
+
+If you want to skip tests, add the profile `skip-tests`.
 
 
 ## Usage
-Start the Neo4J instance
+Start Neo4J
 
     $neo4j-home>./bin/neo4j start
-    
-and visit the Neo4J browser running at *http://localhost:7474*.
 
 Start the Flink cluster
-    
+
     $flink-home>./bin/start-local.sh
-    
-Submit the application to the cluster
+
+Submit the app to the cluster
 
     $> flink run path/to/crimegraph/target/crimegraph-1.0.jar
-    
-Stop the Flink cluster
-    
+
+You can inspect SNA results navigating the graph with Neo4J browser running at *http://localhost:7474*.
+
+Once you have finished the analysis, stop the Flink cluster
+
     $flink-home>./bin/stop-local.sh
-    
-Stop the Neo4J instance
+
+and Neo4J
 
     $neo4j-home>./bin/neo4j stop
+
+## Deploy
+Run the provisioning with Vagrant
+
+  $crimegraph> vagrant up --provider=digital_ocean
+
+When provisioning is complete, visit the following
+
+  http://x.x.x.x:7474
+
+To destroy the droplet, run
+
+  $crimegraph>vagrant destroy
+
+## Provisioning
+The provider supports the following Vagrant sub-commands:
+
+* `vagrant destroy` - Destroys the Droplet instance.
+* `vagrant ssh` - Logs into the Droplet instance using the configured user account.
+* `vagrant halt` - Powers off the Droplet instance.
+* `vagrant provision` - Runs the configured provisioners and rsyncs any specified config.vm.synced_folder.
+* `vagrant reload` - Reboots the Droplet instance.
+* `vagrant rebuild` - Destroys the Droplet instance and recreates it with the same IP address which was previously assigned.
+* `vagrant status` - Outputs the status (active, off, not created) for the Droplet instance.
 
 
 ## Authors
 Giacomo Marciani, [gmarciani@acm.org](mailto:gmarciani@acm.org)
+
 Michele Porretta, [mporretta@acm.org](mailto:mporretta@acm.org)
 
 
 ## References
-Giacomo Marciani. 2017. *Title*. Series. Organization, Country [Read here](https://gmarciani.com)
+Giacomo Marciani, Michele Porretta. 2017. *Crimegraph*. Series. Organization, Country [Read here](https://gmarciani.com)
 
 
 ## License

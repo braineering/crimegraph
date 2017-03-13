@@ -38,6 +38,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
 import java.util.List;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 /**
  * This class realizes the Command Line Interface services.
@@ -56,8 +58,9 @@ public class CliService {
    * @return the arguments list.
    * @see CommandLine
    * @see AppConfiguration
+   * @throws IllegalArgumentException when there are errors in arguments.
    */
-  public static List<String> handleArguments(String[] argv) {
+  public static List<String> handleArguments(String[] argv) throws IllegalArgumentException {
     LOGGER.trace("argv={}", Arrays.asList(argv));
     CommandLine cmd = getCommandLine(argv);
 
@@ -103,7 +106,69 @@ public class CliService {
     if (!configured) {
       LOGGER.trace("Loading default configuration");
       AppConfigurationService.loadDefault();
-      //configured = true;
+    }
+
+    AppConfiguration config = AppConfigurationService.getConfigurations();
+
+    /* option: dataset */
+    if (cmd.hasOption("dataset")) {
+      final String dataset = cmd.getOptionValue("dataset");
+      config.setDataset(dataset);
+    }
+
+    /* option: output */
+    if (cmd.hasOption("output")) {
+      final String output = cmd.getOptionValue("output");
+      config.setOutput(output);
+    }
+
+    /* option: potential-locality */
+    if (cmd.hasOption("potential-locality")) {
+      final long potentialLocality = Long.valueOf(cmd.getOptionValue("potential-locality"));
+      config.setPotentialLocality(potentialLocality);
+    }
+
+    /* option: potential-weight */
+    if (cmd.hasOption("potential-weight")) {
+      final String csPotentialWeight = cmd.getOptionValue("potential-weight");
+      List<Double> potentialWeight = Pattern.compile(",").splitAsStream(csPotentialWeight).map(Double::valueOf).collect(Collectors.toList());
+      if (potentialWeight.size() != config.getPotentialLocality()) {
+        throw new IllegalArgumentException("The  potential weight vector mus contain a numbe rof value equal to the potential locality.");
+      }
+      if (potentialWeight.stream().mapToDouble(Double::valueOf).sum() != 1.0) {
+        throw new IllegalArgumentException("The sum of potential weights must be equal to 1.0.");
+      }
+      config.setPotentialWeight(potentialWeight);
+    }
+
+    /* option: potential-threshold */
+    if (cmd.hasOption("potential-threshold")) {
+      final double potentialThreshold = Double.valueOf(cmd.getOptionValue("potential-threshold"));
+      config.setPotentialThreshold(potentialThreshold);
+    }
+
+    /* option: hidden-threshold */
+    if (cmd.hasOption("hidden-threshold")) {
+      final double hiddenThreshold = Double.valueOf(cmd.getOptionValue("hidden-threshold"));
+      config.setHiddenThreshold(hiddenThreshold);
+    }
+
+    /* option: neo4j-hostname */
+    if (cmd.hasOption("neo4j-hostname")) {
+      final String neo4jHostname = cmd.getOptionValue("neo4j-hostname");
+      config.setNeo4jHostname(neo4jHostname);
+    }
+
+    /* option: neo4j-username */
+    if (cmd.hasOption("neo4j-username")) {
+      final String neo4jUsername = cmd.getOptionValue("neo4j-username");
+      config.setNeo4jUsername(neo4jUsername);
+    }
+
+    /* option: neo4j-password */
+    if (cmd.hasOption("neo4j-password")) {
+      final String neo4jPassword = cmd.getOptionValue("neo4j-password");
+      config.setNeo4jPassword(neo4jPassword);
     }
 
     LOGGER.trace("Configuration loaded: {}",
