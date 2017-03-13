@@ -40,7 +40,21 @@
     "child_process":"^1.0.2",
     "util":"^0.10.3",
     "opn":"^4.0.2",
-    "neo4j-driver":"^1.0.0"
+    "neo4j-driver":"^1.0.0",
+    "bootstrap": "^3.3.7",
+    "browser-sync": "^2.13.0",
+    "font-awesome": "^4.6.3",
+    "gulp": "^3.9.1",
+    "gulp-clean-css": "^2.0.10",
+    "gulp-header": "^1.8.7",
+    "gulp-less": "^3.1.0",
+    "gulp-rename": "^1.2.2",
+    "gulp-uglify": "^1.5.4",
+    "jquery": "^1.11.3",
+    "magnific-popup": "^1.1.0",
+    "scrollreveal": "^3.1.4",
+    "bootstrap-combobox":"^1.0.2",
+    "jquery.easing":"^1.4.1"
   },
   "private": true
 }
