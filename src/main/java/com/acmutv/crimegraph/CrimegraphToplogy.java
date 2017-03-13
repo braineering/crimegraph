@@ -94,7 +94,7 @@ public class CrimegraphToplogy {
     } else if (config.getHiddenMetric().equals(HiddenMetrics.LOCAL) &&
         config.getPotentialMetric().equals(PotentialMetrics.WEIGHTED_QUASI_LOCAL)) {
       scores = updates.flatMap(new ScoreCalculatorTStepsWithWeights(
-          dbconf, config.getPotentialLocality(), config.getPotentialWeight())).keyBy(new NodePairScoreKeyer());
+          dbconf, config.getPotentialLocality(), config.getPotentialWeights())).keyBy(new NodePairScoreKeyer());
     } else {
       throw new IllegalArgumentException("Unrecognized metrics");
     }

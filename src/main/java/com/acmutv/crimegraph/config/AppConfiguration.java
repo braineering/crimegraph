@@ -63,9 +63,19 @@ public class AppConfiguration {
   public static final String OUTPUT = "resources/crimegraph/out/crimegraph.out";
 
   /**
-   * Default value for property {@code hidden-metric}.
+   * Default value for property {@code hiddenMetric}.
    */
   public static final HiddenMetrics HIDDEN_METRIC = HiddenMetrics.LOCAL;
+
+  /**
+   * Default value for property {@code hiddenLocality}.
+   */
+  public static final long HIDDEN_LOCALITY = 1;
+
+  /**
+   * Default value for property {@code hiddenWeights}.
+   */
+  public static final List<Double> HIDDEN_WEIGHTS = new ArrayList<Double>(){{add(1.0);}};
 
   /**
    * Default value for property {@code hiddenThreshold}.
@@ -73,7 +83,7 @@ public class AppConfiguration {
   public static final double HIDDEN_THRESHOLD = 0.5;
 
   /**
-   * Default value for property {@code potential-metric}.
+   * Default value for property {@code potentialMetric}.
    */
   public static final PotentialMetrics POTENTIAL_METRIC = PotentialMetrics.LOCAL;
 
@@ -83,9 +93,9 @@ public class AppConfiguration {
   public static final long POTENTIAL_LOCALITY = 1;
 
   /**
-   * Default value for property {@code potentialWeight}.
+   * Default value for property {@code potentialWeights}.
    */
-  public static final List<Double> POTENTIAL_WEIGHT = new ArrayList<Double>(){{add(1.0);}};
+  public static final List<Double> POTENTIAL_WEIGHTS = new ArrayList<Double>(){{add(1.0);}};
 
   /**
    * Default value for property {@code potentialThreshold}.
@@ -126,6 +136,18 @@ public class AppConfiguration {
   private HiddenMetrics hiddenMetric = HIDDEN_METRIC;
 
   /**
+   * The locality degree for hidden link score.
+   * Default is: {@code 1}.
+   */
+  private long hiddenLocality = HIDDEN_LOCALITY;
+
+  /**
+   * The weight vector for hidden link score.
+   * Default value is {@code [1.0]}.
+   */
+  private List<Double> hiddenWeights = HIDDEN_WEIGHTS;
+
+  /**
    * The threshold for the hidden link score.
    * Default is: {@code 0.5}
    */
@@ -145,9 +167,9 @@ public class AppConfiguration {
 
   /**
    * The weight vector for potential link score.
-   * Dfault value is {@code []}.
+   * Default value is {@code [1.0]}.
    */
-  private List<Double> potentialWeight = POTENTIAL_WEIGHT;
+  private List<Double> potentialWeights = POTENTIAL_WEIGHTS;
 
   /**
    * The threshold for the potential link score.
@@ -189,10 +211,12 @@ public class AppConfiguration {
     this.dataset = other.dataset;
     this.output = other.output;
     this.hiddenMetric = other.hiddenMetric;
+    this.hiddenLocality = other.hiddenLocality;
+    this.hiddenWeights = other.hiddenWeights;
     this.hiddenThreshold = other.hiddenThreshold;
     this.potentialMetric = other.potentialMetric;
     this.potentialLocality = other.potentialLocality;
-    this.potentialWeight = new ArrayList<>(other.potentialWeight);
+    this.potentialWeights = new ArrayList<>(other.potentialWeights);
     this.potentialThreshold = other.potentialThreshold;
     this.neo4jHostname = other.neo4jHostname;
     this.neo4jUsername = other.neo4jUsername;
@@ -206,10 +230,12 @@ public class AppConfiguration {
     this.dataset = DATASET;
     this.output = OUTPUT;
     this.hiddenMetric = HIDDEN_METRIC;
+    this.hiddenLocality = HIDDEN_LOCALITY;
+    this.hiddenWeights = HIDDEN_WEIGHTS;
     this.hiddenThreshold = HIDDEN_THRESHOLD;
     this.potentialMetric = POTENTIAL_METRIC;
     this.potentialLocality = POTENTIAL_LOCALITY;
-    this.potentialWeight = POTENTIAL_WEIGHT;
+    this.potentialWeights = POTENTIAL_WEIGHTS;
     this.potentialThreshold = POTENTIAL_THRESHOLD;
     this.neo4jHostname = NEO4J_HOSTNAME;
     this.neo4jUsername = NEO4J_USERNAME;

@@ -130,6 +130,25 @@ public class CliService {
       config.setHiddenMetric(hiddenMetric);
     }
 
+    /* option: hidden-locality */
+    if (cmd.hasOption("hidden-locality")) {
+      final long potentialLocality = Long.valueOf(cmd.getOptionValue("hidden-locality"));
+      config.setPotentialLocality(potentialLocality);
+    }
+
+    /* option: hidden-weights */
+    if (cmd.hasOption("hidden-weights")) {
+      final String csHiddenWeight = cmd.getOptionValue("hidden-weights");
+      List<Double> hiddenWeight = Pattern.compile(",").splitAsStream(csHiddenWeight).map(Double::valueOf).collect(Collectors.toList());
+      if (hiddenWeight.size() != config.getHiddenLocality()) {
+        throw new IllegalArgumentException("The hidden weight vector mus contain a number of value equal to the potential locality.");
+      }
+      if (hiddenWeight.stream().mapToDouble(Double::valueOf).sum() != 1.0) {
+        throw new IllegalArgumentException("The sum of hidden weights must be equal to 1.0.");
+      }
+      config.setHiddenWeights(hiddenWeight);
+    }
+
     /* option: hidden-threshold */
     if (cmd.hasOption("hidden-threshold")) {
       final double hiddenThreshold = Double.valueOf(cmd.getOptionValue("hidden-threshold"));
@@ -148,17 +167,17 @@ public class CliService {
       config.setPotentialLocality(potentialLocality);
     }
 
-    /* option: potential-weight */
-    if (cmd.hasOption("potential-weight")) {
-      final String csPotentialWeight = cmd.getOptionValue("potential-weight");
+    /* option: potential-weights */
+    if (cmd.hasOption("potential-weights")) {
+      final String csPotentialWeight = cmd.getOptionValue("potential-weights");
       List<Double> potentialWeight = Pattern.compile(",").splitAsStream(csPotentialWeight).map(Double::valueOf).collect(Collectors.toList());
       if (potentialWeight.size() != config.getPotentialLocality()) {
-        throw new IllegalArgumentException("The  potential weight vector mus contain a numbe rof value equal to the potential locality.");
+        throw new IllegalArgumentException("The potential weight vector mus contain a number of value equal to the potential locality.");
       }
       if (potentialWeight.stream().mapToDouble(Double::valueOf).sum() != 1.0) {
         throw new IllegalArgumentException("The sum of potential weights must be equal to 1.0.");
       }
-      config.setPotentialWeight(potentialWeight);
+      config.setPotentialWeights(potentialWeight);
     }
 
     /* option: potential-threshold */

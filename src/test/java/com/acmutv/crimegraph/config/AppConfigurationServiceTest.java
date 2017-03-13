@@ -66,10 +66,16 @@ public class AppConfigurationServiceTest {
     expected.setDataset("CustomDataset");
     expected.setOutput("CustomOutput");
     expected.setHiddenMetric(HiddenMetrics.WEIGHTED_QUASI_LOCAL);
+    expected.setHiddenLocality(3);
+    expected.setHiddenWeights(new ArrayList<Double>(){{
+      add(0.6);
+      add(0.3);
+      add(0.1);
+    }});
     expected.setHiddenThreshold(0.8);
     expected.setPotentialMetric(PotentialMetrics.WEIGHTED_QUASI_LOCAL);
     expected.setPotentialLocality(3);
-    expected.setPotentialWeight(new ArrayList<Double>(){{
+    expected.setPotentialWeights(new ArrayList<Double>(){{
       add(0.6);
       add(0.3);
       add(0.1);

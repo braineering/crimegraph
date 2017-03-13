@@ -54,17 +54,6 @@ function fnStart(req, res) {
   winston.info('New command submitted: ', JSON.stringify(COMMAND));
 
   var dataset = COMMAND.dataset;     // type: S, M, L
-  var potential = COMMAND.potential; // type: Local, QuasiLocal, WeightedQuasiLocal
-  var hidden = COMMAND.hidden; // type: Local
-  var steps = 1;
-  var weights = new Array();
-
-  if(COMMAND.hasOwnProperty('steps'))
-    steps = COMMAND.steps;
-  
-  if(COMMAND.hasOwnProperty('weights'))
-    weights = COMMAND.weights;
-
   switch(COMMAND.dataset) {
     case S:
       dataset = '/vagrant/data/small.data';
@@ -79,8 +68,26 @@ function fnStart(req, res) {
       break;
   }
 
-  //manca la gestione dei jar per le metriche desiderate
-  var resetcommand = 'service restart flink --dataset ${dataset} --potential ${potential} --hidden ${hidden} --potential-locality ${steps} --potential-weight ${weights}';
+  var hiddenMetric = COMMAND.hiddenMetric | 'LOCAL'; // type: LOCAL, QUASI_LOCAL, WEIGHTED_QUASI_LOCAL
+  var hiddenThreshold = COMMAND.hiddenThreshold | 0.5;
+  var hiddenLocality = COMMAND.hiddenLocality | 1;
+  var hiddenWeights = COMMAND.hiddenWeights | [1.0];
+
+  var potentialMetric = COMMAND.potentialMetric | 'LOCAL'; // type: LOCAL, QUASI_LOCAL, WEIGHTED_QUASI_LOCAL
+  var potentialThreshold = COMMAND.potentialThreshold | 0.5;
+  var potentialLocality = COMMAND.potentialLocality | 1;
+  var potentialWeights = COMMAND.potentialWeights | [1.0];
+
+  var resetcommand = 'service restart flink --dataset ${dataset} ' +
+      '--hidden ${hiddenMetric} ' +
+      '--hidden-locality ${hiddenLocality} ' +
+      '--hidden-weights ${hiddenWeights} ' +
+      '--hidden-threshold ${hiddenThreshold} ' +
+      '--potential ${potentialMetric}  ' +
+      '--potential-locality ${potentialLocality} ' +
+      '--potential-weights ${potentialWeights} ' +
+      '--potential-threshold ${potentialThreshold}';
+
   var restart = exec(resetcommand, function (error, stdout, stderr) {
     console.log(stdout);
     if (error !== null) {

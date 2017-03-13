@@ -67,37 +67,57 @@ public class BaseOptions extends Options {
   private static final String DESCRIPTION_OUTPUT = "The path of the output file.";
 
   /**
-   * The CLI description for the option `potential-locality`.
+   * The CLI description for the option `hiddenMetric`.
    */
-  private static final String DESCRIPTION_POTENTIAL_LOCALITY = "The locality degree for potential link metric. The number must be an integer grater than 0.";
+  private static final String DESCRIPTION_HIDDEN_METRIC = "The metric used for link detection. It must be one of: LOCAL, QUASI_LOCAL, WEIGHTED_QUASI_LOCAL.";
 
   /**
-   * The CLI description for the option `potential-weight`.
+   * The CLI description for the option `hiddenLocality`.
    */
-  private static final String DESCRIPTION_POTENTIAL_WEIGHT = "The weught vector for potential link metric. The sum of weights must be in (0,1).";
+  private static final String DESCRIPTION_HIDDEN_LOCALITY = "The locality degree for link detection. The locality degree must be a strictly positive integer.";
 
   /**
-   * The CLI description for the option `potential-threshold`.
+   * The CLI description for the option `hiddenWeights`.
    */
-  private static final String DESCRIPTION_POTENTIAL_THRESHOLD = "The threshold for potential link metric. The number must be in (0,1).";
+  private static final String DESCRIPTION_HIDDEN_WEIGHTS = "The weight vector for weighted quasi-local link detection. The sum of weights must be equal to 1.0.";
 
   /**
-   * The CLI description for the option `hidden-threshold`.
+   * The CLI description for the option `hiddenThreshold`.
    */
-  private static final String DESCRIPTION_HIDDEN_THRESHOLD = "The threshold for hidden link metric. The number must be in (0,1).";
+  private static final String DESCRIPTION_HIDDEN_THRESHOLD = "The threshold for link detection. The threshold must be in (0,1).";
 
   /**
-   * The CLI description for the option `neo4j-hostname`.
+   * The CLI description for the option `potentialMetric`.
+   */
+  private static final String DESCRIPTION_POTENTIAL_METRIC = "The metric used for link prediction. It must be one of: LOCAL, QUASI_LOCAL, WEIGHTED_QUASI_LOCAL.";
+
+  /**
+   * The CLI description for the option `potentialLocality`.
+   */
+  private static final String DESCRIPTION_POTENTIAL_LOCALITY = "The locality degree for link prediction. The locality degree must be a strictly positive integer.";
+
+  /**
+   * The CLI description for the option `potentialWeights`.
+   */
+  private static final String DESCRIPTION_POTENTIAL_WEIGHTS = "The weight vector for weighted quasi-local link prediction. The sum of weights must be equal to 1.0.";
+
+  /**
+   * The CLI description for the option `potentialThreshold`.
+   */
+  private static final String DESCRIPTION_POTENTIAL_THRESHOLD = "The threshold for link prediction. The threshold must be in (0,1).";
+
+  /**
+   * The CLI description for the option `neo4jHostname`.
    */
   private static final String DESCRIPTION_NEO4J_HOSTNAME = "The Neo4J hostname.";
 
   /**
-   * The CLI description for the option `neo4j-username`.
+   * The CLI description for the option `neo4jUsername`.
    */
   private static final String DESCRIPTION_NEO4J_USERNAME = "The Neo4J username.";
 
   /**
-   * The CLI description for the option `neo4j-password`.
+   * The CLI description for the option `neo4jPassword`.
    */
   private static final String DESCRIPTION_NEO4J_PASSWORD = "The Neo4J password.";
 
@@ -126,10 +146,15 @@ public class BaseOptions extends Options {
     Option config = this.optConfig();
     Option dataset = this.optDataset();
     Option output = this.optOutput();
-    Option potentialLocality = this.optPotentialLocality();
-    Option potentialWeight = this.optPotentialWeight();
-    Option potentialThreshold = this.optPotentialThreshold();
+    Option hiddenMetric = this.optHiddenMetric();
+    Option hiddenLocality = this.optHiddenLocality();
+    Option hiddenWeights = this.optHiddenWeights();
     Option hiddenThreshold = this.optHiddenThreshold();
+    Option potentialMetric = this.optPotentialMetric();
+    Option potentialLocality = this.optPotentialLocality();
+    Option potentialWeight = this.optPotentialWeights();
+    Option potentialThreshold = this.optPotentialThreshold();
+
     Option neo4jHostname = this.optNeo4jHostname();
     Option neo4jUsername = this.optNeo4JUsername();
     Option neo4jPassword = this.optNeo4JPassword();
@@ -139,10 +164,14 @@ public class BaseOptions extends Options {
     super.addOption(config);
     super.addOption(dataset);
     super.addOption(output);
+    super.addOption(hiddenMetric);
+    super.addOption(hiddenLocality);
+    super.addOption(hiddenWeights);
+    super.addOption(hiddenThreshold);
+    super.addOption(potentialMetric);
     super.addOption(potentialLocality);
     super.addOption(potentialWeight);
     super.addOption(potentialThreshold);
-    super.addOption(hiddenThreshold);
     super.addOption(neo4jHostname);
     super.addOption(neo4jUsername);
     super.addOption(neo4jPassword);
@@ -194,7 +223,7 @@ public class BaseOptions extends Options {
    * @return the option.
    */
   private Option optDataset() {
-    return Option.builder("D")
+    return Option.builder()
         .longOpt("dataset")
         .desc(DESCRIPTION_DATASET)
         .required(false)
@@ -209,7 +238,7 @@ public class BaseOptions extends Options {
    * @return the option.
    */
   private Option optOutput() {
-    return Option.builder("O")
+    return Option.builder()
         .longOpt("output")
         .desc(DESCRIPTION_OUTPUT)
         .required(false)
@@ -220,13 +249,28 @@ public class BaseOptions extends Options {
   }
 
   /**
-   * Builds the option `potential-locality`.
+   * Builds the option `hiddenMetric`.
    * @return the option.
    */
-  private Option optPotentialLocality() {
-    return Option.builder("L")
-        .longOpt("potential-locality")
-        .desc(DESCRIPTION_POTENTIAL_LOCALITY)
+  private Option optHiddenMetric() {
+    return Option.builder()
+        .longOpt("hiddenMetric")
+        .desc(DESCRIPTION_HIDDEN_METRIC)
+        .required(false)
+        .hasArg(true)
+        .numberOfArgs(1)
+        .argName("LOCAL|QUASI_LOCAL|WEIGHTED_QUASI_LOCAL")
+        .build();
+  }
+
+  /**
+   * Builds the option `hiddenLocality`.
+   * @return the option.
+   */
+  private Option optHiddenLocality() {
+    return Option.builder()
+        .longOpt("hiddenLocality")
+        .desc(DESCRIPTION_HIDDEN_LOCALITY)
         .required(false)
         .hasArg(true)
         .numberOfArgs(1)
@@ -235,13 +279,13 @@ public class BaseOptions extends Options {
   }
 
   /**
-   * Builds the option `potential-weight`.
+   * Builds the option `hiddenWeights`.
    * @return the option.
    */
-  private Option optPotentialWeight() {
-    return Option.builder("W")
-        .longOpt("potential-weight")
-        .desc(DESCRIPTION_POTENTIAL_WEIGHT)
+  private Option optHiddenWeights() {
+    return Option.builder()
+        .longOpt("hiddenWeights")
+        .desc(DESCRIPTION_HIDDEN_WEIGHTS)
         .required(false)
         .hasArg(true)
         .numberOfArgs(1)
@@ -250,27 +294,12 @@ public class BaseOptions extends Options {
   }
 
   /**
-   * Builds the option `potential-threshold`.
-   * @return the option.
-   */
-  private Option optPotentialThreshold() {
-    return Option.builder("P")
-        .longOpt("potential-threshold")
-        .desc(DESCRIPTION_POTENTIAL_THRESHOLD)
-        .required(false)
-        .hasArg(true)
-        .numberOfArgs(1)
-        .argName("NUMBER")
-        .build();
-  }
-
-  /**
-   * Builds the option `hidden-threshold`.
+   * Builds the option `hiddenThreshold`.
    * @return the option.
    */
   private Option optHiddenThreshold() {
-    return Option.builder("H")
-        .longOpt("hidden-threshold")
+    return Option.builder()
+        .longOpt("hiddenThreshold")
         .desc(DESCRIPTION_HIDDEN_THRESHOLD)
         .required(false)
         .hasArg(true)
@@ -280,27 +309,87 @@ public class BaseOptions extends Options {
   }
 
   /**
-   * Builds the option `neo4j-hostname`.
+   * Builds the option `potentialMetric`.
    * @return the option.
    */
-  private Option optNeo4jHostname() {
-    return Option.builder("n")
-        .longOpt("neo4j-hostname")
-        .desc(DESCRIPTION_NEO4J_HOSTNAME)
+  private Option optPotentialMetric() {
+    return Option.builder()
+        .longOpt("potentialMetric")
+        .desc(DESCRIPTION_POTENTIAL_METRIC)
         .required(false)
         .hasArg(true)
         .numberOfArgs(1)
-        .argName("HOSTNAME")
+        .argName("LOCAL|QUASI_LOCAL|WEIGHTED_QUASI_LOCAL")
         .build();
   }
 
   /**
-   * Builds the option `neo4j-username`.
+   * Builds the option `potentialLocality`.
+   * @return the option.
+   */
+  private Option optPotentialLocality() {
+    return Option.builder()
+        .longOpt("potentialLocality")
+        .desc(DESCRIPTION_POTENTIAL_LOCALITY)
+        .required(false)
+        .hasArg(true)
+        .numberOfArgs(1)
+        .argName("NUMBER")
+        .build();
+  }
+
+  /**
+   * Builds the option `potentialWeights`.
+   * @return the option.
+   */
+  private Option optPotentialWeights() {
+    return Option.builder()
+        .longOpt("potentialWeights")
+        .desc(DESCRIPTION_POTENTIAL_WEIGHTS)
+        .required(false)
+        .hasArg(true)
+        .numberOfArgs(1)
+        .argName("NUMBER,NUMBER,...")
+        .build();
+  }
+
+  /**
+   * Builds the option `potentialThreshold`.
+   * @return the option.
+   */
+  private Option optPotentialThreshold() {
+    return Option.builder()
+        .longOpt("potentialThreshold")
+        .desc(DESCRIPTION_POTENTIAL_THRESHOLD)
+        .required(false)
+        .hasArg(true)
+        .numberOfArgs(1)
+        .argName("NUMBER")
+        .build();
+  }
+
+  /**
+   * Builds the option `neo4jHostname`.
+   * @return the option.
+   */
+  private Option optNeo4jHostname() {
+    return Option.builder()
+        .longOpt("neo4jHostname")
+        .desc(DESCRIPTION_NEO4J_HOSTNAME)
+        .required(false)
+        .hasArg(true)
+        .numberOfArgs(1)
+        .argName("HOST:PORT")
+        .build();
+  }
+
+  /**
+   * Builds the option `neo4jUsername`.
    * @return the option.
    */
   private Option optNeo4JUsername() {
-    return Option.builder("u")
-        .longOpt("neo4j-username")
+    return Option.builder()
+        .longOpt("neo4jUsername")
         .desc(DESCRIPTION_NEO4J_USERNAME)
         .required(false)
         .hasArg(true)
@@ -310,12 +399,12 @@ public class BaseOptions extends Options {
   }
 
   /**
-   * Builds the option `neo4j-password`.
+   * Builds the option `neo4jPassword`.
    * @return the option.
    */
   private Option optNeo4JPassword() {
-    return Option.builder("p")
-        .longOpt("neo4j-password")
+    return Option.builder()
+        .longOpt("neo4jPassword")
         .desc(DESCRIPTION_NEO4J_PASSWORD)
         .required(false)
         .hasArg(true)

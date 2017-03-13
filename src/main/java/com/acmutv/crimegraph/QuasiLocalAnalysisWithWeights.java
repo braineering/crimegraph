@@ -85,7 +85,7 @@ public class QuasiLocalAnalysisWithWeights {
     DataStream<NodePair> updates = links.flatMap(new GraphUpdate(dbconf)).shuffle();
 
     DataStream<NodePairScore> scores = updates.flatMap(new ScoreCalculatorTStepsWithWeights(
-        dbconf, config.getPotentialLocality(), config.getPotentialWeight())).keyBy(new NodePairScoreKeyer());
+        dbconf, config.getPotentialLocality(), config.getPotentialWeights())).keyBy(new NodePairScoreKeyer());
 
     SplitStream<NodePairScore> split = scores.split(new ScoreSplitter());
 

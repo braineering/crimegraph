@@ -15,15 +15,17 @@ output: "resources/crimegraph/out/crimegraph.out"
 #===============================================================================
 # LINK DETECTION
 #===============================================================================
-hidden.metric: "local"
+hidden.metric: "LOCAL"
+hidden.locality: 1
+hidden.weights: [1.0]
 hidden.threshold: 0.5
 
 #===============================================================================
 # LINK PREDICTION
 #===============================================================================
-potential.metric: "local"
+potential.metric: "LOCAL"
 potential.locality: 1
-potential.weight: [1.0]
+potential.weights: [1.0]
 potential.threshold: 0.5
 
 #===============================================================================

@@ -33,8 +33,6 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -93,6 +91,21 @@ public class AppConfigurationDeserializer extends StdDeserializer<AppConfigurati
       config.setHiddenMetric(hiddenMetric);
     }
 
+    if (node.hasNonNull("hidden.locality")) {
+      final long hiddenLocality = node.get("hidden.locality").asLong();
+      config.setHiddenLocality(hiddenLocality);
+    }
+
+    if (node.hasNonNull("hidden.weights")) {
+      List<Double> hiddenWeights = new ArrayList<>();
+      Iterator<JsonNode> iter = node.get("hidden.weights").elements();
+      while (iter.hasNext()) {
+        double w = iter.next().asDouble();
+        hiddenWeights.add(w);
+      }
+      config.setHiddenWeights(hiddenWeights);
+    }
+
     if (node.hasNonNull("hidden.threshold")) {
       final double hiddenThreshold = node.get("hidden.threshold").asDouble();
       config.setHiddenThreshold(hiddenThreshold);
@@ -108,15 +121,14 @@ public class AppConfigurationDeserializer extends StdDeserializer<AppConfigurati
       config.setPotentialLocality(potentialLocality);
     }
 
-    if (node.hasNonNull("potential.weight")) {
+    if (node.hasNonNull("potential.weights")) {
       List<Double> potentialWeight = new ArrayList<>();
-      Iterator<JsonNode> iter = node.get("potential.weight").elements();
+      Iterator<JsonNode> iter = node.get("potential.weights").elements();
       while (iter.hasNext()) {
         double w = iter.next().asDouble();
         potentialWeight.add(w);
-
       }
-      config.setPotentialWeight(potentialWeight);
+      config.setPotentialWeights(potentialWeight);
     }
 
     if (node.hasNonNull("potential.threshold")) {
