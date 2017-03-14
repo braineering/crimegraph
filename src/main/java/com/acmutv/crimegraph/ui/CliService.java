@@ -118,12 +118,6 @@ public class CliService {
       config.setDataset(dataset);
     }
 
-    /* option: output */
-    if (cmd.hasOption("output")) {
-      final String output = cmd.getOptionValue("output");
-      config.setOutput(output);
-    }
-
     /* option: hidden-metric */
     if (cmd.hasOption("hidden-metric")) {
       final HiddenMetrics hiddenMetric = HiddenMetrics.valueOf(cmd.getOptionValue("hidden-metric"));

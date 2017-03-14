@@ -36,6 +36,7 @@ import java.io.IOException;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 
 /**
  * A source that reads links from a file.
@@ -51,9 +52,9 @@ public class LinkSource extends RichSourceFunction<Link> {
   private volatile boolean isRunning = true;
 
   /**
-   * The dataset filename.
+   * The dataset path.
    */
-  private String filename;
+  private String dataset;
 
   /**
    * The dataset reader.
@@ -62,10 +63,10 @@ public class LinkSource extends RichSourceFunction<Link> {
 
   /**
    * Creates a new link source.
-   * @param filename the dataset filename.
+   * @param dataset the dataset path.
    */
-  public LinkSource(String filename) {
-    this.filename = filename;
+  public LinkSource(String dataset) {
+    this.dataset = dataset;
   }
 
   /**
@@ -74,7 +75,8 @@ public class LinkSource extends RichSourceFunction<Link> {
    */
   @Override
   public void run(SourceContext<Link> ctx) throws Exception {
-    Path path = FileSystems.getDefault().getPath(this.filename).toAbsolutePath();
+    Path path = Paths.get(this.dataset);
+
     this.reader = Files.newBufferedReader(path);
 
     String line;

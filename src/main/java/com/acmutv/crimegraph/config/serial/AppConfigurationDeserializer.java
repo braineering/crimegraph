@@ -81,11 +81,6 @@ public class AppConfigurationDeserializer extends StdDeserializer<AppConfigurati
       config.setDataset(dataset);
     }
 
-    if (node.hasNonNull("output")) {
-      final String output = node.get("output").asText();
-      config.setOutput(output);
-    }
-
     if (node.hasNonNull("hidden.metric")) {
       final HiddenMetrics hiddenMetric = HiddenMetrics.valueOf(node.get("hidden.metric").asText());
       config.setHiddenMetric(hiddenMetric);

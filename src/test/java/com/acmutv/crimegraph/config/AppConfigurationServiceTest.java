@@ -64,7 +64,6 @@ public class AppConfigurationServiceTest {
     AppConfiguration actual = AppConfigurationService.fromYaml(in);
     AppConfiguration expected = new AppConfiguration();
     expected.setDataset("CustomDataset");
-    expected.setOutput("CustomOutput");
     expected.setHiddenMetric(HiddenMetrics.WEIGHTED_QUASI_LOCAL);
     expected.setHiddenLocality(3);
     expected.setHiddenWeights(new ArrayList<Double>(){{

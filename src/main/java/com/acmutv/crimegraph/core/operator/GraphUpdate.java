@@ -36,7 +36,8 @@ import org.apache.flink.api.java.tuple.Tuple2;
 import org.apache.flink.api.java.tuple.Tuple3;
 import org.apache.flink.configuration.Configuration;
 import org.apache.flink.util.Collector;
-import org.neo4j.driver.v1.*;
+import org.neo4j.driver.v1.Driver;
+import org.neo4j.driver.v1.Session;
 
 import java.util.Set;
 
@@ -74,6 +75,11 @@ public class GraphUpdate extends RichFlatMapFunction<Link, NodePair> {
   private long potentialLocality;
 
   /**
+   * The maximum locality degree.
+   */
+  private long maxLocality;
+
+  /**
    * Constructs for load edge to write {@link Link} on a NEO4J instance.
    * @param dbconfig the Neo4J configuration.
    * @param hiddenLocality the locality degree for link detection.
@@ -83,51 +89,54 @@ public class GraphUpdate extends RichFlatMapFunction<Link, NodePair> {
     this.dbconfig = dbconfig;
     this.hiddenLocality = hiddenLocality;
     this.potentialLocality = potentialLocality;
+    this.maxLocality = Long.max(hiddenLocality, potentialLocality);
   }
 
   @SuppressWarnings("unchecked")
   @Override
-  public void flatMap(Link value, Collector<NodePair> out){
+  public void flatMap(Link value, Collector<NodePair> out) {
+    long x = value.f0;
+    long y = value.f1;
 
-    Tuple3<Boolean,Boolean,Boolean> check = Neo4JManager.checkExtremes(this.session,value.f0,value.f1);
+    Tuple3<Boolean,Boolean,Boolean> check = Neo4JManager.checkExtremes(this.session, x, y);
+    boolean xInG = check.f0;
+    boolean yinG = check.f1;
+    boolean edgeInG = check.f2;
+
     Neo4JManager.save(this.session, value);
 
     // if x in G, y in G, and (x,y) in G
-    if(check.f0 && check.f1 && check.f2){
-      Set<Tuple2<Long,Long>> pairs = Neo4JManager.pairsToUpdateTwice(this.session, value.f0, value.f1);
-      for(Tuple2<Long,Long> pair : pairs ) {
-        NodePair update = new NodePair(pair.f0,pair.f1, UpdateType.HIDDEN);
-        //System.out.println("NODE PAIR: "+ update.toString());
+    if(xInG && yinG && edgeInG) {
+      Set<Tuple2<Long,Long>> pairs = Neo4JManager.pairsToUpdateTwiceWithinDistance(this.session, x, y, this.hiddenLocality);
+      for (Tuple2<Long,Long> pair : pairs) {
+        NodePair update = new NodePair(pair.f0, pair.f1, UpdateType.HIDDEN);
         out.collect(update);
       }
     }
 
     // if x in G, y in G, and (x,y) NOT in G
-    else if (check.f0 && check.f1 && !check.f2){
-      Set<Tuple2<Long,Long>> pairs = Neo4JManager.pairsToUpdateTwice(this.session, value.f0, value.f1);
-      for(Tuple2<Long,Long> pair : pairs ) {
-        NodePair update = new NodePair(pair.f0,pair.f1, UpdateType.BOTH);
-        //System.out.println("NODE PAIR: "+ update.toString());
+    else if (xInG && yinG) {
+      Set<Tuple2<Long,Long>> pairs = Neo4JManager.pairsToUpdateTwiceWithinDistance(this.session, x, y, this.maxLocality);
+      for (Tuple2<Long,Long> pair : pairs) {
+        NodePair update = new NodePair(pair.f0, pair.f1, UpdateType.BOTH);
         out.collect(update);
       }
     }
 
     // if x NOT in G and y in G
-    else if(!check.f0 && check.f1 && !check.f2){
-      Set<Tuple2<Long,Long>> pairs = Neo4JManager.pairsToUpdate(this.session, value.f0);
-      for(Tuple2<Long,Long> pair : pairs ) {
-        NodePair update = new NodePair(pair.f0,pair.f1, UpdateType.BOTH);
-        //System.out.println("NODE PAIR: "+ update.toString());
+    else if (!xInG && yinG) {
+      Set<Tuple2<Long,Long>> pairs = Neo4JManager.pairsToUpdateWithinDistance(this.session, x, this.maxLocality);
+      for (Tuple2<Long,Long> pair : pairs ) {
+        NodePair update = new NodePair(pair.f0, pair.f1, UpdateType.BOTH);
         out.collect(update);
       }
     }
 
     // if x in G and y NOT in G
-    else if(check.f0 && !check.f1 && !check.f2) {
-      Set<Tuple2<Long,Long>> pairs = Neo4JManager.pairsToUpdate(this.session, value.f1);
-      for(Tuple2<Long,Long> pair : pairs ) {
-        NodePair update = new NodePair(pair.f0,pair.f1, UpdateType.BOTH);
-        //System.out.println("NODE PAIR: "+ update.toString());
+    else if (xInG && !yinG) {
+      Set<Tuple2<Long,Long>> pairs = Neo4JManager.pairsToUpdateWithinDistance(this.session, x, this.maxLocality);
+      for (Tuple2<Long,Long> pair : pairs) {
+        NodePair update = new NodePair(pair.f0, pair.f1, UpdateType.BOTH);
         out.collect(update);
       }
     }

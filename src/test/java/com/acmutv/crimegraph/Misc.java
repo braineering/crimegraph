@@ -29,6 +29,8 @@ package com.acmutv.crimegraph;
 import org.junit.Test;
 
 import java.io.*;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 /**
  * Miscellanea JUnit tests (for personal use only)
@@ -39,6 +41,9 @@ public class Misc {
 
   @Test
   public void test() throws IOException {
-    //TODO
+    String filename = "resources/crimegraph/data/crimegraph.data";
+    String flinkHome = System.getenv("FLINK_HOME");
+    Path path = Paths.get(flinkHome, filename);
+    System.out.println(path);
   }
 }

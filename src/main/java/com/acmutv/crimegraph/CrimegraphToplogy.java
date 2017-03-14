@@ -44,6 +44,9 @@ import org.apache.flink.streaming.api.datastream.DataStream;
 import org.apache.flink.streaming.api.datastream.SplitStream;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 
+import java.nio.file.FileSystems;
+import java.nio.file.Path;
+
 /**
  * The app word-point for {@code CrimegraphToplogy} application.
  * Before starting the application, it is necessary to open the socket, running
@@ -56,8 +59,6 @@ import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
  * @see RuntimeManager
  */
 public class CrimegraphToplogy {
-
-  private static final String ANALYSIS = "Local Analysis";
 
   /**
    * The app main method, executed when the program is launched.
@@ -72,6 +73,9 @@ public class CrimegraphToplogy {
 
     AppConfiguration config = AppConfigurationService.getConfigurations();
 
+    final String dataset = FileSystems.getDefault().getPath(
+        System.getenv("FLINK_HOME"), config.getDataset()
+    ).toAbsolutePath().toString();
     final DbConfiguration dbconf = new DbConfiguration(
         config.getNeo4jHostname(), config.getNeo4jUsername(), config.getNeo4jPassword()
     );
@@ -81,10 +85,10 @@ public class CrimegraphToplogy {
     /* TOPOLOGY */
     final StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
 
-    DataStream<Link> links = env.addSource(new LinkSource(config.getDataset()));
+    DataStream<Link> links = env.addSource(new LinkSource(dataset));
 
     DataStream<NodePair> updates = links.flatMap(
-        new GraphUpdate2(dbconf, config.getHiddenLocality(), config.getPotentialLocality())
+        new GraphUpdate(dbconf, config.getHiddenLocality(), config.getPotentialLocality())
     ).shuffle();
 
     DataStream<NodePairScore> scores;
@@ -115,6 +119,6 @@ public class CrimegraphToplogy {
 
     potentialScores.addSink(new PotentialSink(dbconf, config.getPotentialThreshold()));
 
-    env.execute(ANALYSIS);
+    env.execute("Crimegraph");
   }
 }

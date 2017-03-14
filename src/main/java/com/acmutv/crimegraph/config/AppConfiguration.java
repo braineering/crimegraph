@@ -58,11 +58,6 @@ public class AppConfiguration {
   public static final String DATASET = "resources/crimegraph/data/crimegraph.data";
 
   /**
-   * Default value for property {@code output}.
-   */
-  public static final String OUTPUT = "resources/crimegraph/out/crimegraph.out";
-
-  /**
    * Default value for property {@code hiddenMetric}.
    */
   public static final HiddenMetrics HIDDEN_METRIC = HiddenMetrics.LOCAL;
@@ -122,12 +117,6 @@ public class AppConfiguration {
    * Default is: {@code crimegraph-dataset.txt}
    */
   private String dataset = DATASET;
-
-  /**
-   * The pathname of the file or directory containing the dataset.
-   * Default is: {@code crimegraph-dataset.txt}
-   */
-  private String output = OUTPUT;
 
   /**
    * The metric used to compute hidden links.
@@ -209,7 +198,6 @@ public class AppConfiguration {
    */
   public void copy(AppConfiguration other) {
     this.dataset = other.dataset;
-    this.output = other.output;
     this.hiddenMetric = other.hiddenMetric;
     this.hiddenLocality = other.hiddenLocality;
     this.hiddenWeights = other.hiddenWeights;
@@ -228,7 +216,6 @@ public class AppConfiguration {
    */
   public void toDefault() {
     this.dataset = DATASET;
-    this.output = OUTPUT;
     this.hiddenMetric = HIDDEN_METRIC;
     this.hiddenLocality = HIDDEN_LOCALITY;
     this.hiddenWeights = HIDDEN_WEIGHTS;
