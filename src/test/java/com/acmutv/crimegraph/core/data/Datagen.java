@@ -61,12 +61,18 @@ public class Datagen {
 
     List<Link> data = new ArrayList<>();
     data.add(new Link(1,2,10.0));
-    data.add(new Link(1,3,10.0));
-    data.add(new Link(2,3,10.0));
-    data.add(new Link(2,4,10.0));
-    data.add(new Link(3,6,10.0));
-    data.add(new Link(4,5,10.0));
-    data.add(new Link(6,7,10.0));
+    data.add(new Link(1,3,20.0));
+    data.add(new Link(2,3,30.0));
+    data.add(new Link(2,4,40.0));
+    data.add(new Link(3,6,50.0));
+    data.add(new Link(4,5,40.0));
+    data.add(new Link(6,7,30.0));
+    data.add(new Link(7,8,20.0));
+    data.add(new Link(7,9,10.0));
+    data.add(new Link(8,9,20.0));
+    data.add(new Link(8,10,30.0));
+    data.add(new Link(9,11,40.0));
+    data.add(new Link(10,12,50.0));
 
     writeDataset(path, data);
 
@@ -77,7 +83,7 @@ public class Datagen {
       if (!Files.isDirectory(flinkPath.getParent())) {
         Files.createDirectories(flinkPath.getParent());
       }
-      Files.copy(path, flinkPath);
+      Files.copy(path, flinkPath, StandardCopyOption.REPLACE_EXISTING);
     }
   }
 

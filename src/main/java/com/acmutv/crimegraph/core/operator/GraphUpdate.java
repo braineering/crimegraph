@@ -107,7 +107,7 @@ public class GraphUpdate extends RichFlatMapFunction<Link, NodePair> {
 
     // if x in G, y in G, and (x,y) in G
     if(xInG && yinG && edgeInG) {
-      Set<Tuple2<Long,Long>> pairs = Neo4JManager.pairsToUpdateTwiceWithinDistance(this.session, x, y, this.hiddenLocality);
+      Set<Tuple2<Long,Long>> pairs = Neo4JManager.pairsToUpdateTwiceWithinDistance(this.session, x, y, this.hiddenLocality + 1);
       for (Tuple2<Long,Long> pair : pairs) {
         NodePair update = new NodePair(pair.f0, pair.f1, UpdateType.HIDDEN);
         out.collect(update);
@@ -116,7 +116,7 @@ public class GraphUpdate extends RichFlatMapFunction<Link, NodePair> {
 
     // if x in G, y in G, and (x,y) NOT in G
     else if (xInG && yinG) {
-      Set<Tuple2<Long,Long>> pairs = Neo4JManager.pairsToUpdateTwiceWithinDistance(this.session, x, y, this.maxLocality);
+      Set<Tuple2<Long,Long>> pairs = Neo4JManager.pairsToUpdateTwiceWithinDistance(this.session, x, y, this.maxLocality + 1);
       for (Tuple2<Long,Long> pair : pairs) {
         NodePair update = new NodePair(pair.f0, pair.f1, UpdateType.BOTH);
         out.collect(update);
@@ -125,7 +125,7 @@ public class GraphUpdate extends RichFlatMapFunction<Link, NodePair> {
 
     // if x NOT in G and y in G
     else if (!xInG && yinG) {
-      Set<Tuple2<Long,Long>> pairs = Neo4JManager.pairsToUpdateWithinDistance(this.session, x, this.maxLocality);
+      Set<Tuple2<Long,Long>> pairs = Neo4JManager.pairsToUpdateWithinDistance(this.session, x, this.maxLocality + 1);
       for (Tuple2<Long,Long> pair : pairs ) {
         NodePair update = new NodePair(pair.f0, pair.f1, UpdateType.BOTH);
         out.collect(update);
@@ -134,7 +134,7 @@ public class GraphUpdate extends RichFlatMapFunction<Link, NodePair> {
 
     // if x in G and y NOT in G
     else if (xInG && !yinG) {
-      Set<Tuple2<Long,Long>> pairs = Neo4JManager.pairsToUpdateWithinDistance(this.session, x, this.maxLocality);
+      Set<Tuple2<Long,Long>> pairs = Neo4JManager.pairsToUpdateWithinDistance(this.session, x, this.maxLocality + 1);
       for (Tuple2<Long,Long> pair : pairs) {
         NodePair update = new NodePair(pair.f0, pair.f1, UpdateType.BOTH);
         out.collect(update);

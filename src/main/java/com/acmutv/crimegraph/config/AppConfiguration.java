@@ -75,7 +75,7 @@ public class AppConfiguration {
   /**
    * Default value for property {@code hiddenThreshold}.
    */
-  public static final double HIDDEN_THRESHOLD = 0.5;
+  public static final double HIDDEN_THRESHOLD = 0.8;
 
   /**
    * Default value for property {@code potentialMetric}.
@@ -95,7 +95,7 @@ public class AppConfiguration {
   /**
    * Default value for property {@code potentialThreshold}.
    */
-  public static final double POTENTIAL_THRESHOLD = 0.5;
+  public static final double POTENTIAL_THRESHOLD = 0.8;
 
   /**
    * Default value for property {@code neo4jHostname}.

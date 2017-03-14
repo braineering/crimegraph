@@ -13,7 +13,7 @@ dataset: "resources/crimegraph/data/crimegraph.data"
 hidden.metric: "LOCAL"
 hidden.locality: 1
 hidden.weights: [1.0]
-hidden.threshold: 0.5
+hidden.threshold: 0.8
 
 #===============================================================================
 # LINK PREDICTION
@@ -21,7 +21,7 @@ hidden.threshold: 0.5
 potential.metric: "LOCAL"
 potential.locality: 1
 potential.weights: [1.0]
-potential.threshold: 0.5
+potential.threshold: 0.8
 
 #===============================================================================
 # NEO4J
