@@ -30,6 +30,7 @@ import com.acmutv.crimegraph.core.tuple.Link;
 import com.acmutv.crimegraph.core.tuple.LinkType;
 import org.apache.flink.api.java.tuple.Tuple2;
 import org.apache.flink.api.java.tuple.Tuple3;
+import org.apache.flink.api.java.tuple.Tuple4;
 import org.junit.*;
 import org.neo4j.driver.v1.*;
 
@@ -435,7 +436,7 @@ public class Neo4JManagerTest {
       add(new Tuple3<>(3L, 3L, 20.0));
     }});
     for (Tuple2<Long,Long> key : expectedMap.keySet()) {
-      Set<Tuple3<Long,Long,Double>> actual = Neo4JManager.gammaIntersection(session, key.f0, key.f1);
+      Set<Tuple4<Long,Long,Double,Double>> actual = Neo4JManager.gammaIntersection(session, key.f0, key.f1);
       Set<Tuple3<Long,Long,Double>> expected = expectedMap.get(key);
       Assert.assertEquals(expected, actual);
     }

@@ -92,6 +92,8 @@ public class GraphUpdate2 extends RichFlatMapFunction<Link, NodePair> {
 
     Tuple3<Boolean,Boolean,Boolean> check = Neo4JManager.checkExtremes(this.session,value.f0,value.f1);
     Neo4JManager.save(this.session, value);
+    System.out.println("ARRIVED LINK: "+ value.toString());
+
 
     // if x in G, y in G, and (x,y) in G
     if(check.f0 && check.f1 && check.f2){
@@ -107,7 +109,7 @@ public class GraphUpdate2 extends RichFlatMapFunction<Link, NodePair> {
       Set<Tuple2<Long,Long>> pairs = Neo4JManager.pairsToUpdateTwice(this.session, value.f0, value.f1);
       for(Tuple2<Long,Long> pair : pairs ) {
         NodePair update = new NodePair(pair.f0,pair.f1, UpdateType.BOTH);
-        //System.out.println("NODE PAIR: "+ update.toString());
+        System.out.println("NODE PAIR: "+ update.toString());
         out.collect(update);
       }
     }
@@ -117,7 +119,7 @@ public class GraphUpdate2 extends RichFlatMapFunction<Link, NodePair> {
       Set<Tuple2<Long,Long>> pairs = Neo4JManager.pairsToUpdate(this.session, value.f0);
       for(Tuple2<Long,Long> pair : pairs ) {
         NodePair update = new NodePair(pair.f0,pair.f1, UpdateType.BOTH);
-        //System.out.println("NODE PAIR: "+ update.toString());
+        System.out.println("NODE PAIR: "+ update.toString());
         out.collect(update);
       }
     }
@@ -127,7 +129,7 @@ public class GraphUpdate2 extends RichFlatMapFunction<Link, NodePair> {
       Set<Tuple2<Long,Long>> pairs = Neo4JManager.pairsToUpdate(this.session, value.f1);
       for(Tuple2<Long,Long> pair : pairs ) {
         NodePair update = new NodePair(pair.f0,pair.f1, UpdateType.BOTH);
-        //System.out.println("NODE PAIR: "+ update.toString());
+        System.out.println("NODE PAIR: "+ update.toString());
         out.collect(update);
       }
     }

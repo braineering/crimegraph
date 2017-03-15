@@ -84,13 +84,13 @@ public class CrimegraphToplogy {
     /* TOPOLOGY */
     final StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
 
-    /* EMPYTING
+    // EMPYTING
     String hostname = dbconf.getHostname();
     String username = dbconf.getUsername();
     String password = dbconf.getPassword();
     Driver driver = Neo4JManager.open(hostname, username, password);
     Session session = driver.session();
-    Neo4JManager.empyting(session);*/
+    Neo4JManager.empyting(session);
 
     DataStream<Link> links = env.addSource(new LinkSource(config.getDataset()));
 
@@ -122,9 +122,9 @@ public class CrimegraphToplogy {
 
     DataStream<NodePairScore> potentialScores = split.select(ScoreType.POTENTIAL.name());
 
-    hiddenScores.addSink(new HiddenSink(dbconf, config.getHiddenThreshold()));
+    hiddenScores.addSink(new HiddenSink(dbconf, 0.01));
 
-    potentialScores.addSink(new PotentialSink(dbconf, config.getPotentialThreshold()));
+    potentialScores.addSink(new PotentialSink(dbconf, 0.1));
 
     env.execute(ANALYSIS);
   }
