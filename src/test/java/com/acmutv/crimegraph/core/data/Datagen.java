@@ -35,8 +35,7 @@ import java.io.BufferedWriter;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.*;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 /**
  * Utility for dataset generation.
@@ -47,6 +46,10 @@ import java.util.List;
 public class Datagen {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(Datagen.class);
+
+  private static final int NUM_NODES = 100;
+
+  private static final int NUM_LINKS = 1000;
 
   /**
    * Generates a simple dataset.
@@ -59,20 +62,25 @@ public class Datagen {
       Files.createDirectories(path.getParent());
     }
 
+    Random rnd = new Random();
+
+    Set<Long> nodes = new HashSet<>();
+
+    for (long id = 1; id <= NUM_NODES; id++) nodes.add(id);
+
     List<Link> data = new ArrayList<>();
-    data.add(new Link(1,2,10.0));
-    data.add(new Link(1,3,20.0));
-    data.add(new Link(2,3,30.0));
-    data.add(new Link(2,4,40.0));
-    data.add(new Link(3,6,50.0));
-    data.add(new Link(4,5,40.0));
-    data.add(new Link(6,7,30.0));
-    data.add(new Link(7,8,20.0));
-    data.add(new Link(7,9,10.0));
-    data.add(new Link(8,9,20.0));
-    data.add(new Link(8,10,30.0));
-    data.add(new Link(9,11,40.0));
-    data.add(new Link(10,12,50.0));
+
+    for (int i = 0; i < NUM_LINKS; i++) {
+      int x = rnd.nextInt(NUM_NODES);
+      int y;
+      do {
+        y = rnd.nextInt(NUM_NODES);
+      } while (y == x);
+
+      double weight = rnd.nextDouble();
+      Link link = new Link(x, y, weight);
+      data.add(link);
+    }
 
     writeDataset(path, data);
 
