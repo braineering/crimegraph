@@ -537,7 +537,7 @@ public class Neo4JManager {
   public static Set<Tuple2<Long,Long>> pairsToUpdateWithinDistance(Session session, long x, long dist) {
     Value params = parameters("x", x);
     String query = String.format(PAIRS_TO_UPDATE_WITHIN_DISTANCE,
-        dist, dist-1, dist, dist, dist-1, dist-1);
+        dist + 1, dist, dist + 1, dist + 1, dist, dist);
     StatementResult result = session.run(query, params);
     Set<Tuple2<Long,Long>> neighbours = new HashSet<>();
     while (result.hasNext()) {
@@ -566,8 +566,8 @@ public class Neo4JManager {
   public static Set<Tuple2<Long,Long>> pairsToUpdateTwiceWithinDistance(Session session, long x, long y, long dist) {
     Value params = parameters("x", x, "y", y);
     String query = String.format(PAIRS_TO_UPDATE_TWICE_WITHIN_DISTANCE,
-        dist, dist-1, dist, dist, dist-1, dist-1,
-        dist, dist-1, dist, dist, dist-1, dist-1);
+        dist + 1, dist, dist + 1, dist + 1, dist, dist,
+        dist + 1, dist, dist + 1, dist + 1, dist, dist);
     StatementResult result = session.run(query, params);
     Set<Tuple2<Long,Long>> neighbours = new HashSet<>();
     while (result.hasNext()) {
