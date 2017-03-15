@@ -238,6 +238,12 @@ public class Neo4JManager {
           "RETURN n.id AS id,COUNT(r) AS deg";
 
   /**
+   * Query to remove all nodes on Neo4J
+   */
+  private static final String EMPYTING =
+          "MATCH (n:Person) DETACH DELETE n";
+
+  /**
    * Opens a NEO4J connection.
    * @param hostname the instance hostname.
    * @param username the username for the authentication.
@@ -614,6 +620,15 @@ public class Neo4JManager {
       neighbours.add(new Tuple2<>(node, degree));
     }
     return neighbours;
+  }
+
+  /**
+   * Empyting of Neo4J
+   * @param session the NEO4J open session.
+   */
+  public static void empyting(Session session) {
+    String query = String.format(EMPYTING);
+    session.run(query);
   }
 
 }

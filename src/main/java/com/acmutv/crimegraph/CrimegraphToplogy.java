@@ -29,6 +29,7 @@ package com.acmutv.crimegraph;
 import com.acmutv.crimegraph.config.AppConfiguration;
 import com.acmutv.crimegraph.config.AppConfigurationService;
 import com.acmutv.crimegraph.core.db.DbConfiguration;
+import com.acmutv.crimegraph.core.db.Neo4JManager;
 import com.acmutv.crimegraph.core.keyer.NodePairScoreKeyer;
 import com.acmutv.crimegraph.core.metric.HiddenMetrics;
 import com.acmutv.crimegraph.core.metric.PotentialMetrics;
@@ -43,6 +44,8 @@ import com.acmutv.crimegraph.ui.CliService;
 import org.apache.flink.streaming.api.datastream.DataStream;
 import org.apache.flink.streaming.api.datastream.SplitStream;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
+import org.neo4j.driver.v1.Driver;
+import org.neo4j.driver.v1.Session;
 
 /**
  * The app word-point for {@code CrimegraphToplogy} application.
@@ -80,6 +83,14 @@ public class CrimegraphToplogy {
 
     /* TOPOLOGY */
     final StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
+
+    /* EMPYTING
+    String hostname = dbconf.getHostname();
+    String username = dbconf.getUsername();
+    String password = dbconf.getPassword();
+    Driver driver = Neo4JManager.open(hostname, username, password);
+    Session session = driver.session();
+    Neo4JManager.empyting(session);*/
 
     DataStream<Link> links = env.addSource(new LinkSource(config.getDataset()));
 
