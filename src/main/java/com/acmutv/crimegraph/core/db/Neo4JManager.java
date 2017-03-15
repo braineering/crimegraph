@@ -49,7 +49,8 @@ public class Neo4JManager {
    * Query to create a new real link.
    */
   private static final String SAVE_LINK_REAL =
-      "MERGE (u1:Person {id:{src}}) MERGE (u2:Person {id:{dst}}) " +
+      "MERGE (u1:Person {id:{src}}) " +
+          "MERGE (u2:Person {id:{dst}}) " +
           "MERGE (u1)-[r:REAL]-(u2) " +
           "ON CREATE SET r.weight={weight},r.num=1,r.created=timestamp(),r.updated=r.created " +
           "ON MATCH SET r.weight=(r.weight*r.num+{weight})/(r.num+1),r.num=r.num+1,r.updated=timestamp() " +
@@ -62,7 +63,8 @@ public class Neo4JManager {
    * Query to create a new potential link.
    */
   private static final String SAVE_LINK_POTENTIAL =
-      "MERGE (u1:Person {id:{src}}) MERGE (u2:Person {id:{dst}}) " +
+      "MERGE (u1:Person {id:{src}}) " +
+          "MERGE (u2:Person {id:{dst}}) " +
           "MERGE (u1)-[r:POTENTIAL]-(u2) " +
           "ON CREATE SET r.weight={weight},r.created=timestamp(),r.updated=r.created " +
           "ON MATCH SET r.weight={weight},r.updated=timestamp()";
@@ -71,7 +73,8 @@ public class Neo4JManager {
    * Query to create a new hidden link.
    */
   private static final String SAVE_LINK_HIDDEN =
-      "MERGE (u1:Person {id:{src}}) MERGE (u2:Person {id:{dst}}) " +
+      "MERGE (u1:Person {id:{src}}) " +
+          "MERGE (u2:Person {id:{dst}}) " +
           "MERGE (u1)-[r:HIDDEN]-(u2) " +
           "ON CREATE SET r.weight={weight},r.created=timestamp(),r.updated=r.created " +
           "ON MATCH SET r.weight={weight},r.updated=timestamp()";
@@ -80,14 +83,16 @@ public class Neo4JManager {
    * Query to remove a link.
    */
   private static final String REMOVE_LINK =
-      "MATCH (x:Person {id:{x}})-[r:%s]-(y:Person {id:{y}}) " +
+      "MATCH (x:Person {id:{x}})-[r]-(y:Person {id:{y}}) " +
+          "WHERE type(r) = '{type}' " +
           "DELETE r";
 
   /**
    * Query to match neighbours.
    */
   private static final String MATCH_NEIGHBOURS =
-      "MATCH (u1:Person {id:{src}})-[:REAL]-(n:Person) RETURN n.id AS id";
+      "MATCH (u1:Person {id:{src}})-[:REAL]-(n:Person) " +
+          "RETURN DISTINCT n.id AS id";
 
   /**
    * Query to match neighbours and degree.
@@ -102,7 +107,8 @@ public class Neo4JManager {
    * Query to match neighbours within maximum distance.
    */
   private static final String MATCH_NEIGHBOURS_WITHIN_DISTANCE =
-      "MATCH (u1:Person {id:{src}})-[:REAL*1..%d]-(n:Person) RETURN DISTINCT n.id AS id";
+      "MATCH (u1:Person {id:{src}})-[:REAL*1..%d]-(n:Person) " +
+          "RETURN DISTINCT n.id AS id";
 
   /**
    * Query to match neighbours with degree within maximum distance.
@@ -158,7 +164,7 @@ public class Neo4JManager {
   /**
    * Query to find pairs of unlinked nodes to update, with single node insertion.
    */
-  private static final String NODES_TO_UPDATE =
+  private static final String PAIRS_TO_UPDATE =
       "MATCH (x:Person {id:{x}})-[:REAL*2]-(n:Person) " +
           "WHERE NOT (x)-[:REAL]-(n) " +
           "RETURN [x.id,n.id] AS pair " +
@@ -170,7 +176,7 @@ public class Neo4JManager {
   /**
    * Query to find pairs of unlinked nodes to update, with double node insertion.
    */
-  private static final String NODES_TO_UPDATE_TWICE =
+  private static final String PAIRS_TO_UPDATE_TWICE =
       "MATCH (x:Person {id:{x}})-[:REAL*2]-(n:Person) " +
           "WHERE NOT (x)-[:REAL]-(n) " +
           "RETURN [x.id,n.id] AS pair " +
@@ -190,7 +196,7 @@ public class Neo4JManager {
   /**
    * Query to find pairs of unlinked nodes to update, with single node insertion.
    */
-  private static final String NODES_TO_UPDATE_WITHIN_DISTANCE =
+  private static final String PAIRS_TO_UPDATE_WITHIN_DISTANCE =
       "MATCH (x:Person {id:{x}})-[:REAL*%d]-(n:Person) " +
           "WHERE NOT (x)-[:REAL*%d]-(n) " +
           "RETURN [x.id,n.id] AS pair " +
@@ -202,7 +208,7 @@ public class Neo4JManager {
   /**
    * Query to find pairs of unlinked nodes to update, with double node insertion.
    */
-  private static final String NODES_TO_UPDATE_TWICE_WITHIN_DISTANCE =
+  private static final String PAIRS_TO_UPDATE_TWICE_WITHIN_DISTANCE =
       "MATCH (x:Person {id:{x}})-[:REAL*%d]-(n:Person) " +
           "WHERE NOT (x)-[:REAL*%d]-(n) " +
           "RETURN [x.id,n.id] AS pair " +
@@ -288,10 +294,8 @@ public class Neo4JManager {
    * @param type the type of link.
    */
   public static void remove(Session session, long x, long y, LinkType type) {
-    Value params = parameters("x", x, "y", y);
-    String query = String.format(REMOVE_LINK, type.name());
-
-    session.run(query, params);
+    Value params = parameters("x", x, "y", y, "type", type);
+    session.run(REMOVE_LINK, params);
   }
 
   /**
@@ -473,7 +477,7 @@ public class Neo4JManager {
    */
   public static Set<Tuple2<Long,Long>> pairsToUpdate(Session session, long x) {
     Value params = parameters("x", x);
-    StatementResult result = session.run(NODES_TO_UPDATE, params);
+    StatementResult result = session.run(PAIRS_TO_UPDATE, params);
     Set<Tuple2<Long,Long>> neighbours = new HashSet<>();
     while (result.hasNext()) {
       Record rec = result.next();
@@ -499,7 +503,7 @@ public class Neo4JManager {
    */
   public static Set<Tuple2<Long,Long>> pairsToUpdateTwice(Session session, long x, long y) {
     Value params = parameters("x", x, "y", y);
-    StatementResult result = session.run(NODES_TO_UPDATE_TWICE, params);
+    StatementResult result = session.run(PAIRS_TO_UPDATE_TWICE, params);
     Set<Tuple2<Long,Long>> neighbours = new HashSet<>();
     while (result.hasNext()) {
       Record rec = result.next();
@@ -525,7 +529,7 @@ public class Neo4JManager {
    */
   public static Set<Tuple2<Long,Long>> pairsToUpdateWithinDistance(Session session, long x, long dist) {
     Value params = parameters("x", x);
-    String query = String.format(NODES_TO_UPDATE_WITHIN_DISTANCE,
+    String query = String.format(PAIRS_TO_UPDATE_WITHIN_DISTANCE,
         dist, dist-1, dist, dist, dist-1, dist-1);
     StatementResult result = session.run(query, params);
     Set<Tuple2<Long,Long>> neighbours = new HashSet<>();
@@ -554,7 +558,7 @@ public class Neo4JManager {
    */
   public static Set<Tuple2<Long,Long>> pairsToUpdateTwiceWithinDistance(Session session, long x, long y, long dist) {
     Value params = parameters("x", x, "y", y);
-    String query = String.format(NODES_TO_UPDATE_TWICE_WITHIN_DISTANCE,
+    String query = String.format(PAIRS_TO_UPDATE_TWICE_WITHIN_DISTANCE,
         dist, dist-1, dist, dist, dist-1, dist-1,
         dist, dist-1, dist, dist, dist-1, dist-1);
     StatementResult result = session.run(query, params);
