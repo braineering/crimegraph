@@ -76,6 +76,7 @@ public class PotentialSink extends RichSinkFunction<NodePairScore> {
 
   @Override
   public void invoke(NodePairScore value) throws Exception {
+    System.out.println("NEW POTENTIAL LINK  "+ value.toString());
     if (value.f2 >= this.threshold) {
       Link link = new Link(value.f0, value.f1, value.f2, LinkType.POTENTIAL);
       Neo4JManager.save(this.session, link);

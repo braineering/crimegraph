@@ -29,6 +29,7 @@ package com.acmutv.crimegraph;
 import com.acmutv.crimegraph.config.AppConfiguration;
 import com.acmutv.crimegraph.config.AppConfigurationService;
 import com.acmutv.crimegraph.core.db.DbConfiguration;
+import com.acmutv.crimegraph.core.db.Neo4JManager;
 import com.acmutv.crimegraph.core.keyer.NodePairScoreKeyer;
 import com.acmutv.crimegraph.core.metric.HiddenMetrics;
 import com.acmutv.crimegraph.core.metric.PotentialMetrics;
@@ -43,6 +44,8 @@ import com.acmutv.crimegraph.ui.CliService;
 import org.apache.flink.streaming.api.datastream.DataStream;
 import org.apache.flink.streaming.api.datastream.SplitStream;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
+import org.neo4j.driver.v1.Driver;
+import org.neo4j.driver.v1.Session;
 
 import java.nio.file.FileSystems;
 import java.nio.file.Path;
@@ -85,6 +88,14 @@ public class CrimegraphToplogy {
     /* TOPOLOGY */
     final StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
 
+    // EMPYTING
+    String hostname = dbconf.getHostname();
+    String username = dbconf.getUsername();
+    String password = dbconf.getPassword();
+    Driver driver = Neo4JManager.open(hostname, username, password);
+    Session session = driver.session();
+    Neo4JManager.empyting(session);
+
     DataStream<Link> links = env.addSource(new LinkSource(dataset));
 
     DataStream<NodePair> updates = links.flatMap(
@@ -115,10 +126,11 @@ public class CrimegraphToplogy {
 
     DataStream<NodePairScore> potentialScores = split.select(ScoreType.POTENTIAL.name());
 
-    hiddenScores.addSink(new HiddenSink(dbconf, config.getHiddenThreshold()));
+    hiddenScores.addSink(new HiddenSink(dbconf, 0.01));
 
-    potentialScores.addSink(new PotentialSink(dbconf, config.getPotentialThreshold()));
+    potentialScores.addSink(new PotentialSink(dbconf, 0.1));
 
     env.execute("Crimegraph");
   }
+
 }

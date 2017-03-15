@@ -35,6 +35,7 @@ import com.acmutv.crimegraph.core.tuple.ScoreType;
 import org.apache.flink.api.common.functions.RichFlatMapFunction;
 import org.apache.flink.api.java.tuple.Tuple2;
 import org.apache.flink.api.java.tuple.Tuple3;
+import org.apache.flink.api.java.tuple.Tuple4;
 import org.apache.flink.configuration.Configuration;
 import org.apache.flink.util.Collector;
 import org.neo4j.driver.v1.Driver;
@@ -97,25 +98,32 @@ public class ScoreCalculator extends RichFlatMapFunction<NodePair, NodePairScore
 
     if(type.equals(UpdateType.BOTH) || type.equals(UpdateType.POTENTIAL)){
       double potentialScore = 0.0;
+      Long totalDegree = 0L;
 
       Set<Tuple2<Long,Long>> neighbours = Neo4JManager.commonNeighboursWithDegree(this.session, nodePair.f0, nodePair.f1);
 
       for (Tuple2<Long,Long> z : neighbours) {
         System.out.println("computing ("+nodePair.f0 + ";"+nodePair.f1+")"+ " - neighbour id: " +z.f0.toString() +" with degree "+z.f1.toString() + " for potential");
         potentialScore += (1.0 / z.f1);
+        totalDegree += z.f1;
       }
+
+      potentialScore /= totalDegree;
       NodePairScore potential = new NodePairScore(nodePair.f0, nodePair.f1, potentialScore, ScoreType.POTENTIAL);
       out.collect(potential);
     }
 
     if(type.equals(UpdateType.BOTH) || type.equals(UpdateType.HIDDEN)){
       double hiddenScore = 0.0;
+      double totalWeight = 0.0;
 
-      Set<Tuple3<Long,Long,Double>> neighbours = Neo4JManager.gammaIntersection(this.session, nodePair.f0, nodePair.f1);
-      for (Tuple3<Long,Long,Double> z : neighbours) {
+      Set<Tuple4<Long,Long,Double,Double>> neighbours = Neo4JManager.gammaIntersection(this.session, nodePair.f0, nodePair.f1);
+      for (Tuple4<Long,Long,Double,Double> z : neighbours) {
         System.out.println("computing ("+nodePair.f0 + ";"+nodePair.f1+")"+ " - neighbour id: " +z.f0.toString() +" with degree "+z.f1.toString() + " for hidden");
-        hiddenScore += (z.f2 / z.f1);
+        hiddenScore += (z.f2 / z.f3);
+        totalWeight += z.f3;
       }
+      hiddenScore /= totalWeight;
       NodePairScore hidden = new NodePairScore(nodePair.f0, nodePair.f1, hiddenScore, ScoreType.HIDDEN);
       out.collect(hidden);
     }

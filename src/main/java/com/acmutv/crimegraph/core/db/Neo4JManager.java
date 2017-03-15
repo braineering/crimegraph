@@ -30,6 +30,7 @@ import com.acmutv.crimegraph.core.tuple.Link;
 import com.acmutv.crimegraph.core.tuple.LinkType;
 import org.apache.flink.api.java.tuple.Tuple2;
 import org.apache.flink.api.java.tuple.Tuple3;
+import org.apache.flink.api.java.tuple.Tuple4;
 import org.neo4j.driver.v1.*;
 
 import java.util.HashSet;
@@ -232,7 +233,7 @@ public class Neo4JManager {
       "MATCH (u1:Person {id:{x}})-[r1:REAL]-(n:Person)-[r2:REAL]-(u2:Person {id:{y}}) " +
           "WITH DISTINCT n,r1,r2 " +
           "MATCH (n)-[r:REAL]-() " +
-          "RETURN n.id AS id,COUNT(r) AS deg, (r1.weight+r2.weight) AS weight";
+          "RETURN n.id AS id,COUNT(r) AS deg, (r1.weight+r2.weight) AS weight, SUM(r.weight) AS weightTot";
 
   /**
    * Query to find common nodes at fixed distance and related details for score formulas.
@@ -242,6 +243,12 @@ public class Neo4JManager {
           "WITH DISTINCT n " +
           "MATCH (n)-[r:REAL]-() " +
           "RETURN n.id AS id,COUNT(r) AS deg";
+
+  /**
+   * Query to remove all nodes on Neo4J
+   */
+  private static final String EMPYTING =
+          "MATCH (n:Person) DETACH DELETE n";
 
   /**
    * Opens a NEO4J connection.
@@ -585,16 +592,17 @@ public class Neo4JManager {
    * @param x the id of the first node to update.
    * @param y the id of the second node to update.
    */
-  public static Set<Tuple3<Long,Long,Double>> gammaIntersection(Session session, long x, long y) {
+  public static Set<Tuple4<Long,Long,Double,Double>> gammaIntersection(Session session, long x, long y) {
     Value params = parameters("x", x, "y", y);
     StatementResult result = session.run(GAMMA_INTERSECTION, params);
-    Set<Tuple3<Long,Long,Double>> neighbours = new HashSet<>();
+    Set<Tuple4<Long,Long,Double,Double>> neighbours = new HashSet<>();
     while (result.hasNext()) {
       Record rec = result.next();
       Long node = rec.get("id").asLong();
       Long degree = rec.get("deg").asLong();
       Double weight = rec.get("weight").asDouble();
-      neighbours.add(new Tuple3<>(node, degree, weight));
+      Double weightTot = rec.get("weightTot").asDouble();
+      neighbours.add(new Tuple4<>(node, degree, weight, weightTot));
     }
     return neighbours;
   }
@@ -618,6 +626,15 @@ public class Neo4JManager {
       neighbours.add(new Tuple2<>(node, degree));
     }
     return neighbours;
+  }
+
+  /**
+   * Empyting of Neo4J
+   * @param session the NEO4J open session.
+   */
+  public static void empyting(Session session) {
+    String query = String.format(EMPYTING);
+    session.run(query);
   }
 
 }
