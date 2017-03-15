@@ -67,32 +67,38 @@ public class CrimegraphToplogy {
 
     CliService.printSplash();
 
+    /* CONFIGURATION */
     CliService.handleArguments(args);
 
     AppConfiguration config = AppConfigurationService.getConfigurations();
 
-    final StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
-
     final DbConfiguration dbconf = new DbConfiguration(
         config.getNeo4jHostname(), config.getNeo4jUsername(), config.getNeo4jPassword()
     );
+    final HiddenMetrics hiddenMetric = config.getHiddenMetric();
+    final PotentialMetrics potentialMetric = config.getPotentialMetric();
+
+    /* TOPOLOGY */
+    final StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
 
     DataStream<Link> links = env.addSource(new LinkSource(config.getDataset()));
 
-    DataStream<NodePair> updates = links.flatMap(new GraphUpdate(dbconf)).shuffle();
+    DataStream<NodePair> updates = links.flatMap(
+        new GraphUpdate2(dbconf, config.getHiddenLocality(), config.getPotentialLocality())
+    ).shuffle();
 
     DataStream<NodePairScore> scores;
 
-    if (config.getHiddenMetric().equals(HiddenMetrics.LOCAL) &&
-        config.getPotentialMetric().equals(PotentialMetrics.LOCAL)) {
+    if (hiddenMetric.equals(HiddenMetrics.LOCAL) &&
+        potentialMetric.equals(PotentialMetrics.LOCAL)) {
       scores = updates.flatMap(new ScoreCalculator(dbconf))
           .keyBy(new NodePairScoreKeyer());
-    } else if (config.getHiddenMetric().equals(HiddenMetrics.LOCAL) &&
-        config.getPotentialMetric().equals(PotentialMetrics.QUASI_LOCAL)) {
+    } else if (hiddenMetric.equals(HiddenMetrics.LOCAL) &&
+        potentialMetric.equals(PotentialMetrics.QUASI_LOCAL)) {
       scores = updates.flatMap(new ScoreCalculatorTSteps(
           dbconf, config.getPotentialLocality())).keyBy(new NodePairScoreKeyer());
-    } else if (config.getHiddenMetric().equals(HiddenMetrics.LOCAL) &&
-        config.getPotentialMetric().equals(PotentialMetrics.WEIGHTED_QUASI_LOCAL)) {
+    } else if (hiddenMetric.equals(HiddenMetrics.LOCAL) &&
+        potentialMetric.equals(PotentialMetrics.WEIGHTED_QUASI_LOCAL)) {
       scores = updates.flatMap(new ScoreCalculatorTStepsWithWeights(
           dbconf, config.getPotentialLocality(), config.getPotentialWeights())).keyBy(new NodePairScoreKeyer());
     } else {

@@ -36,7 +36,8 @@ import org.apache.flink.api.java.tuple.Tuple2;
 import org.apache.flink.api.java.tuple.Tuple3;
 import org.apache.flink.configuration.Configuration;
 import org.apache.flink.util.Collector;
-import org.neo4j.driver.v1.*;
+import org.neo4j.driver.v1.Driver;
+import org.neo4j.driver.v1.Session;
 
 import java.util.Set;
 
@@ -46,7 +47,7 @@ import java.util.Set;
  * @author Michele Porretta {@literal <mporretta@acm.org>}
  * @since 1.0
  */
-public class GraphUpdate extends RichFlatMapFunction<Link, NodePair> {
+public class GraphUpdate2 extends RichFlatMapFunction<Link, NodePair> {
 
   /**
    * The Neo4J configuration.
@@ -79,7 +80,7 @@ public class GraphUpdate extends RichFlatMapFunction<Link, NodePair> {
    * @param hiddenLocality the locality degree for link detection.
    * @param potentialLocality the locality degree for link prediction.
    */
-  public GraphUpdate(DbConfiguration dbconfig, long hiddenLocality, long potentialLocality) {
+  public GraphUpdate2(DbConfiguration dbconfig, long hiddenLocality, long potentialLocality) {
     this.dbconfig = dbconfig;
     this.hiddenLocality = hiddenLocality;
     this.potentialLocality = potentialLocality;
@@ -97,7 +98,6 @@ public class GraphUpdate extends RichFlatMapFunction<Link, NodePair> {
       Set<Tuple2<Long,Long>> pairs = Neo4JManager.pairsToUpdateTwice(this.session, value.f0, value.f1);
       for(Tuple2<Long,Long> pair : pairs ) {
         NodePair update = new NodePair(pair.f0,pair.f1, UpdateType.HIDDEN);
-        //System.out.println("NODE PAIR: "+ update.toString());
         out.collect(update);
       }
     }
