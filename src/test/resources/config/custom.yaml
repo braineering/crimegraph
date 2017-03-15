@@ -29,3 +29,8 @@ potential.threshold: 0.8
 neo4j.hostname: "CustomNeo4jHostname"
 neo4j.username: "CustomNeo4jUsername"
 neo4j.password: "CustomNeo4jPassword"
+
+#===============================================================================
+# TOPOLOGY
+#===============================================================================
+parallelism: 2

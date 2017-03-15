@@ -29,3 +29,8 @@ potential.threshold: 0.8
 neo4j.hostname: "bolt://localhost:7687"
 neo4j.username: "neo4j"
 neo4j.password: "password"
+
+#===============================================================================
+# TOPOLOGY
+#===============================================================================
+parallelism: 2

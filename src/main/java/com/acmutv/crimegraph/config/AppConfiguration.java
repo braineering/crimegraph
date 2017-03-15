@@ -113,6 +113,11 @@ public class AppConfiguration {
   public static final String NEO4J_PASSWORD = "password";
 
   /**
+   * Default value for property {@code parallelism}.
+   */
+  public static final int PARALLELISM = 2;
+
+  /**
    * The pathname of the file or directory containing the dataset.
    * Default is: {@code crimegraph-dataset.txt}
    */
@@ -185,6 +190,12 @@ public class AppConfiguration {
   private String neo4jPassword = NEO4J_PASSWORD;
 
   /**
+   * The operator parallelism.
+   * Default is: {@code 2}.
+   */
+  private int parallelism = PARALLELISM;
+
+  /**
    * Constructs a configuration as a copy of the one specified.
    * @param other the configuration to copy.
    */
@@ -209,6 +220,7 @@ public class AppConfiguration {
     this.neo4jHostname = other.neo4jHostname;
     this.neo4jUsername = other.neo4jUsername;
     this.neo4jPassword = other.neo4jPassword;
+    this.parallelism = other.parallelism;
   }
 
   /**
@@ -227,6 +239,7 @@ public class AppConfiguration {
     this.neo4jHostname = NEO4J_HOSTNAME;
     this.neo4jUsername = NEO4J_USERNAME;
     this.neo4jPassword = NEO4J_PASSWORD;
+    this.parallelism = PARALLELISM;
   }
 
 }

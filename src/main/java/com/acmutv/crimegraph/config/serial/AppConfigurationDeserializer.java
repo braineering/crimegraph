@@ -146,6 +146,11 @@ public class AppConfigurationDeserializer extends StdDeserializer<AppConfigurati
       config.setNeo4jPassword(neo4jPassword);
     }
 
+    if (node.hasNonNull("parallelism")) {
+      final int parallelism = node.get("parallelism").asInt();
+      config.setParallelism(parallelism);
+    }
+
     return config;
   }
 }
