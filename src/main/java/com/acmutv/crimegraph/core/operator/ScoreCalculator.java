@@ -94,22 +94,28 @@ public class ScoreCalculator extends RichFlatMapFunction<NodePair, NodePairScore
   @Override
   public void flatMap(NodePair nodePair, Collector<NodePairScore> out) {
 
+    long x = nodePair.f0;
+    long y = nodePair.f1;
     UpdateType type = nodePair.f2;
+
+    Set<Tuple4<Long,Long,Double,Double>> neighbours = Neo4JManager.gammaIntersection(this.session, x, y);
 
     if(type.equals(UpdateType.BOTH) || type.equals(UpdateType.POTENTIAL)){
       double potentialScore = 0.0;
-      Long totalDegree = 0L;
+      long totalDegree = 0;
 
-      Set<Tuple2<Long,Long>> neighbours = Neo4JManager.commonNeighboursWithDegree(this.session, nodePair.f0, nodePair.f1);
-
-      for (Tuple2<Long,Long> z : neighbours) {
-        System.out.println("computing ("+nodePair.f0 + ";"+nodePair.f1+")"+ " - neighbour id: " +z.f0.toString() +" with degree "+z.f1.toString() + " for potential");
-        potentialScore += (1.0 / z.f1);
-        totalDegree += z.f1;
+      for (Tuple4<Long,Long,Double,Double> z : neighbours) {
+        long zId = z.f0;
+        long zDegree = z.f1;
+        System.out.format("computing potential (%d,%d) - neighbour %d :: degree %d",
+            x, y, zId, zDegree);
+        potentialScore += (1.0 / zDegree);
+        totalDegree += zDegree;
       }
 
       potentialScore /= totalDegree;
-      NodePairScore potential = new NodePairScore(nodePair.f0, nodePair.f1, potentialScore, ScoreType.POTENTIAL);
+      System.out.format("Potential(%d,%d)=%f", x, y, potentialScore);
+      NodePairScore potential = new NodePairScore(x, y, potentialScore, ScoreType.POTENTIAL);
       out.collect(potential);
     }
 
@@ -117,14 +123,18 @@ public class ScoreCalculator extends RichFlatMapFunction<NodePair, NodePairScore
       double hiddenScore = 0.0;
       double totalWeight = 0.0;
 
-      Set<Tuple4<Long,Long,Double,Double>> neighbours = Neo4JManager.gammaIntersection(this.session, nodePair.f0, nodePair.f1);
       for (Tuple4<Long,Long,Double,Double> z : neighbours) {
-        System.out.println("computing ("+nodePair.f0 + ";"+nodePair.f1+")"+ " - neighbour id: " +z.f0.toString() +" with degree "+z.f1.toString() + " for hidden");
-        hiddenScore += (z.f2 / z.f3);
-        totalWeight += z.f3;
+        long zId = z.f0;
+        double pathWeight = z.f2;
+        double nodeWeight = z.f3;
+        System.out.format("computing potential (%d,%d) - neighbour %d :: pathWeight %f, nodeWeight %f",
+            x, y, zId, pathWeight, nodeWeight);
+        hiddenScore += (pathWeight / nodeWeight);
+        totalWeight += nodeWeight;
       }
       hiddenScore /= totalWeight;
-      NodePairScore hidden = new NodePairScore(nodePair.f0, nodePair.f1, hiddenScore, ScoreType.HIDDEN);
+      System.out.format("Hidden(%d,%d)=%f", x, y, hiddenScore);
+      NodePairScore hidden = new NodePairScore(x, y, hiddenScore, ScoreType.HIDDEN);
       out.collect(hidden);
     }
 

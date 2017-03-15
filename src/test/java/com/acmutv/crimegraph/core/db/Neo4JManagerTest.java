@@ -78,6 +78,7 @@ public class Neo4JManagerTest {
     try {
       DRIVER = GraphDatabase.driver(HOSTNAME, AuthTokens.basic(USERNAME, PASSWORD), CONFIG);
       testSession = DRIVER.session();
+      Neo4JManager.empyting(testSession);
     } catch (Exception exc) {
       neo4jActive = false;
     } finally {
@@ -383,7 +384,7 @@ public class Neo4JManagerTest {
       add(new Tuple2<>(4L,6L));
     }});
     for (Long key : expectedMap.keySet()) {
-      Set<Tuple2<Long, Long>> actual = Neo4JManager.pairsToUpdateWithinDistance(session, key, 2);
+      Set<Tuple2<Long, Long>> actual = Neo4JManager.pairsToUpdateWithinDistance(session, key, 1);
       Set<Tuple2<Long, Long>> expected = expectedMap.get(key);
       Assert.assertEquals(expected, actual);
     }
@@ -412,7 +413,7 @@ public class Neo4JManagerTest {
       add(new Tuple2<>(5L,6L));
     }});
     for (Tuple2<Long,Long> key : expectedMap.keySet()) {
-      Set<Tuple2<Long, Long>> actual = Neo4JManager.pairsToUpdateTwiceWithinDistance(session, key.f0, key.f1, 2);
+      Set<Tuple2<Long, Long>> actual = Neo4JManager.pairsToUpdateTwiceWithinDistance(session, key.f0, key.f1, 1);
       Set<Tuple2<Long, Long>> expected = expectedMap.get(key);
       Assert.assertEquals(expected, actual);
     }
@@ -431,13 +432,13 @@ public class Neo4JManagerTest {
     for (Link link : DATA) Neo4JManager.save(session, link);
 
     // Check
-    Map<Tuple2<Long,Long>,Set<Tuple3<Long,Long,Double>>> expectedMap = new HashMap<>();
-    expectedMap.put(new Tuple2<>(2L,6L), new HashSet<Tuple3<Long,Long,Double>>(){{
-      add(new Tuple3<>(3L, 3L, 20.0));
+    Map<Tuple2<Long,Long>,Set<Tuple4<Long,Long,Double,Double>>> expectedMap = new HashMap<>();
+    expectedMap.put(new Tuple2<>(2L,6L), new HashSet<Tuple4<Long,Long,Double,Double>>(){{
+      add(new Tuple4<>(3L, 3L, 20.0, 30.0));
     }});
     for (Tuple2<Long,Long> key : expectedMap.keySet()) {
       Set<Tuple4<Long,Long,Double,Double>> actual = Neo4JManager.gammaIntersection(session, key.f0, key.f1);
-      Set<Tuple3<Long,Long,Double>> expected = expectedMap.get(key);
+      Set<Tuple4<Long,Long,Double,Double>> expected = expectedMap.get(key);
       Assert.assertEquals(expected, actual);
     }
 

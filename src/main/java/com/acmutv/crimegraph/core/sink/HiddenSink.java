@@ -76,12 +76,15 @@ public class HiddenSink extends RichSinkFunction<NodePairScore> {
 
   @Override
   public void invoke(NodePairScore value) throws Exception {
-    System.out.println("NEW HIDDEN LINK  "+ value.toString());
-    if (value.f2 >= this.threshold) {
-      Link link = new Link(value.f0, value.f1, value.f2, LinkType.HIDDEN);
+    long x = value.f0;
+    long y = value.f1;
+    double score = value.f2;
+
+    if (score >= this.threshold) {
+      Link link = new Link(x, y, score, LinkType.HIDDEN);
       Neo4JManager.save(this.session, link);
     } else {
-      Neo4JManager.remove(this.session, value.f0, value.f1, LinkType.HIDDEN);
+      Neo4JManager.remove(this.session, x, y, LinkType.HIDDEN);
     }
   }
 

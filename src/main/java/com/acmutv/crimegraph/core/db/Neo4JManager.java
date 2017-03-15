@@ -301,7 +301,7 @@ public class Neo4JManager {
    * @param type the type of link.
    */
   public static void remove(Session session, long x, long y, LinkType type) {
-    Value params = parameters("x", x, "y", y, "type", type);
+    Value params = parameters("x", x, "y", y, "type", type.name());
     session.run(REMOVE_LINK, params);
   }
 

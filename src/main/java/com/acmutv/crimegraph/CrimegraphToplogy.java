@@ -102,23 +102,8 @@ public class CrimegraphToplogy {
         new GraphUpdate(dbconf, config.getHiddenLocality(), config.getPotentialLocality())
     ).shuffle();
 
-    DataStream<NodePairScore> scores;
-
-    if (hiddenMetric.equals(HiddenMetrics.LOCAL) &&
-        potentialMetric.equals(PotentialMetrics.LOCAL)) {
-      scores = updates.flatMap(new ScoreCalculator(dbconf))
-          .keyBy(new NodePairScoreKeyer());
-    } else if (hiddenMetric.equals(HiddenMetrics.LOCAL) &&
-        potentialMetric.equals(PotentialMetrics.QUASI_LOCAL)) {
-      scores = updates.flatMap(new ScoreCalculatorTSteps(
-          dbconf, config.getPotentialLocality())).keyBy(new NodePairScoreKeyer());
-    } else if (hiddenMetric.equals(HiddenMetrics.LOCAL) &&
-        potentialMetric.equals(PotentialMetrics.WEIGHTED_QUASI_LOCAL)) {
-      scores = updates.flatMap(new ScoreCalculatorTStepsWithWeights(
-          dbconf, config.getPotentialLocality(), config.getPotentialWeights())).keyBy(new NodePairScoreKeyer());
-    } else {
-      throw new IllegalArgumentException("Unrecognized metrics");
-    }
+    DataStream<NodePairScore> scores = updates.flatMap(new ScoreCalculator(dbconf))
+        .keyBy(new NodePairScoreKeyer());
 
     SplitStream<NodePairScore> split = scores.split(new ScoreSplitter());
 
@@ -126,9 +111,9 @@ public class CrimegraphToplogy {
 
     DataStream<NodePairScore> potentialScores = split.select(ScoreType.POTENTIAL.name());
 
-    hiddenScores.addSink(new HiddenSink(dbconf, 0.01));
+    hiddenScores.addSink(new HiddenSink(dbconf, 0.5));
 
-    potentialScores.addSink(new PotentialSink(dbconf, 0.1));
+    potentialScores.addSink(new PotentialSink(dbconf, 0.5));
 
     env.execute("Crimegraph");
   }
