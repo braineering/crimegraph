@@ -47,9 +47,9 @@ public class Datagen {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(Datagen.class);
 
-  private static final int NUM_NODES = 100;
+  private static final int NUM_NODES = 50;
 
-  private static final int NUM_LINKS = 1000;
+  private static final int NUM_LINKS = 250;
 
   /**
    * Generates a simple dataset.

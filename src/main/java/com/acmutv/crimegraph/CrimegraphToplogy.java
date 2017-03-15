@@ -63,6 +63,8 @@ import java.nio.file.Path;
  */
 public class CrimegraphToplogy {
 
+  private static final int PARALLELISM = 8;
+
   /**
    * The app main method, executed when the program is launched.
    * @param args the command line arguments.
@@ -85,8 +87,9 @@ public class CrimegraphToplogy {
     final HiddenMetrics hiddenMetric = config.getHiddenMetric();
     final PotentialMetrics potentialMetric = config.getPotentialMetric();
 
-    /* TOPOLOGY */
+    /* ENVIRONMENT */
     final StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
+    env.setParallelism(PARALLELISM);
 
     // EMPYTING
     String hostname = dbconf.getHostname();
@@ -111,9 +114,9 @@ public class CrimegraphToplogy {
 
     DataStream<NodePairScore> potentialScores = split.select(ScoreType.POTENTIAL.name());
 
-    hiddenScores.addSink(new HiddenSink(dbconf, 0.5));
+    hiddenScores.addSink(new HiddenSink(dbconf, 0.5)).setParallelism(PARALLELISM);
 
-    potentialScores.addSink(new PotentialSink(dbconf, 0.5));
+    potentialScores.addSink(new PotentialSink(dbconf, 0.5)).setParallelism(PARALLELISM);
 
     env.execute("Crimegraph");
   }
