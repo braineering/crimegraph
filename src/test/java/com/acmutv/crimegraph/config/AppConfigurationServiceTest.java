@@ -83,6 +83,7 @@ public class AppConfigurationServiceTest {
     expected.setNeo4jHostname("CustomNeo4jHostname");
     expected.setNeo4jUsername("CustomNeo4jUsername");
     expected.setNeo4jPassword("CustomNeo4jPassword");
+    expected.setParallelism(16);
     Assert.assertEquals(expected, actual);
   }
 

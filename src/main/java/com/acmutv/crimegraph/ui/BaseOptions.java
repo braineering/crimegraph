@@ -122,6 +122,11 @@ public class BaseOptions extends Options {
   private static final String DESCRIPTION_NEO4J_PASSWORD = "The Neo4J password.";
 
   /**
+   * The CLI description for the option `parallelism`.
+   */
+  private static final String DESCRIPTION_PARALLELISM = "The parallelism of topology operators.";
+
+  /**
    * The singleton instance of {@link BaseOptions}.
    */
   private static BaseOptions instance;
@@ -154,6 +159,7 @@ public class BaseOptions extends Options {
     Option potentialLocality = this.optPotentialLocality();
     Option potentialWeight = this.optPotentialWeights();
     Option potentialThreshold = this.optPotentialThreshold();
+    Option parallelism = this.optParallelism();
 
     Option neo4jHostname = this.optNeo4jHostname();
     Option neo4jUsername = this.optNeo4JUsername();
@@ -175,6 +181,7 @@ public class BaseOptions extends Options {
     super.addOption(neo4jHostname);
     super.addOption(neo4jUsername);
     super.addOption(neo4jPassword);
+    super.addOption(parallelism);
   }
 
   /**
@@ -410,6 +417,21 @@ public class BaseOptions extends Options {
         .hasArg(true)
         .numberOfArgs(1)
         .argName("PASSWORD")
+        .build();
+  }
+
+  /**
+   * Builds the option `parallelism`.
+   * @return the option.
+   */
+  private Option optParallelism() {
+    return Option.builder()
+        .longOpt("parallelism")
+        .desc(DESCRIPTION_PARALLELISM)
+        .required(false)
+        .hasArg(true)
+        .numberOfArgs(1)
+        .argName("NUMBER")
         .build();
   }
 

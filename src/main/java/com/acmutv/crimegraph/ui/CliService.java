@@ -198,6 +198,12 @@ public class CliService {
       config.setNeo4jPassword(neo4jPassword);
     }
 
+    /* option: parallelism */
+    if (cmd.hasOption("parallelism")) {
+      final int parallelism = Integer.valueOf(cmd.getOptionValue("parallelism"));
+      config.setParallelism(parallelism);
+    }
+
     LOGGER.trace("Configuration loaded: {}",
         AppConfigurationService.getConfigurations());
 
