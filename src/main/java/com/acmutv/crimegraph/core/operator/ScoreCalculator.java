@@ -33,8 +33,6 @@ import com.acmutv.crimegraph.core.tuple.NodePairScore;
 import com.acmutv.crimegraph.core.tuple.UpdateType;
 import com.acmutv.crimegraph.core.tuple.ScoreType;
 import org.apache.flink.api.common.functions.RichFlatMapFunction;
-import org.apache.flink.api.java.tuple.Tuple2;
-import org.apache.flink.api.java.tuple.Tuple3;
 import org.apache.flink.api.java.tuple.Tuple4;
 import org.apache.flink.configuration.Configuration;
 import org.apache.flink.util.Collector;
