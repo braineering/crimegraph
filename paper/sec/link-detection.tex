@@ -49,9 +49,23 @@ where $\Theta_{x,y,i}$ is the set of common neighbours between $x$ and $y$ dista
 $\overline{w}_{\pi_{x,y,z}}$ is the weight of the highest weighted path between $x$ and $y$ passing through $z$ and
 $w_{\pi_{x,y,z}}$ is the total weight of paths between $x$ and $y$ passing through $z$.
 
-The metric produces a normalized score $\Phi_{QL}(x,y,t,\vec{\lambda})\in(0,1)$, hence it is suitable for thresholding. The same considerations about thresholding stated for the local metric hold for the quasi-local.
-
 Notice that $\Phi_{QL}(x,y,1,\vec{1})\equiv\Phi(x,y)$.
 
+ATTENZIONE INIZIO PROPOSTA (al posto della formula 3)\{
+
+\begin{equation}
+\label{eqn:detection-quasi-local-3}
+\Phi_{QL}(x,y,i)=
+\frac{\sum\limits_{\pi\in\Pi_{x,y}^{(i+1)}}w_{\pi}}
+{\sum\limits_{z\in\pi\in\Pi_{x,y}^{(i+1)}}w_{z}}
+\end{equation}
+
+where $\Pi_{x,y}^{(i)}$ is the set of paths between $x$ and $y$ of lenght $i$,
+$w_{\pi}$ is the weight of path $\pi$ and
+$w_{z}$ is the total weight of edges incident to $z$.
+
+\} FINE PROPOSTA
+
+The metric produces a normalized score $\Phi_{QL}(x,y,t,\vec{\lambda})\in(0,1)$, hence it is suitable for thresholding. The same considerations about thresholding stated for the local metric hold for the quasi-local.
 
 
