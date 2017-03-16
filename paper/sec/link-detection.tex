@@ -1,4 +1,57 @@
 \section{Link detection}
 \label{sec:link-detection}
 
-\lipsum[1]
+The link detection is the task of discovering hidden links in a graph. 
+Typically, the metrics used for this task are the same adopted in the link prediction. 
+The difference concerns how results are interpreted.
+We present here a local metric for link detection and its quasi-local extension.
+
+Let us consider a weighted undirected graph $G$ with weights in $\Re_{\geq1}^{+}$ and a pair of nodes $x,y\in V(G)$.
+We can build the following local metric:
+
+
+\begin{equation}
+\label{eqn:detection-local}
+\Phi(x,y)=
+\frac{\sum\limits_{z\in\Gamma_{x,y}}(w_{x,z}+w_{z,y})w_{z}^{-1}}
+{\sum\limits_{z\in\Gamma_{x,y}}w_{z}}
+\end{equation}
+
+where 
+$\Gamma_{x,y}$ is the set of common neighbours between $x$ and $y$,
+$w_{x,z}$ is the weight of the edge $(x,z)$ and
+$w_{z}$ is the total weight of the edges incident to $z$.
+
+The metric produces a normalized score $\Phi(x,y)\in(0,1)$, hence it is suitable for thresholding.
+Given an arbitrary threshold $\tilde{\Phi}$, every edge $(x,y)$ such that $\Phi(x,y)\geq\tilde{\Phi}$ is considered an hidden link with a probability proportional to the score achieved.
+Since $\Phi$ is strictly related to the edge weights, the threshold must be choosen according to the maximum and minimum weights on graph.
+
+The Equation~\ref{eqn:detection-local} can be extended to the following quasi-local metric.
+
+Let us now consider a weighted undirected graph $G$ with weights in $\Re_{\geq1}^{+}$, a pair of nodes $x,y\in V(G)$, a locality degree $t\geq 2$ and a vector $\vec{\lambda}=(\lambda_{1}\ldots\lambda_{t})$ such that $\sum_{i=1}^{t}\lambda_{i}=1$. 
+We can build the following quasi-local metric:
+
+\begin{equation}
+\label{eqn:detection-quasi-local-1}
+\Phi_{QL}(x,y,t,\vec{\lambda})=\vec{\lambda}\cdot\vec{\Phi}_{QL}(x,y,t)
+\end{equation}
+
+where $\vec{\Phi}_{QL}(x,y,t)=(\Phi_{QL}(x,y,1)\ldots\Phi_{QL}(x,y,t))$ is a vector of scores with every element defined as follows:
+
+\begin{equation}
+\label{eqn:detection-quasi-local-2}
+\Phi_{QL}(x,y,i)=
+\frac{\sum\limits_{z\in\Theta_{x,y,i}}\overline{w}_{\pi_{x,y,z}}w_{\pi_{x,y,z}}^{-1}}
+{\sum\limits_{z\in\Theta_{x,y,i}}w_{\pi_{x,y,z}}}
+\end{equation}
+
+where $\Theta_{x,y,i}$ is the set of common neighbours between $x$ and $y$ distant $i$ from them,
+$\overline{w}_{\pi_{x,y,z}}$ is the weight of the highest weighted path between $x$ and $y$ passing through $z$ and
+$w_{\pi_{x,y,z}}$ is the total weight of paths between $x$ and $y$ passing through $z$.
+
+The metric produces a normalized score $\Phi_{QL}(x,y,t,\vec{\lambda})\in(0,1)$, hence it is suitable for thresholding. The same considerations about thresholding stated for the local metric hold for the quasi-local.
+
+Notice that $\Phi_{QL}(x,y,1,\vec{1})\equiv\Phi(x,y)$.
+
+
+
