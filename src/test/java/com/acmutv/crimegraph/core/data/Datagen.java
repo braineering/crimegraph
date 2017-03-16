@@ -53,7 +53,7 @@ public class Datagen {
 
   private static final double MIN_WEIGHT = 1.0;
 
-  private static final double MAX_WEIGHT = 100.0;
+  private static final double MAX_WEIGHT = 10.0;
 
   /**
    * Generates a simple dataset.

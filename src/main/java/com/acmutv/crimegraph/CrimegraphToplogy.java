@@ -74,6 +74,7 @@ public class CrimegraphToplogy {
     /* CONFIGURATION */
     CliService.handleArguments(args);
     AppConfiguration config = AppConfigurationService.getConfigurations();
+    System.out.println(config);
 
     final String dataset = FileSystems.getDefault().getPath(
         System.getenv("FLINK_HOME"), config.getDataset()

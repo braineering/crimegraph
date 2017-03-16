@@ -78,10 +78,7 @@ public class ScoreCalculator extends RichFlatMapFunction<NodePair, NodePairScore
 
   @Override
   public void open(Configuration parameters) throws Exception {
-    String hostname = this.dbconfig.getHostname();
-    String username = this.dbconfig.getUsername();
-    String password = this.dbconfig.getPassword();
-    this.driver = Neo4JManager.open(hostname, username, password);
+    this.driver = Neo4JManager.open(this.dbconfig);
     this.session = driver.session();
   }
 
@@ -93,7 +90,6 @@ public class ScoreCalculator extends RichFlatMapFunction<NodePair, NodePairScore
   @SuppressWarnings("unchecked")
   @Override
   public void flatMap(NodePair nodePair, Collector<NodePairScore> out) {
-
     long x = nodePair.f0;
     long y = nodePair.f1;
     UpdateType type = nodePair.f2;
@@ -105,16 +101,14 @@ public class ScoreCalculator extends RichFlatMapFunction<NodePair, NodePairScore
       long totalDegree = 0;
 
       for (Tuple4<Long,Long,Double,Double> z : neighbours) {
-        long zId = z.f0;
         long zDegree = z.f1;
-        System.out.format("computing potential (%d,%d) - neighbour %d :: degree %d",
-            x, y, zId, zDegree);
+        assert zDegree > 0;
         potentialScore += (1.0 / zDegree);
         totalDegree += zDegree;
       }
 
       potentialScore /= totalDegree;
-      System.out.format("Potential(%d,%d)=%f", x, y, potentialScore);
+      System.out.format("Potential(%d,%d)=%f\n", x, y, potentialScore);
       NodePairScore potential = new NodePairScore(x, y, potentialScore, ScoreType.POTENTIAL);
       out.collect(potential);
     }
@@ -124,16 +118,14 @@ public class ScoreCalculator extends RichFlatMapFunction<NodePair, NodePairScore
       double totalWeight = 0.0;
 
       for (Tuple4<Long,Long,Double,Double> z : neighbours) {
-        long zId = z.f0;
         double pathWeight = z.f2;
         double nodeWeight = z.f3;
-        System.out.format("computing potential (%d,%d) - neighbour %d :: pathWeight %f, nodeWeight %f",
-            x, y, zId, pathWeight, nodeWeight);
+        assert nodeWeight != 0.0;
         hiddenScore += (pathWeight / nodeWeight);
         totalWeight += nodeWeight;
       }
       hiddenScore /= totalWeight;
-      System.out.format("Hidden(%d,%d)=%f", x, y, hiddenScore);
+      System.out.format("Hidden(%d,%d)=%f\n", x, y, hiddenScore);
       NodePairScore hidden = new NodePairScore(x, y, hiddenScore, ScoreType.HIDDEN);
       out.collect(hidden);
     }

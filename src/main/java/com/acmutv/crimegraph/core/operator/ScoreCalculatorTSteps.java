@@ -49,6 +49,7 @@ import java.util.Set;
  * @author Michele Porretta {@literal <mporretta@acm.org>}
  * @since 1.0
  */
+@Deprecated
 public class ScoreCalculatorTSteps extends RichFlatMapFunction<NodePair, NodePairScore> {
 
   /**

@@ -118,21 +118,21 @@ public class CliService {
       config.setDataset(dataset);
     }
 
-    /* option: hidden-metric */
-    if (cmd.hasOption("hidden-metric")) {
-      final HiddenMetrics hiddenMetric = HiddenMetrics.valueOf(cmd.getOptionValue("hidden-metric"));
+    /* option: hiddenMetric */
+    if (cmd.hasOption("hiddenMetric")) {
+      final HiddenMetrics hiddenMetric = HiddenMetrics.valueOf(cmd.getOptionValue("hiddenMetric"));
       config.setHiddenMetric(hiddenMetric);
     }
 
-    /* option: hidden-locality */
-    if (cmd.hasOption("hidden-locality")) {
-      final long potentialLocality = Long.valueOf(cmd.getOptionValue("hidden-locality"));
+    /* option: hiddenLocality */
+    if (cmd.hasOption("hiddenLocality")) {
+      final long potentialLocality = Long.valueOf(cmd.getOptionValue("hiddenLocality"));
       config.setPotentialLocality(potentialLocality);
     }
 
-    /* option: hidden-weights */
-    if (cmd.hasOption("hidden-weights")) {
-      final String csHiddenWeight = cmd.getOptionValue("hidden-weights");
+    /* option: hiddenWeights */
+    if (cmd.hasOption("hiddenWeights")) {
+      final String csHiddenWeight = cmd.getOptionValue("hiddenWeights");
       List<Double> hiddenWeight = Pattern.compile(",").splitAsStream(csHiddenWeight).map(Double::valueOf).collect(Collectors.toList());
       if (hiddenWeight.size() != config.getHiddenLocality()) {
         throw new IllegalArgumentException("The hidden weight vector mus contain a number of value equal to the potential locality.");
@@ -143,27 +143,27 @@ public class CliService {
       config.setHiddenWeights(hiddenWeight);
     }
 
-    /* option: hidden-threshold */
-    if (cmd.hasOption("hidden-threshold")) {
-      final double hiddenThreshold = Double.valueOf(cmd.getOptionValue("hidden-threshold"));
+    /* option: hiddenThreshold */
+    if (cmd.hasOption("hiddenThreshold")) {
+      final double hiddenThreshold = Double.valueOf(cmd.getOptionValue("hiddenThreshold"));
       config.setHiddenThreshold(hiddenThreshold);
     }
 
-    /* option: potential-metric */
-    if (cmd.hasOption("potential-metric")) {
-      final PotentialMetrics potentialMetric = PotentialMetrics.valueOf(cmd.getOptionValue("potential-metric"));
+    /* option: potentialMetric */
+    if (cmd.hasOption("potentialMetric")) {
+      final PotentialMetrics potentialMetric = PotentialMetrics.valueOf(cmd.getOptionValue("potentialMetric"));
       config.setPotentialMetric(potentialMetric);
     }
 
-    /* option: potential-locality */
-    if (cmd.hasOption("potential-locality")) {
-      final long potentialLocality = Long.valueOf(cmd.getOptionValue("potential-locality"));
+    /* option: potentialLocality */
+    if (cmd.hasOption("potentialLocality")) {
+      final long potentialLocality = Long.valueOf(cmd.getOptionValue("potentialLocality"));
       config.setPotentialLocality(potentialLocality);
     }
 
-    /* option: potential-weights */
-    if (cmd.hasOption("potential-weights")) {
-      final String csPotentialWeight = cmd.getOptionValue("potential-weights");
+    /* option: potentialWeights */
+    if (cmd.hasOption("potentialWeights")) {
+      final String csPotentialWeight = cmd.getOptionValue("potentialWeights");
       List<Double> potentialWeight = Pattern.compile(",").splitAsStream(csPotentialWeight).map(Double::valueOf).collect(Collectors.toList());
       if (potentialWeight.size() != config.getPotentialLocality()) {
         throw new IllegalArgumentException("The potential weight vector mus contain a number of value equal to the potential locality.");
@@ -174,27 +174,27 @@ public class CliService {
       config.setPotentialWeights(potentialWeight);
     }
 
-    /* option: potential-threshold */
-    if (cmd.hasOption("potential-threshold")) {
-      final double potentialThreshold = Double.valueOf(cmd.getOptionValue("potential-threshold"));
+    /* option: potentialThreshold */
+    if (cmd.hasOption("potentialThreshold")) {
+      final double potentialThreshold = Double.valueOf(cmd.getOptionValue("potentialThreshold"));
       config.setPotentialThreshold(potentialThreshold);
     }
 
-    /* option: neo4j-hostname */
-    if (cmd.hasOption("neo4j-hostname")) {
-      final String neo4jHostname = cmd.getOptionValue("neo4j-hostname");
+    /* option: neo4jHostname */
+    if (cmd.hasOption("neo4jHostname")) {
+      final String neo4jHostname = cmd.getOptionValue("neo4jHostname");
       config.setNeo4jHostname(neo4jHostname);
     }
 
-    /* option: neo4j-username */
-    if (cmd.hasOption("neo4j-username")) {
-      final String neo4jUsername = cmd.getOptionValue("neo4j-username");
+    /* option: neo4jUsername */
+    if (cmd.hasOption("neo4jUsername")) {
+      final String neo4jUsername = cmd.getOptionValue("neo4jUsername");
       config.setNeo4jUsername(neo4jUsername);
     }
 
-    /* option: neo4j-password */
-    if (cmd.hasOption("neo4j-password")) {
-      final String neo4jPassword = cmd.getOptionValue("neo4j-password");
+    /* option: neo4jPassword */
+    if (cmd.hasOption("neo4jPassword")) {
+      final String neo4jPassword = cmd.getOptionValue("neo4jPassword");
       config.setNeo4jPassword(neo4jPassword);
     }
 
