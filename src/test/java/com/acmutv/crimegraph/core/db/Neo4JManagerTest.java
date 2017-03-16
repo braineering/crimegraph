@@ -31,6 +31,7 @@ import com.acmutv.crimegraph.core.tuple.LinkType;
 import org.apache.flink.api.java.tuple.Tuple2;
 import org.apache.flink.api.java.tuple.Tuple3;
 import org.apache.flink.api.java.tuple.Tuple4;
+import org.apache.hadoop.yarn.webapp.hamlet.HamletSpec;
 import org.junit.*;
 import org.neo4j.driver.v1.*;
 
@@ -73,20 +74,15 @@ public class Neo4JManagerTest {
 
   @BeforeClass
   public static void init() {
+    DbConfiguration dbconf = new DbConfiguration(HOSTNAME, USERNAME, PASSWORD);
     boolean neo4jActive = true;
-    Session testSession = null;
     try {
-      DRIVER = GraphDatabase.driver(HOSTNAME, AuthTokens.basic(USERNAME, PASSWORD), CONFIG);
-      testSession = DRIVER.session();
-      Neo4JManager.empyting(testSession);
+      Neo4JManager.empyting(dbconf);
     } catch (Exception exc) {
       neo4jActive = false;
-    } finally {
-      if (testSession != null) {
-        testSession.close();
-      }
     }
     Assume.assumeTrue(neo4jActive);
+    DRIVER = Neo4JManager.open(dbconf);
   }
 
   @AfterClass

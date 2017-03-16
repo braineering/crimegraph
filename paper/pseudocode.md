@@ -7,17 +7,17 @@ L'operatore 1 riceve un'interazione (x,y) ed emette coppie (a,b) di cui è neces
 var T > = 2
 
 func receive(x,y,w):
-  if (x in G & y not in G):
+  if (x in G and y not in G):
     addArcInG(x,y,w)
     C = update(y)
     for (c in C):
       emit(c)
-  else if (y in G & x not in G):
+  else if (y in G and x not in G):
     addArcInG(x,y,w)
     C = update(x)
     for (c in C):
       emit(c)
-  else if (x in G & y in G):
+  else if (x in G and y in G):
     addOrUpdateArcInG(x,y,w)
     C_x = update(x)
     C_y = update(y)
@@ -36,7 +36,7 @@ func update(x):
     if ((x,y) not in G):
       R.add(x,y)
     for (z in S):
-      if ((y,z) not in G  && z != y):
+      if ((y,z) not in G and z != y):
         R.add(y,z)
   return R
 ```

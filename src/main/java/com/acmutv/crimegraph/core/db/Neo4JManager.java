@@ -252,6 +252,17 @@ public class Neo4JManager {
 
   /**
    * Opens a NEO4J connection.
+   * @param dbconf the configuration to connect to Neo4J.
+   * @return a open NEO4J driver.
+   */
+  public static Driver open(DbConfiguration dbconf) {
+    AuthToken auth = AuthTokens.basic(dbconf.getUsername(), dbconf.getPassword());
+    Config config = Config.build().withEncryptionLevel(Config.EncryptionLevel.NONE ).toConfig();
+    return GraphDatabase.driver(dbconf.getHostname(), auth, config);
+  }
+
+  /**
+   * Opens a NEO4J connection.
    * @param hostname the instance hostname.
    * @param username the username for the authentication.
    * @param password the password for the authentication.
@@ -630,11 +641,24 @@ public class Neo4JManager {
 
   /**
    * Empyting of Neo4J
-   * @param session the NEO4J open session.
+   * @param dbconf the configuration to connect to Neo4J.
+   */
+  public static void empyting(DbConfiguration dbconf) {
+    String hostname = dbconf.getHostname();
+    String username = dbconf.getUsername();
+    String password = dbconf.getPassword();
+    Driver driver = Neo4JManager.open(hostname, username, password);
+    Session session = driver.session();
+    session.run(EMPYTING);
+    Neo4JManager.close(session, driver);
+  }
+
+  /**
+   * Empyting of Neo4J
+   * @param session the Neo4J session.
    */
   public static void empyting(Session session) {
-    String query = String.format(EMPYTING);
-    session.run(query);
+    session.run(EMPYTING);
   }
 
 }

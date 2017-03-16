@@ -47,9 +47,13 @@ public class Datagen {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(Datagen.class);
 
-  private static final int NUM_NODES = 50;
+  private static final int NUM_NODES = 25;
 
-  private static final int NUM_LINKS = 250;
+  private static final int NUM_LINKS = 100;
+
+  private static final double MIN_WEIGHT = 1.0;
+
+  private static final double MAX_WEIGHT = 100.0;
 
   /**
    * Generates a simple dataset.
@@ -64,10 +68,6 @@ public class Datagen {
 
     Random rnd = new Random();
 
-    Set<Long> nodes = new HashSet<>();
-
-    for (long id = 1; id <= NUM_NODES; id++) nodes.add(id);
-
     List<Link> data = new ArrayList<>();
 
     for (int i = 0; i < NUM_LINKS; i++) {
@@ -77,7 +77,7 @@ public class Datagen {
         y = rnd.nextInt(NUM_NODES);
       } while (y == x);
 
-      double weight = rnd.nextDouble();
+      double weight = rnd.nextDouble() * (MAX_WEIGHT - MIN_WEIGHT) + MIN_WEIGHT;
       Link link = new Link(x, y, weight);
       data.add(link);
     }

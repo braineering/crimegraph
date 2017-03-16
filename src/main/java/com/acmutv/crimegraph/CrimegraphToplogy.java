@@ -73,7 +73,6 @@ public class CrimegraphToplogy {
 
     /* CONFIGURATION */
     CliService.handleArguments(args);
-
     AppConfiguration config = AppConfigurationService.getConfigurations();
 
     final String dataset = FileSystems.getDefault().getPath(
@@ -82,27 +81,17 @@ public class CrimegraphToplogy {
     final DbConfiguration dbconf = new DbConfiguration(
         config.getNeo4jHostname(), config.getNeo4jUsername(), config.getNeo4jPassword()
     );
-    final HiddenMetrics hiddenMetric = config.getHiddenMetric();
-    final PotentialMetrics potentialMetric = config.getPotentialMetric();
     final int parallelism = config.getParallelism();
 
     /* ENVIRONMENT */
     final StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
     env.setParallelism(parallelism);
+    Neo4JManager.empyting(dbconf);
 
-    // EMPYTING
-    String hostname = dbconf.getHostname();
-    String username = dbconf.getUsername();
-    String password = dbconf.getPassword();
-    Driver driver = Neo4JManager.open(hostname, username, password);
-    Session session = driver.session();
-    Neo4JManager.empyting(session);
-
+    /* TOPOLOGY */
     DataStream<Link> links = env.addSource(new LinkSource(dataset));
 
-    DataStream<NodePair> updates = links.flatMap(
-        new GraphUpdate(dbconf, config.getHiddenLocality(), config.getPotentialLocality())
-    ).shuffle();
+    DataStream<NodePair> updates = links.flatMap(new GraphUpdate(dbconf)).shuffle();
 
     DataStream<NodePairScore> scores = updates.flatMap(new ScoreCalculator(dbconf))
         .keyBy(new NodePairScoreKeyer());
@@ -113,10 +102,11 @@ public class CrimegraphToplogy {
 
     DataStream<NodePairScore> potentialScores = split.select(ScoreType.POTENTIAL.name());
 
-    hiddenScores.addSink(new HiddenSink(dbconf, 0.8)).setParallelism(parallelism);
+    hiddenScores.addSink(new HiddenSink(dbconf, config.getHiddenThreshold()));
 
-    potentialScores.addSink(new PotentialSink(dbconf, 0.2)).setParallelism(parallelism);
+    potentialScores.addSink(new PotentialSink(dbconf, config.getPotentialThreshold()));
 
+    /* EXECUTION */
     env.execute("Crimegraph");
   }
 

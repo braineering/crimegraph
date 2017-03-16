@@ -65,31 +65,11 @@ public class GraphUpdate extends RichFlatMapFunction<Link, NodePair> {
   private Session session;
 
   /**
-   * The locality degree for link detection.
-   */
-  private long hiddenLocality;
-
-  /**
-   * The locality degree for link prediction.
-   */
-  private long potentialLocality;
-
-  /**
-   * The maximum locality degree.
-   */
-  private long maxLocality;
-
-  /**
    * Constructs for load edge to write {@link Link} on a NEO4J instance.
    * @param dbconfig the Neo4J configuration.
-   * @param hiddenLocality the locality degree for link detection.
-   * @param potentialLocality the locality degree for link prediction.
    */
-  public GraphUpdate(DbConfiguration dbconfig, long hiddenLocality, long potentialLocality) {
+  public GraphUpdate(DbConfiguration dbconfig) {
     this.dbconfig = dbconfig;
-    this.hiddenLocality = hiddenLocality;
-    this.potentialLocality = potentialLocality;
-    this.maxLocality = Long.max(hiddenLocality, potentialLocality);
   }
 
   @SuppressWarnings("unchecked")
@@ -106,8 +86,8 @@ public class GraphUpdate extends RichFlatMapFunction<Link, NodePair> {
     Neo4JManager.save(this.session, value);
 
     // if x in G, y in G, and (x,y) in G
-    if(xInG && yinG && edgeInG) {
-      Set<Tuple2<Long,Long>> pairs = Neo4JManager.pairsToUpdateTwiceWithinDistance(this.session, x, y, this.hiddenLocality);
+    if (xInG && yinG && edgeInG) {
+      Set<Tuple2<Long,Long>> pairs = Neo4JManager.pairsToUpdateTwice(this.session, x, y);
       for (Tuple2<Long,Long> pair : pairs) {
         NodePair update = new NodePair(pair.f0, pair.f1, UpdateType.HIDDEN);
         out.collect(update);
@@ -116,7 +96,7 @@ public class GraphUpdate extends RichFlatMapFunction<Link, NodePair> {
 
     // if x in G, y in G, and (x,y) NOT in G
     else if (xInG && yinG) {
-      Set<Tuple2<Long,Long>> pairs = Neo4JManager.pairsToUpdateTwiceWithinDistance(this.session, x, y, this.maxLocality);
+      Set<Tuple2<Long,Long>> pairs = Neo4JManager.pairsToUpdateTwice(this.session, x, y);
       for (Tuple2<Long,Long> pair : pairs) {
         NodePair update = new NodePair(pair.f0, pair.f1, UpdateType.BOTH);
         out.collect(update);
@@ -125,7 +105,7 @@ public class GraphUpdate extends RichFlatMapFunction<Link, NodePair> {
 
     // if x NOT in G and y in G
     else if (!xInG && yinG) {
-      Set<Tuple2<Long,Long>> pairs = Neo4JManager.pairsToUpdateWithinDistance(this.session, x, this.maxLocality);
+      Set<Tuple2<Long,Long>> pairs = Neo4JManager.pairsToUpdate(this.session, x);
       for (Tuple2<Long,Long> pair : pairs ) {
         NodePair update = new NodePair(pair.f0, pair.f1, UpdateType.BOTH);
         out.collect(update);
@@ -134,7 +114,7 @@ public class GraphUpdate extends RichFlatMapFunction<Link, NodePair> {
 
     // if x in G and y NOT in G
     else if (xInG && !yinG) {
-      Set<Tuple2<Long,Long>> pairs = Neo4JManager.pairsToUpdateWithinDistance(this.session, x, this.maxLocality);
+      Set<Tuple2<Long,Long>> pairs = Neo4JManager.pairsToUpdate(this.session, y);
       for (Tuple2<Long,Long> pair : pairs) {
         NodePair update = new NodePair(pair.f0, pair.f1, UpdateType.BOTH);
         out.collect(update);
@@ -144,10 +124,7 @@ public class GraphUpdate extends RichFlatMapFunction<Link, NodePair> {
 
   @Override
   public void open(Configuration parameters) throws Exception {
-    String hostname = this.dbconfig.getHostname();
-    String username = this.dbconfig.getUsername();
-    String password = this.dbconfig.getPassword();
-    this.driver = Neo4JManager.open(hostname, username, password);
+    this.driver = Neo4JManager.open(this.dbconfig);
     this.session = driver.session();
   }
 
