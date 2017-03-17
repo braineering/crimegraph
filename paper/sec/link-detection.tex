@@ -1,12 +1,10 @@
 \section{Link detection}
 \label{sec:link-detection}
 
-The link detection is the task of discovering hidden links in a graph, that are connections 
-Typically, the metrics used for this task are the same adopted in the link prediction. 
-The difference concerns how results are interpreted.
+The link detection is the task of discovering hidden links in a graph, that are connections.
 We present here a local metric for link detection and its quasi-local extension.
 
-The metrics are based on the following criminological assumptions:
+The metrics are based on the following criminological assumptions: MANCANO LE ASSUNZIONI???
 
 Let us consider a weighted undirected graph $G$ with weights in $\Re_{\geq1}^{+}$ and a pair of nodes $x,y\in V(G)$.
 We can build the following local metric:
@@ -26,7 +24,7 @@ $w_{z}$ is the total weight of the edges incident to $z$.
 
 The metric produces a normalized score $\Phi(x,y)\in(0,1)$, hence it is suitable for thresholding.
 Given an arbitrary threshold $\tilde{\Phi}$, every edge $(x,y)$ such that $\Phi(x,y)\geq\tilde{\Phi}$ is considered an hidden link with a probability proportional to the score achieved.
-Since $\Phi$ is strictly related to the edge weights, the threshold must be choosen according to the maximum and minimum weights on graph.
+Since $\Phi$ is strictly related to the edge weights, the threshold must be chosen according to the maximum and minimum weights on graph.
 
 The Equation~\ref{eqn:detection-local} can be extended to the following quasi-local metric.
 

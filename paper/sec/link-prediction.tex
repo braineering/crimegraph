@@ -1,4 +1,26 @@
 \section{Link prediction}
 \label{sec:link-prediction}
 
-\lipsum[1]
+The link prediction is the problem of infer which new interactions in the near future in a graph.
+As the link detection, we present here a local metric for link prediction and its quasi-local extension.
+
+The metrics are a normalized extension of \textit{Resource Allocation Index}[INSERIRE RIFERIMENTO A Predicting missing links via local information], that we report for simplicity:
+
+\begin{equation}
+\label{eqn:resource-allocation}
+s_{xy}\textsuperscript{RA} = 
+\sum\limits_{z\in\Gamma_{x,y}}\frac{1}{k_{z}}
+\end{equation}
+
+where $k_{z}$ is the degree of node $z$.
+
+We can build the following local metric:
+
+\begin{equation}
+\label{eqn:prediction-local}
+\Psi(x,y)=
+\frac{\sum\limits_{z\in\Gamma_{x,y}}\frac{1}{k_{z}}}
+{\sum\limits_{z\in\Gamma_{x,y}}k_{z}}
+\end{equation}
+
+da continuare...
