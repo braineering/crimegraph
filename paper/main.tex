@@ -1,7 +1,7 @@
 %*******************************************************************************
-% Title: Crimegraph, link prediction and detection in criminal netwoks
+% Title: Criminal link mining in data stream environments
 %
-% Conference: Cool Conference 2016
+% Conference: autoDaSP 2017
 %
 % Authors: Giacomo Marciani <gmarciani@acm.org>
 %          Michele Porretta <mporretta@acm.org>
@@ -21,6 +21,8 @@
 \usepackage{bm}
 \usepackage{url}
 \usepackage{lipsum}
+\usepackage{amsmath}
+\usepackage[ruled,noend,noline]{algorithm2e}
 
 %*******************************************************************************
 % Paper Size as US Letter
@@ -66,7 +68,7 @@
 %*******************************************************************************
 % Title and Authors
 %*******************************************************************************
-\title{Crimegraph, link prediction and detection in criminal networks}
+\title{Criminal link mining in data stream environments}
 
 \numberofauthors{2}
 \author{
@@ -90,6 +92,7 @@
 \input{sec/introduction}
 \input{sec/background}
 \input{sec/architecture}
+\input{sec/data-model}
 \input{sec/link-detection}
 \input{sec/link-prediction}
 \input{sec/metrics-update}
