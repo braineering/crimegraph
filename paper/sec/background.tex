@@ -1,8 +1,8 @@
 \section{Background}
 \label{sec:background}
 The \textit{social network analysis}-\textit{SNA} is an interdisciplinary field from social sciences, statistics, graph theory, complex networks, and now computer science. SNA has received considerable attention from the scientific community, in order to find algorithmic solutions to extract missing information, identify hidden interactions between individuals, and so on. 
+There are many domains which can be represented with a social network and to do that on network analysis, for example social interactions between people, biological interactions between proteins, systems informations. An additional field of application relates to criminal networks, to facilitate the authorities in the investigation of organized crime, such as terrorism, drug trafficking, fraud, armed gang crimes and others\cite{xu2005criminal}.
 
-There are many domains which can be represented with a social network and to do that on network analysis, for example social interactions between people, biological interactions between proteins, systems informations. A additional field of application relates to criminal networks, to facilitate the authorities in the investigation of organized crime, such as terrorism, drug trafficking, fraud, armed gang crimes\cite{Xu}.
 
 We assume that the reader is familiar with the standard graph terminology. However, we make a brief recap to introduce what we will see in the next sections.
 
@@ -11,16 +11,14 @@ Let $G(V,E)$ an undirected graph, where $V$ is the the set of vertices and $E$ i
 A \textit{path} of \textit{length} $k$ in $G$ is a sequence of vertices $v_{1},v_{2},...,v_{k}$ such that the edge $(v_{i},v_{i+1}) \in E$ for $i = 1, 2,..., K-1$. An undirected graph is \textit{connected} if, for every pair of nodes, there is a path between them. Otherwise, if a graph is not connected, it's constituted by at least two \textit{connected components}.
 
 
-
 For two times $t$ and $t\textsuperscript{'} > t$, we denote $G[t,t\textsuperscript{'}]$ the subgraph of G consisting of all edges with a timestamp between $t$ and $t\textsuperscript{'}$. Identified four times: $t_{0}, t\textsuperscript{'}_{0}, t_{1}, t\textsuperscript{'}_{1}$, with $t_{0}<t\textsuperscript{'}_{0}<t_{1}<t\textsuperscript{'}_{1}$, we refer to $[t_{0},t\textsuperscript{'}_{0}]$ as the \textit{training interval} and $[t_{1},t\textsuperscript{'}_{1}]$ as the \textit{test interval}. Applying a \textit{prediction algorithm} on the graph obtained after the training interval, as $G[t_{0},t\textsuperscript{'}_{0}]$, we want to make a prediction on the edges that will be present in the graph $G[t_{1},t\textsuperscript{'}_{1}]$ and not present in $G[t_{0},t\textsuperscript{'}_{0}]$ \cite{Liben-Nowell}.
-
-
 
 In this work, the notions of training interval and test interval, are provided with the only purpose to test the algorithm that will be presented in the following; The application of data stream processing that we are explain produce an output of links mining in real time: in which each instant $t\textsuperscript{*}$ identifies a graph $G[t_{0},t\textsuperscript{*}]$ on which to apply the algorithm.
 
- 
 
 
 In this work we assume that the graph is connected, therefore each pair of nodes is connected by a path, because  (e spiegarne il motivo sulla base di quanto scritto nell'articolo corrispondente).
 
 quando si parla di metriche for detectione introdurre al grafo pesato With each edge ee of GG let there be associated a real number w(e)w(e), called its weight. Then GG, together with these weights on its edges, is called a weighted graph.
+
+Link mining refers to data mining techniques that consider data links when building descriptive or predictive models \cite{getoor2005link}.

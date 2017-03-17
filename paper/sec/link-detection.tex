@@ -1,10 +1,12 @@
 \section{Link detection}
 \label{sec:link-detection}
 
-The link detection is the task of discovering hidden links in a graph. 
+The link detection is the task of discovering hidden links in a graph, that are connections 
 Typically, the metrics used for this task are the same adopted in the link prediction. 
 The difference concerns how results are interpreted.
 We present here a local metric for link detection and its quasi-local extension.
+
+The metrics are based on the following criminological assumptions:
 
 Let us consider a weighted undirected graph $G$ with weights in $\Re_{\geq1}^{+}$ and a pair of nodes $x,y\in V(G)$.
 We can build the following local metric:
@@ -38,20 +40,18 @@ We can build the following quasi-local metric:
 
 where $\vec{\Phi}_{QL}(x,y,t)=(\Phi_{QL}(x,y,1)\ldots\Phi_{QL}(x,y,t))$ is a vector of scores with every element defined as follows:
 
-\begin{equation}
-\label{eqn:detection-quasi-local-2}
-\Phi_{QL}(x,y,i)=
-\frac{\sum\limits_{z\in\Theta_{x,y,i}}\overline{w}_{\pi_{x,y,z}}w_{\pi_{x,y,z}}^{-1}}
-{\sum\limits_{z\in\Theta_{x,y,i}}w_{\pi_{x,y,z}}}
-\end{equation}
+%\begin{equation}
+%\label{eqn:detection-quasi-local-2}
+%\Phi_{QL}(x,y,i)=
+%\frac{\sum\limits_{z\in\Theta_{x,y,i}}\overline{w}_{\pi_{x,y,z}}w_{\pi_{x,y,z}}^{-1}}
+%{\sum\limits_{z\in\Theta_{x,y,i}}w_{\pi_{x,y,z}}}
+%\end{equation}
 
-where $\Theta_{x,y,i}$ is the set of common neighbours between $x$ and $y$ distant $i$ from them,
-$\overline{w}_{\pi_{x,y,z}}$ is the weight of the highest weighted path between $x$ and $y$ passing through $z$ and
-$w_{\pi_{x,y,z}}$ is the total weight of paths between $x$ and $y$ passing through $z$.
-
-Notice that $\Phi_{QL}(x,y,1,\vec{1})\equiv\Phi(x,y)$.
-
-ATTENZIONE INIZIO PROPOSTA (al posto della formula 3)\{
+%where $\Theta_{x,y,i}$ is the set of common neighbours between $x$ and $y$ distant $i$ from them,
+%$\overline{w}_{\pi_{x,y,z}}$ is the weight of the highest weighted path between $x$ and $y$ passing through $z$ and
+%$w_{\pi_{x,y,z}}$ is the total weight of paths between $x$ and $y$ %passing through $z$.
+%
+%Notice that $\Phi_{QL}(x,y,1,\vec{1})\equiv\Phi(x,y)$.
 
 \begin{equation}
 \label{eqn:detection-quasi-local-3}
@@ -63,8 +63,6 @@ ATTENZIONE INIZIO PROPOSTA (al posto della formula 3)\{
 where $\Pi_{x,y}^{(i)}$ is the set of paths between $x$ and $y$ of lenght $i$,
 $w_{\pi}$ is the weight of path $\pi$ and
 $w_{z}$ is the total weight of edges incident to $z$.
-
-\} FINE PROPOSTA
 
 The metric produces a normalized score $\Phi_{QL}(x,y,t,\vec{\lambda})\in(0,1)$, hence it is suitable for thresholding. The same considerations about thresholding stated for the local metric hold for the quasi-local.
 
