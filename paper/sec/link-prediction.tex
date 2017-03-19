@@ -4,17 +4,7 @@
 The link prediction is the problem of infer which new interactions in the near future in a graph.
 As the link detection, we present here a local metric for link prediction and its quasi-local extension.
 
-The metrics are a normalized extension of \textit{Resource Allocation Index}[INSERIRE RIFERIMENTO A Predicting missing links via local information], that we report for simplicity:
-
-\begin{equation}
-\label{eqn:resource-allocation}
-s_{xy}\textsuperscript{RA} = 
-\sum\limits_{z\in\Gamma_{x,y}}\frac{1}{k_{z}}
-\end{equation}
-
-where $k_{z}$ is the degree of node $z$.
-
-We can build the following local metric:
+Let us consider an undirected graph $G(V,E)$ and a pair of nodes $x$,$y\in V$. We can build the following local metric:
 
 \begin{equation}
 \label{eqn:prediction-local}
@@ -23,4 +13,27 @@ We can build the following local metric:
 {\sum\limits_{z\in\Gamma_{x,y}}k_{z}}
 \end{equation}
 
-da continuare...
+where $k_{z}$ is the degree of node $z$ and $\Gamma_{x,y}$ is the set of common neighbors between $x$ and $y$. 
+
+Let us now consider an undirected graph $G$, a pair of nodes $x,y\in V$, a locality degree $t\in \mathbb{Z}$, $\geq 1$ and a vector $\vec{\mu}=(\mu_{1}\ldots\mu_{t})$ such that $\sum_{i=1}^{t}\mu_{i}=1$. We denote with $\Theta(x,t)$ the set of nodes at distance $t$ from $x$. In another words, given a nodes $v \in G$, and a path $\pi_{x,v}$ of length $t$, $\pi_{x,v} = u,v_{2},...,v_{t-1},v$, the set $\Theta(x,t) = \{v\}$.
+
+Now, we can build the following quasi-local metric:
+
+\begin{equation}
+\label{eqn:prediction-quasi-local-1}
+\Psi_{QL}(x,y,t,\vec{\mu})=\vec{\mu}\cdot\vec{\Psi}_{QL}(x,y,t)
+\end{equation}
+
+
+where $\vec{\Psi}_{QL}(x,y,t)=(\Psi_{QL}(x,y,1)\ldots\Psi_{QL}(x,y,t))$ is a vector of scores with every element defined as follows:
+
+\begin{equation}
+\label{eqn:prediction-quasi-local-2}
+\Phi_{QL}(x,y,i)=
+\frac{\sum\limits_{z\in \Gamma_{x,y,i}}\frac{1}{k_{z}}}
+{\sum\limits_{z\in\Gamma_{x,y,i}}k_{z}}
+\end{equation}
+
+where $\Gamma_{x,y,i} = \Gamma(x,i) \cap \Gamma(y,i)$ is the set of common neighbors between $x$ and $y$ distant $i$ steps from each.
+
+The metrics \ref{eqn:prediction-local} [and its quasi-local extension \ref{eqn:prediction-quasi-local-1}] produces a normalized score $\Psi(x,y) \in (0,1)$, [$\Psi_{QL}(x,y,t,\vec{\mu}) \in (0,1)$], so the same considerations already made previously in Section \ref{sec:link-detection}, regarding a threshold, are still valid. 

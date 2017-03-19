@@ -6,7 +6,7 @@ We present here a local metric for link detection and its quasi-local extension.
 
 The metrics are based on the following criminological assumptions: MANCANO LE ASSUNZIONI???
 
-Let us consider a weighted undirected graph $G$ with weights in $\Re_{\geq1}^{+}$ and a pair of nodes $x,y\in V(G)$.
+Let us consider a weighted undirected graph $G(V,E)$ with weights in $\Re_{\geq1}^{+}$ and a pair of nodes $x,y\in V$.
 We can build the following local metric:
 
 
@@ -28,7 +28,7 @@ Since $\Phi$ is strictly related to the edge weights, the threshold must be chos
 
 The Equation~\ref{eqn:detection-local} can be extended to the following quasi-local metric.
 
-Let us now consider a weighted undirected graph $G$ with weights in $\Re_{\geq1}^{+}$, a pair of nodes $x,y\in V(G)$, a locality degree $t\geq 1$ and a vector $\vec{\lambda}=(\lambda_{1}\ldots\lambda_{t})$ such that $\sum_{i=1}^{t}\lambda_{i}=1$. Notice that when $t=1$, the following metric is equivalent to a local one.
+Let us now consider a weighted undirected graph $G$ with weights in $\Re_{\geq1}^{+}$, a pair of nodes $x,y\in V(G)$, a locality degree $t\in \mathbb{Z}$, $t\geq 1$, and a vector $\vec{\lambda}=(\lambda_{1}\ldots\lambda_{t})$ such that $\sum_{i=1}^{t}\lambda_{i}=1$. Notice that when $t=1$, the following metric is equivalent to a local one.
 We can build the following quasi-local metric:
 
 \begin{equation}
