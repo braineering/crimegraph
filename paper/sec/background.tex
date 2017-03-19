@@ -18,10 +18,12 @@ In this work, the notions of training interval and test interval, are provided w
 
 Currently, the problem of link prediction, as the link detection, is a long-standing challenge in modern information science. There are many algorithms for this problem and ways to address this challenge. The mainstreaming class of algorithms so-called \textit{similarity-based algorithms}. Other algorithms are based on \textit{Markov chains} or on \textit{statistical models}, as extensively discussed in \cite{Liben-Nowell} and \cite{Lu2011}.
 
-Let us consider the link prediction, because the link detection is analogous, the metrics used for this task are the same adopted: the difference concerns how the results are interpreted. The similarity metrics are so many and they and differ because the size in which focus the analysis. In detail, let $s_{x,y}$ the likelihood, i.e. the \textit{score}, as \textit{proximity} or \textit{similarity}, that between the nodes $x$,$y$ there will be a link in the future, provided by the algorithm that implements the similarity considered metric, and let $\pi_{x,y}$ a path between them, we denote \textit{local indices} the metrics that can only compute the $s_{x,y}$ at distance $d_{\pi}(x,y) = 2$ (i.e it's applicable on only nodes that have a common neighbor $\in \Gamma_{x,y}$). Other types of metrics are \textit{quasi-local} indices, that consider $d(x,y) \geq t$, where $t\in \mathbb{Z}, t\geq 1 $, as \textit{locality degree}, identifies a neighborhood with a max length equal to $t$ steps, starting from the node $x$ to $y$. Another metrics are \textit{global indices}, that computes the score between any pairs of nodes in $G$ not directly connected\cite{Lu2011}. The metrics used in this work are presented in Section \ref{sec:link-detection} and \ref{sec:link-prediction}.
+Let us consider the link prediction, because the link detection is analogous, the metrics used for this task are the same adopted: the difference concerns how the results are interpreted. The similarity metrics are so many and they and differ because the size in which focus the analysis. In detail, let $s_{x,y}$ the likelihood, i.e. the \textit{score}, as \textit{proximity} or \textit{similarity}, that between the nodes $x$,$y$ there will be a link in the future, provided by the algorithm that implements the similarity considered metric, and let $\pi_{x,y}$ a path between them, we denote \textit{local indices} the metrics that can only compute the $s_{x,y}$ at distance $d_{\pi}(x,y) = 2$ (i.e it's applicable on only nodes that have a common neighbor $\in \Gamma_{x,y}$). 
+
+Other types of metrics are \textit{quasi-local} indices, that consider $d(x,y) \geq t$, where $t\in \mathbb{Z}, t\geq 1 $, as \textit{locality degree}, identifies a neighborhood with a max length equal to $t$ steps, starting from the node $x$ to $y$. Quasi-local metrics are a good tradeoff of accuracy and computational complexity, because the global indices require considerable computational effort, while local indexes are limited. Another metrics are \textit{global indices}, that computes the score between any pairs of nodes in $G$ not directly connected\cite{Lu2011}. The metrics used in this work are presented in Section \ref{sec:link-detection} and \ref{sec:link-prediction}.
 
 %Consider once again an undirected graph $G(V,E)$ and a pair of nodes $x$,$y \in V$,
-The metrics that will present in the following Sections \ref{sec:link-detection} and \ref{sec:link-prediction}, are a normalized extension of \textit{Resource Allocation Index} - \textit{RA} \cite{zhou2009predicting}, PARLARE ANCHE DI LP that we report for simplicity:
+The metrics that will present in the following Sections \ref{sec:link-detection} and \ref{sec:link-prediction}, are a normalized extension of \textit{Resource Allocation Index} - \textit{RA} \cite{Lu2011,zhou2009predicting} and        \textit{Local Path} - \textit{LP}\cite{Lu2011,zhou2009predicting,lu2009similarity}, that we report for simplicity:
 
 \begin{equation}
 \label{eqn:resource-allocation}
@@ -30,7 +32,15 @@ s_{xy}\textsuperscript{RA} =
 \end{equation}
 where $k_{z}$ is the degree of node $z$.
 
-RA is an local index for link prediction, that assigns to a pair $x$,$y$ a score, representing their possible future relationship. This score can be viewed as a measure of similarity between nodes $x$ and $y$. Notice that for each pair of nodes, $x$, $y \in V$, then $s_{xy} = s_{yx}$. Performing an ranking among the RA score on a graph $G$, can be get the top most likely link those still not present in G.
+\begin{equation}
+\label{eqn:local-path}
+s_{xy}\textsuperscript{LP(k)} = 
+A^{2} + \epsilon A^{3} + \epsilon^{2}A^{4}+...+\epsilon^{k-2}A^{k}
+\end{equation}
+where $k\geq 1$ is a locality degree, $A$ is the adjacency matrix, and $\epsilon$ is a free parameter. For example, $A_{xy}^{2}$ is also the number of different paths with length $2$ connecting $x$ and $y$.
+
+RA is an local index and LP is a quasi-local index. Both metrics for link prediction assigned to a pair $x$,$y$ a score, representing their possible future relationship. This score can be viewed as a measure of similarity between nodes $x$ and $y$. Notice that for each pair of nodes, $x$, $y \in V$, we have that $s_{xy} = s_{yx}$. Performing an ranking among the RA score on a graph $G$, can be get the top most likely link those still not present in G.
+
 Some precision indices are usable to evaluate the accuracy of the metric applied, as we shall see in the evaluation section.
 
 Notice that, in this work we assume that the graph is connected, therefore each pair of nodes is connected by a path. If we had in the case of a not connected graph, with a large connected component, as \textit{giant component}, and other small size connected components, the accuracy would be distorted by different \textit{density} of edges in a connected components.
