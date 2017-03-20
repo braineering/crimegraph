@@ -31,6 +31,7 @@ import com.acmutv.crimegraph.config.AppManifest;
 import com.acmutv.crimegraph.config.AppConfigurationService;
 import com.acmutv.crimegraph.core.metric.HiddenMetrics;
 import com.acmutv.crimegraph.core.metric.PotentialMetrics;
+import com.acmutv.crimegraph.core.source.SourceType;
 import org.apache.commons.cli.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -112,10 +113,40 @@ public class CliService {
 
     AppConfiguration config = AppConfigurationService.getConfigurations();
 
+    /* option: source */
+    if (cmd.hasOption("source")) {
+      final SourceType source = SourceType.valueOf(cmd.getOptionValue("source"));
+      config.setSource(source);
+    }
+
     /* option: dataset */
     if (cmd.hasOption("dataset")) {
       final String dataset = cmd.getOptionValue("dataset");
       config.setDataset(dataset);
+    }
+
+    /* option: kafkaTopic */
+    if (cmd.hasOption("kafkaTopic")) {
+      final String kafkaTopic = cmd.getOptionValue("kafkaTopic");
+      config.setTopic(kafkaTopic);
+    }
+
+    /* option: kafkaBootstrap */
+    if (cmd.hasOption("kafkaBootstrap")) {
+      final String kafkaBootstrap = cmd.getOptionValue("kafkaBootstrap");
+      config.getKafkaProperties().setBootstrapServers(kafkaBootstrap);
+    }
+
+    /* option: kafkaZookeper */
+    if (cmd.hasOption("kafkaZookeper")) {
+      final String kafkaZookeper = cmd.getOptionValue("kafkaZookeper");
+      config.getKafkaProperties().setZookeperConnect(kafkaZookeper);
+    }
+
+    /* option: kafkaGroup */
+    if (cmd.hasOption("kafkaGroup")) {
+      final String kafkaGroup = cmd.getOptionValue("kafkaGroup");
+      config.getKafkaProperties().setGroupId(kafkaGroup);
     }
 
     /* option: hiddenMetric */
@@ -183,19 +214,19 @@ public class CliService {
     /* option: neo4jHostname */
     if (cmd.hasOption("neo4jHostname")) {
       final String neo4jHostname = cmd.getOptionValue("neo4jHostname");
-      config.setNeo4jHostname(neo4jHostname);
+      config.getNeo4jConfig().setHostname(neo4jHostname);
     }
 
     /* option: neo4jUsername */
     if (cmd.hasOption("neo4jUsername")) {
       final String neo4jUsername = cmd.getOptionValue("neo4jUsername");
-      config.setNeo4jUsername(neo4jUsername);
+      config.getNeo4jConfig().setUsername(neo4jUsername);
     }
 
     /* option: neo4jPassword */
     if (cmd.hasOption("neo4jPassword")) {
       final String neo4jPassword = cmd.getOptionValue("neo4jPassword");
-      config.setNeo4jPassword(neo4jPassword);
+      config.getNeo4jConfig().setPassword(neo4jPassword);
     }
 
     /* option: parallelism */

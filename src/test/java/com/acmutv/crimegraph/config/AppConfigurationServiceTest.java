@@ -26,8 +26,11 @@
 
 package com.acmutv.crimegraph.config;
 
+import com.acmutv.crimegraph.core.db.DbConfiguration;
 import com.acmutv.crimegraph.core.metric.HiddenMetrics;
 import com.acmutv.crimegraph.core.metric.PotentialMetrics;
+import com.acmutv.crimegraph.core.source.KafkaProperties;
+import com.acmutv.crimegraph.core.source.SourceType;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -59,10 +62,11 @@ public class AppConfigurationServiceTest {
    * The configuration file has non-null values and template string (${RES}).
    */
   @Test
-  public void test_fromJsonYaml_custom() throws IOException {
-    InputStream in = AppConfigurationServiceTest.class.getResourceAsStream("/config/custom.yaml");
+  public void test_fromJsonYaml_custom_file() throws IOException {
+    InputStream in = AppConfigurationServiceTest.class.getResourceAsStream("/config/custom1.yaml");
     AppConfiguration actual = AppConfigurationService.fromYaml(in);
     AppConfiguration expected = new AppConfiguration();
+    expected.setSource(SourceType.FILE);
     expected.setDataset("CustomDataset");
     expected.setHiddenMetric(HiddenMetrics.WEIGHTED_QUASI_LOCAL);
     expected.setHiddenLocality(3);
@@ -80,9 +84,47 @@ public class AppConfigurationServiceTest {
       add(0.1);
     }});
     expected.setPotentialThreshold(0.8);
-    expected.setNeo4jHostname("CustomNeo4jHostname");
-    expected.setNeo4jUsername("CustomNeo4jUsername");
-    expected.setNeo4jPassword("CustomNeo4jPassword");
+    expected.setNeo4jConfig(new DbConfiguration(
+        "CustomNeo4jHostname", "CustomNeo4jUsername", "CustomNeo4jPassword"
+    ));
+    expected.setParallelism(16);
+    Assert.assertEquals(expected, actual);
+  }
+
+  /**
+   * Tests the app configuration parsing from an external YAML file.
+   * In this test the configuration file provides with complete custom settings.
+   * The configuration file has non-null values and template string (${RES}).
+   */
+  @Test
+  public void test_fromJsonYaml_custom_kafka() throws IOException {
+    InputStream in = AppConfigurationServiceTest.class.getResourceAsStream("/config/custom2.yaml");
+    AppConfiguration actual = AppConfigurationService.fromYaml(in);
+    AppConfiguration expected = new AppConfiguration();
+    expected.setSource(SourceType.KAFKA);
+    expected.setTopic("CustomTopic");
+    expected.setKafkaProperties(new KafkaProperties(
+        "CustomBootstrap", "CustomZookeper", "CustomGroup"
+    ));
+    expected.setHiddenMetric(HiddenMetrics.WEIGHTED_QUASI_LOCAL);
+    expected.setHiddenLocality(3);
+    expected.setHiddenWeights(new ArrayList<Double>(){{
+      add(0.6);
+      add(0.3);
+      add(0.1);
+    }});
+    expected.setHiddenThreshold(0.8);
+    expected.setPotentialMetric(PotentialMetrics.WEIGHTED_QUASI_LOCAL);
+    expected.setPotentialLocality(3);
+    expected.setPotentialWeights(new ArrayList<Double>(){{
+      add(0.6);
+      add(0.3);
+      add(0.1);
+    }});
+    expected.setPotentialThreshold(0.8);
+    expected.setNeo4jConfig(new DbConfiguration(
+        "CustomNeo4jHostname", "CustomNeo4jUsername", "CustomNeo4jPassword"
+    ));
     expected.setParallelism(16);
     Assert.assertEquals(expected, actual);
   }
@@ -121,7 +163,7 @@ public class AppConfigurationServiceTest {
     InputStream in = AppConfigurationServiceTest.class.getResourceAsStream("/config/partial.yaml");
     AppConfiguration actual = AppConfigurationService.fromYaml(in);
     AppConfiguration expected = new AppConfiguration();
-    expected.setNeo4jHostname("CustomNeo4jHostname");
+    expected.getNeo4jConfig().setHostname("CustomNeo4jHostname");
     Assert.assertEquals(expected, actual);
   }
 

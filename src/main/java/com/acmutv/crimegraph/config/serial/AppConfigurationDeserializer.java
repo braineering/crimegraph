@@ -29,6 +29,7 @@ package com.acmutv.crimegraph.config.serial;
 import com.acmutv.crimegraph.config.AppConfiguration;
 import com.acmutv.crimegraph.core.metric.HiddenMetrics;
 import com.acmutv.crimegraph.core.metric.PotentialMetrics;
+import com.acmutv.crimegraph.core.source.SourceType;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -75,6 +76,31 @@ public class AppConfigurationDeserializer extends StdDeserializer<AppConfigurati
   public AppConfiguration deserialize(JsonParser parser, DeserializationContext ctx) throws IOException {
     AppConfiguration config = new AppConfiguration();
     JsonNode node = parser.getCodec().readTree(parser);
+
+    if (node.hasNonNull("source")) {
+      final SourceType source = SourceType.valueOf(node.get("source").asText());
+      config.setSource(source);
+    }
+
+    if (node.hasNonNull("kafka.topic")) {
+      final String topic = node.get("kafka.topic").asText();
+      config.setTopic(topic);
+    }
+
+    if (node.hasNonNull("kafka.bootstrap")) {
+      final String kafkaBootstrap = node.get("kafka.bootstrap").asText();
+      config.getKafkaProperties().setBootstrapServers(kafkaBootstrap);
+    }
+
+    if (node.hasNonNull("kafka.zookeper")) {
+      final String kafkaZookeper = node.get("kafka.zookeper").asText();
+      config.getKafkaProperties().setZookeperConnect(kafkaZookeper);
+    }
+
+    if (node.hasNonNull("kafka.group")) {
+      final String kafkaGroup = node.get("kafka.group").asText();
+      config.getKafkaProperties().setGroupId(kafkaGroup);
+    }
 
     if (node.hasNonNull("dataset")) {
       final String dataset = node.get("dataset").asText();
@@ -133,17 +159,17 @@ public class AppConfigurationDeserializer extends StdDeserializer<AppConfigurati
 
     if (node.hasNonNull("neo4j.hostname")) {
       final String neo4jHostname = node.get("neo4j.hostname").asText();
-      config.setNeo4jHostname(neo4jHostname);
+      config.getNeo4jConfig().setHostname(neo4jHostname);
     }
 
     if (node.hasNonNull("neo4j.username")) {
       final String neo4jUsername = node.get("neo4j.username").asText();
-      config.setNeo4jUsername(neo4jUsername);
+      config.getNeo4jConfig().setUsername(neo4jUsername);
     }
 
     if (node.hasNonNull("neo4j.password")) {
       final String neo4jPassword = node.get("neo4j.password").asText();
-      config.setNeo4jPassword(neo4jPassword);
+      config.getNeo4jConfig().setPassword(neo4jPassword);
     }
 
     if (node.hasNonNull("parallelism")) {

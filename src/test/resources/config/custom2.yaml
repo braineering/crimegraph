@@ -1,35 +1,38 @@
 #===============================================================================
-# CRIMEGRAPH Configuration file
+# APP Configuration file
 #===============================================================================
 
 #===============================================================================
-# SOURCE
+# DATASOURCE
 #===============================================================================
-source: "FILE"
-dataset: "resources/crimegraph/data/crimegraph.data"
+source: "KAFKA"
+kafka.topic: "CustomTopic"
+kafka.bootstrap: "CustomBootstrap"
+kafka.zookeper: "CustomZookeper"
+kafka.group: "CustomGroup"
 
 #===============================================================================
 # LINK DETECTION
 #===============================================================================
-hidden.metric: "LOCAL"
-hidden.locality: 1
-hidden.weights: [1.0]
+hidden.metric: "WEIGHTED_QUASI_LOCAL"
+hidden.locality: 3
+hidden.weights: [0.6,0.3,0.1]
 hidden.threshold: 0.8
 
 #===============================================================================
 # LINK PREDICTION
 #===============================================================================
-potential.metric: "LOCAL"
-potential.locality: 1
-potential.weights: [1.0]
+potential.metric: "WEIGHTED_QUASI_LOCAL"
+potential.locality: 3
+potential.weights: [0.6,0.3,0.1]
 potential.threshold: 0.8
 
 #===============================================================================
 # NEO4J
 #===============================================================================
-neo4j.hostname: "bolt://localhost:7687"
-neo4j.username: "neo4j"
-neo4j.password: "password"
+neo4j.hostname: "CustomNeo4jHostname"
+neo4j.username: "CustomNeo4jUsername"
+neo4j.password: "CustomNeo4jPassword"
 
 #===============================================================================
 # TOPOLOGY

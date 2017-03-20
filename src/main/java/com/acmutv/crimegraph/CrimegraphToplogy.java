@@ -34,6 +34,9 @@ import com.acmutv.crimegraph.core.keyer.NodePairScoreKeyer;
 import com.acmutv.crimegraph.core.operator.*;
 import com.acmutv.crimegraph.core.sink.HiddenSink;
 import com.acmutv.crimegraph.core.sink.PotentialSink;
+import com.acmutv.crimegraph.core.source.KafkaProperties;
+import com.acmutv.crimegraph.core.source.LinkKafkaSource;
+import com.acmutv.crimegraph.core.source.SourceType;
 import com.acmutv.crimegraph.core.tuple.*;
 
 import com.acmutv.crimegraph.core.source.LinkSource;
@@ -70,13 +73,8 @@ public class CrimegraphToplogy {
     CliService.handleArguments(args);
     AppConfiguration config = AppConfigurationService.getConfigurations();
     System.out.println(config);
-
-    final String dataset = FileSystems.getDefault().getPath(
-        System.getenv("FLINK_HOME"), config.getDataset()
-    ).toAbsolutePath().toString();
-    final DbConfiguration dbconf = new DbConfiguration(
-        config.getNeo4jHostname(), config.getNeo4jUsername(), config.getNeo4jPassword()
-    );
+    final SourceType source = config.getSource();
+    final DbConfiguration dbconf = config.getNeo4jConfig();
     final int parallelism = config.getParallelism();
 
     /* ENVIRONMENT */
@@ -85,7 +83,17 @@ public class CrimegraphToplogy {
     Neo4JManager.empyting(dbconf);
 
     /* TOPOLOGY */
-    DataStream<Link> links = env.addSource(new LinkSource(dataset));
+    DataStream<Link> links;
+    if (source.equals(SourceType.KAFKA)) {
+      final KafkaProperties props = config.getKafkaProperties();
+      final String topic = config.getTopic();
+      links = env.addSource(new LinkKafkaSource(topic, props));
+    } else {
+      final String dataset = FileSystems.getDefault().getPath(
+          System.getenv("FLINK_HOME"), config.getDataset()
+      ).toAbsolutePath().toString();
+      links = env.addSource(new LinkSource(dataset));
+    }
 
     DataStream<NodePair> updates = links.flatMap(new GraphUpdate(dbconf)).shuffle();
 

@@ -57,9 +57,34 @@ public class BaseOptions extends Options {
   private static final String DESCRIPTION_CONFIG = "Custom configuration.";
 
   /**
+   * The CLI description for the option `source`.
+   */
+  private static final String DESCRIPTION_SOURCE = "The data source type (FILE|KAFKA).";
+
+  /**
    * The CLI description for the option `dataset`.
    */
   private static final String DESCRIPTION_DATASET = "The path of the dataset.";
+
+  /**
+   * The CLI description for the option `kafkaTopic`.
+   */
+  private static final String DESCRIPTION_KAFKA_TOPIC = "The Kafka topic.";
+
+  /**
+   * The CLI description for the option `kafkaBootstrap`.
+   */
+  private static final String DESCRIPTION_KAFKA_BOOTSTRAP = "The Kafka bootstrap servers.";
+
+  /**
+   * The CLI description for the option `kafkaZookeper`.
+   */
+  private static final String DESCRIPTION_KAFKA_ZOOKEPER = "The Kafka Zookeper connect.";
+
+  /**
+   * The CLI description for the option `kafkaGroup`.
+   */
+  private static final String DESCRIPTION_KAFKA_GROUP = "The Kafka group id.";
 
   /**
    * The CLI description for the option `output`.
@@ -149,7 +174,12 @@ public class BaseOptions extends Options {
     Option version = this.optVersion();
     Option help = this.optHelp();
     Option config = this.optConfig();
+    Option source = this.optSource();
     Option dataset = this.optDataset();
+    Option kafkaTopic = this.optKafkaTopic();
+    Option kafkaBootstrap = this.optKafkaBootstrap();
+    Option kafkaZookeper = this.optKafkaZookeper();
+    Option kafkaGroup = this.optKafkaGroup();
     Option output = this.optOutput();
     Option hiddenMetric = this.optHiddenMetric();
     Option hiddenLocality = this.optHiddenLocality();
@@ -168,7 +198,12 @@ public class BaseOptions extends Options {
     super.addOption(version);
     super.addOption(help);
     super.addOption(config);
+    super.addOption(source);
     super.addOption(dataset);
+    super.addOption(kafkaTopic);
+    super.addOption(kafkaBootstrap);
+    super.addOption(kafkaZookeper);
+    super.addOption(kafkaGroup);
     super.addOption(output);
     super.addOption(hiddenMetric);
     super.addOption(hiddenLocality);
@@ -226,6 +261,21 @@ public class BaseOptions extends Options {
   }
 
   /**
+   * Builds the option `source`.
+   * @return the option.
+   */
+  private Option optSource() {
+    return Option.builder()
+        .longOpt("source")
+        .desc(DESCRIPTION_SOURCE)
+        .required(false)
+        .hasArg(true)
+        .numberOfArgs(1)
+        .argName("FILE|KAFKA")
+        .build();
+  }
+
+  /**
    * Builds the option `dataset`.
    * @return the option.
    */
@@ -237,6 +287,66 @@ public class BaseOptions extends Options {
         .hasArg(true)
         .numberOfArgs(1)
         .argName("FILE")
+        .build();
+  }
+
+  /**
+   * Builds the option `kafkaTopic`.
+   * @return the option.
+   */
+  private Option optKafkaTopic() {
+    return Option.builder()
+        .longOpt("kafkaTopic")
+        .desc(DESCRIPTION_KAFKA_TOPIC)
+        .required(false)
+        .hasArg(true)
+        .numberOfArgs(1)
+        .argName("topic")
+        .build();
+  }
+
+  /**
+   * Builds the option `kafkaBootstrap`.
+   * @return the option.
+   */
+  private Option optKafkaBootstrap() {
+    return Option.builder()
+        .longOpt("kafkaBootstrap")
+        .desc(DESCRIPTION_KAFKA_BOOTSTRAP)
+        .required(false)
+        .hasArg(true)
+        .numberOfArgs(1)
+        .argName("BOOTSTRAP SERVERS")
+        .build();
+  }
+
+  /**
+   * Builds the option `kafkaZookeper`.
+   * @return the option.
+   */
+  private Option optKafkaZookeper() {
+    return Option.builder()
+        .longOpt("kafkaZookeper")
+        .desc(DESCRIPTION_KAFKA_ZOOKEPER)
+        .required(false)
+        .hasArg(true)
+        .numberOfArgs(1)
+        .argName("ZOOKEPER CONNECT")
+        .build();
+  }
+
+  /**
+   * Builds the option `kafkaGroup`.
+   * @return the option.
+   */
+  private Option optKafkaGroup() {
+    return Option.builder()
+        .longOpt("kafkaGroup")
+        .desc(DESCRIPTION_KAFKA_GROUP)
+        .required(false)
+        .hasArg(true)
+        .numberOfArgs(1)
+        .argName("KAFKA GROUP ID")
         .build();
   }
 

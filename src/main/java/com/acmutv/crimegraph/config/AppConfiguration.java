@@ -26,8 +26,11 @@
 
 package com.acmutv.crimegraph.config;
 
+import com.acmutv.crimegraph.core.db.DbConfiguration;
 import com.acmutv.crimegraph.core.metric.HiddenMetrics;
 import com.acmutv.crimegraph.core.metric.PotentialMetrics;
+import com.acmutv.crimegraph.core.source.KafkaProperties;
+import com.acmutv.crimegraph.core.source.SourceType;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -35,6 +38,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.yaml.snakeyaml.Yaml;
 
+import javax.xml.transform.Source;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -51,6 +55,21 @@ import java.util.List;
 public class AppConfiguration {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(AppConfiguration.class);
+
+  /**
+   * Default value for property {@code source}.
+   */
+  public static final SourceType SOURCE = SourceType.FILE;
+
+  /**
+   * Default value for property {@code topic}.
+   */
+  public static final String TOPIC = "crimegraph";
+
+  /**
+   * Default value for property {@code kafkaProperties}.
+   */
+  public static final KafkaProperties KAFKA_PROPERTIES = new KafkaProperties();
 
   /**
    * Default value for property {@code dataset}.
@@ -98,24 +117,32 @@ public class AppConfiguration {
   public static final double POTENTIAL_THRESHOLD = 0.8;
 
   /**
-   * Default value for property {@code neo4jHostname}.
+   * Default value for property {@code neo4j.config}.
    */
-  public static final String NEO4J_HOSTNAME = "bolt://localhost:7687";
-
-  /**
-   * Default value for property {@code neo4jUsername}.
-   */
-  public static final String NEO4J_USERNAME = "neo4j";
-
-  /**
-   * Default value for property {@code neo4jPassword}.
-   */
-  public static final String NEO4J_PASSWORD = "password";
+  public static final DbConfiguration NEO4J_CONFIG =
+      new DbConfiguration("bolt://localhost:7687", "neo4j", "password");
 
   /**
    * Default value for property {@code parallelism}.
    */
   public static final int PARALLELISM = 2;
+
+  /**
+   * The source type.
+   * Default is: {@code FILE}.
+   */
+  private SourceType source = SOURCE;
+  /**
+   * The topic to subscribe to.
+   * Default is: {@code crimegraph}.
+   */
+  private String topic = TOPIC;
+
+  /**
+   * Kafka connector properties.
+   * Default is {@code {}}.
+   */
+  private KafkaProperties kafkaProperties = new KafkaProperties(KAFKA_PROPERTIES);
 
   /**
    * The pathname of the file or directory containing the dataset.
@@ -172,22 +199,10 @@ public class AppConfiguration {
   private double potentialThreshold = POTENTIAL_THRESHOLD;
 
   /**
-   * The hostname of the NEO4J instance.
-   * Default is: {@code bolt://localhost:7474}.
+   * Configuration for Neo4J instance.
+   * Default is {@code (bolt://localhost:7474, neo4j, password)}.
    */
-  private String neo4jHostname = NEO4J_HOSTNAME;
-
-  /**
-   * The username of the NEO4J instance.
-   * Default is: {@code neo4j}.
-   */
-  private String neo4jUsername = NEO4J_USERNAME;
-
-  /**
-   * The password of the NEO4J instance.
-   * Default is: {@code password}.
-   */
-  private String neo4jPassword = NEO4J_PASSWORD;
+  private DbConfiguration neo4jConfig = NEO4J_CONFIG;
 
   /**
    * The operator parallelism.
@@ -208,6 +223,9 @@ public class AppConfiguration {
    * @param other the configuration to copy.
    */
   public void copy(AppConfiguration other) {
+    this.source = other.source;
+    this.topic = other.topic;
+    this.kafkaProperties = other.kafkaProperties;
     this.dataset = other.dataset;
     this.hiddenMetric = other.hiddenMetric;
     this.hiddenLocality = other.hiddenLocality;
@@ -217,9 +235,7 @@ public class AppConfiguration {
     this.potentialLocality = other.potentialLocality;
     this.potentialWeights = new ArrayList<>(other.potentialWeights);
     this.potentialThreshold = other.potentialThreshold;
-    this.neo4jHostname = other.neo4jHostname;
-    this.neo4jUsername = other.neo4jUsername;
-    this.neo4jPassword = other.neo4jPassword;
+    this.neo4jConfig = other.neo4jConfig;
     this.parallelism = other.parallelism;
   }
 
@@ -227,6 +243,9 @@ public class AppConfiguration {
    * Restores the default configuration settings.
    */
   public void toDefault() {
+    this.source = SOURCE;
+    this.topic = TOPIC;
+    this.kafkaProperties = KAFKA_PROPERTIES;
     this.dataset = DATASET;
     this.hiddenMetric = HIDDEN_METRIC;
     this.hiddenLocality = HIDDEN_LOCALITY;
@@ -236,9 +255,7 @@ public class AppConfiguration {
     this.potentialLocality = POTENTIAL_LOCALITY;
     this.potentialWeights = POTENTIAL_WEIGHTS;
     this.potentialThreshold = POTENTIAL_THRESHOLD;
-    this.neo4jHostname = NEO4J_HOSTNAME;
-    this.neo4jUsername = NEO4J_USERNAME;
-    this.neo4jPassword = NEO4J_PASSWORD;
+    this.neo4jConfig = NEO4J_CONFIG;
     this.parallelism = PARALLELISM;
   }
 
