@@ -1,18 +1,19 @@
 \section{Link detection}
 \label{sec:link-detection}
 
-The link detection is the task of discovering \textit{hidden links} in a network. A link $(x,y)$ is an hidden link if it exists in reality, but $(x,y)\notin E(G)$, that is it has been deliberately concelad for criminal pruposes.
+The link detection is the task of discovering \textit{hidden links} in a network. 
+A link $(x,y)$ is an hidden link if it exists in reality, but not in the dataset because, tipically, it has been deliberately concelad for criminal pruposes.
 
-We present here a local metric for link detection and its quasi-local extension.
-
-The metric is based on the following criminological assumption: 
-two criminal nodes hide their direct relation interposing some other nodes, mainly dedicated to let them interact.
+We present here a local metric for link detection, based on the following criminological assumptions: 
+(i) two criminal nodes hide their direct relation interposing some nodes between them, namely \textit{mediator nodes}, 
+(ii) these nodes are mainly dedicated to let them interact.
+(iii) the greater the number of these nodes, the greater the likelihood of hidden linkage. 
 
 Formally, 
-(i) a direct link $(x,y)$ can be hidden by a path $\pi=(x,z_{1},\ldots,z_{h},y)$, where $z_{1},\ldots,z_{h}$ are called \textit{mediator nodes};
-(ii) the interaction weight $w_{z}$ involving the mediator node $z$ is mainly dedicated to convey the hidden interaction weight $w_{x,z}$ passing through that node, that is $\frac{w_{x,z}+w_{z,y}}{w_{z}} > \frac{1-w_{x,z}-w_{z,y}}{w_{z}}$.
+(i) a direct link $(x,y)$ can be hidden by a path $\pi=(x,z_{1},\ldots,z_{h},y)$, where $z_{1},\ldots,z_{h}$ are mediator nodes,
+(ii) the weight $w_{z_{i}}$ of the interactions involving nodes $z_{i}$ is mainly dedicated to convey the hidden interaction passing through that node, that is $\frac{w_{x,z_{i}}+w_{z_{i},y}}{w_{z_{i}}} > 1- \frac{w_{x,z_{i}}+w_{z_{i},y}}{w_{z_{i}}}$.
 
-Let us consider a weighted undirected graph $G(V,E)$ with weights in $\Re_{\geq1}^{+}$ and a pair of nodes $x,y\in V$.
+Let us consider an undirected weighted graph $G(V,E,w)$ with $w:E\rightarrow\Re_{\geq1}^{+}$ and a pair of nodes $x,y\in V$.
 We can build the following local metric:
 
 
@@ -30,11 +31,11 @@ $w_{z}$ is the total weight of the edges incident to $z$.
 
 The metric produces a normalized score $\Phi(x,y)\in(0,1)$, hence it is suitable for thresholding.
 Given an arbitrary threshold $\tilde{\Phi}$, every edge $(x,y)$ such that $\Phi(x,y)\geq\tilde{\Phi}$ is considered an hidden link with a probability proportional to the score achieved.
-Since $\Phi$ is strictly related to the edge weights, the threshold must be chosen according to the maximum and minimum weights on graph.
+Since $\Phi$ is strictly related to the edge weights, the threshold must be chosen according to the maximum and minimum weights observed on the graph.
 
 The Equation~\ref{eqn:detection-local} can be extended to the following quasi-local metric.
 
-Let us now consider a weighted undirected graph $G$ with weights in $\Re_{\geq1}^{+}$, a pair of nodes $x,y\in V(G)$, a locality degree $t\in \mathbb{Z}$, $t\geq 1$, and a vector $\vec{\lambda}=(\lambda_{1}\ldots\lambda_{t})$ such that $\sum_{i=1}^{t}\lambda_{i}=1$. Notice that when $t=1$, the following metric is equivalent to a local one.
+Let us now consider an undirected weighted graph $G$ with $w:E\rightarrow\Re_{\geq1}^{+}$, a pair of nodes $x,y\in V$, a locality degree $t\in \mathbb{Z}$, $t\geq 1$, and a vector $\vec{\lambda}=(\lambda_{1}\ldots\lambda_{t})$ such that $\sum_{i=1}^{t}\lambda_{i}=1$.
 We can build the following quasi-local metric:
 
 \begin{equation}
@@ -43,22 +44,8 @@ We can build the following quasi-local metric:
 \end{equation}
 
 where $\vec{\Phi}_{QL}(x,y,t)=(\Phi_{QL}(x,y,1)\ldots\Phi_{QL}(x,y,t))$ is a vector of scores with every element defined as follows:
-
-%\begin{equation}
-%\label{eqn:detection-quasi-local-2}
-%\Phi_{QL}(x,y,i)=
-%\frac{\sum\limits_{z\in\Theta_{x,y,i}}\overline{w}_{\pi_{x,y,z}}w_{\pi_{x,y,z}}^{-1}}
-%{\sum\limits_{z\in\Theta_{x,y,i}}w_{\pi_{x,y,z}}}
-%\end{equation}
-
-%where $\Theta_{x,y,i}$ is the set of common neighbours between $x$ and $y$ distant $i$ from them,
-%$\overline{w}_{\pi_{x,y,z}}$ is the weight of the highest weighted path between $x$ and $y$ passing through $z$ and
-%$w_{\pi_{x,y,z}}$ is the total weight of paths between $x$ and $y$ %passing through $z$.
-%
-%Notice that $\Phi_{QL}(x,y,1,\vec{1})\equiv\Phi(x,y)$.
-
 \begin{equation}
-\label{eqn:detection-quasi-local-3}
+\label{eqn:detection-quasi-local-2}
 \Phi_{QL}(x,y,i)=
 \frac{\sum\limits_{\pi\in\Pi_{x,y}^{(i+1)}}w_{\pi}}
 {\sum\limits_{z\in\pi\in\Pi_{x,y}^{(i+1)}}w_{z}}
@@ -68,6 +55,4 @@ where $\Pi_{x,y}^{(i)}$ is the set of paths between $x$ and $y$ of lenght $i$,
 $w_{\pi}$ is the weight of path $\pi$ and
 $w_{z}$ is the total weight of edges incident to $z$.
 
-The metric produces a normalized score $\Phi_{QL}(x,y,t,\vec{\lambda})\in(0,1)$, hence it is suitable for thresholding. The same considerations about thresholding stated for the local metric hold for the quasi-local.
-
-
+The metric produces a normalized score $\Phi_{QL}(x,y,t,\vec{\lambda})\in(0,1)$, hence thold here he same considerations about thresholding stated for the local metric.
