@@ -1,0 +1,13 @@
+\section{Data model}
+\label{sec:data-model}
+
+The criminological domain handles a wide variety of entities and relations between them.
+When representing a criminal network with a graph theory model, this variety must be addressed.
+Nodes and edges should not be limited to represent people and their mutual knowledge, but also places, assets, not yet investigated groups and every kind of interaction between them. 
+
+In this scenario, a generic node should be labeled with an IRI pointing to an external knowledge base.
+A generic edge should be undirected and weighted according to the EWMA  relevance of the observed interaction. 
+
+Furthermore, also the investigation dynamics should be considered. Since entities are observed in their interactions, isolated nodes has no sense in this model. This means that a node insertion occurs only through the insertion of an interaction in which it is involved.
+
+Such a general model makes the link mining task more flexible and adaptable to different criminal contexts.
