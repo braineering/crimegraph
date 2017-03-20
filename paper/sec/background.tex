@@ -1,14 +1,19 @@
 \section{Background}
 \label{sec:background}
-We assume that the reader is familiar with the standard graph terminology. However, we make a brief recap to introduce what we will see in the next sections.
 
-Let $G(V,E)$ an undirected graph, where $V$ is the the set of vertices and $E$ is the set of edges, we represent the topological structure of a network, in which each node $v \in V$ is an individual or an organization, and each edge $e=(u,v)\in E$ represents a link (i.e. an interaction) between two nodes, $u$ and $v$. 
+We assume that the reader is familiar with the fundamentals of graph theory. 
+However, we make a brief recap to introduce what we will see in the next sections.
 
-A \textit{path} $\pi_{x,y}$ between two nodes $x$,$y$ of \textit{length} $k$ in $G$ is a sequence of vertices $v_{1},v_{2},...,v_{k}$, where $x = v_{1}$ and $y = v_{k}$, such that the edge $(v_{i},v_{i+1}) \in E$ for $i = 1, 2,..., K-1$. The distance between $x$ and $y$, $d(x,y)$ is the length (number of edges) of the shortest path from $x$ to $y$ (or vice versa).
+Let $G(V,E,w)$ be an undirected weighted graph, where $V$ is the set of vertices, $E$ is the set of edges and $w:E\rightarrow\Re$ is the weight function. 
+A \textit{path} $\pi_{x,y}$ between two vertices $x$,$y$ of \textit{length} $k$ in $G$ is a sequence of vertices $v_{1},v_{2},\ldots,v_{k}$, where $x = v_{1}$ and $y = v_{k}$, such that the edge $(v_{i},v_{i+1}) \in E$ for $i = 1, 2,\ldots,k-1$. 
+The distance $d(x,y)$ between $x$ and $y$, is the length of the shortest path from $x$ to $y$ (or vice versa).
+A graph is \textit{connected} if there is a path between every pair of vertices; otherwise, it is not connected and made of at least two \textit{connected components}.
 
-An undirected graph is \textit{connected} if, for every pair of nodes, there is a path between them. Otherwise, if a graph is not connected, it's made or at least two \textit{connected components}.
+Given two vertices $x,y \in V$, we denote with $\Gamma_{x}$ the set of neighbors of $x$ (i.e. adjacent vertices) and with $\Gamma_{x,y} = \Gamma_{x} \bigcap \Gamma_{y}$ the set of common neighbors between $x$ and $y$.
 
-Given two nodes $x,y \in V$, we denote with $\Gamma(x)$ the set of neighbors of $x$ (i.e. adjacent nodes) and with $\Gamma_{x,y} = \Gamma(x) \bigcap \Gamma(y)$ the set of common neighbors between $x$ and $y$.
+CORREGGRE DA QUI
+We may represent the structure of the criminal network, with the topological structure of a network, in which each node $v \in V$ is an individual or an organization, and each edge $e=(u,v)\in E$ represents a link (i.e. an interaction) between two nodes, $u$ and $v$. 
+A QUI
 
 In this paper, we lay our focus on a criminal scenario and describe it on a graph where apply the link mining techniques. In particular, we want to predict the likelihood that a link, between two entities, is hidden or that may arise in the future. These problems are called respectively the \textit{link detection problem} and \textit{link prediction problem}. Briefly, we refer to the first case when the link between two nodes may already exist, but not visible, while we refer to the second case to indicate the prediction of future interaction between two observed individuals\cite{Hasan2011}.
 

@@ -1,10 +1,16 @@
 \section{Link detection}
 \label{sec:link-detection}
 
-The link detection is the task of discovering hidden links in a graph, that are connections.
+The link detection is the task of discovering \textit{hidden links} in a network. A link $(x,y)$ is an hidden link if it exists in reality, but $(x,y)\notin E(G)$, that is it has been deliberately concelad for criminal pruposes.
+
 We present here a local metric for link detection and its quasi-local extension.
 
-The metrics are based on the following criminological assumptions: MANCANO LE ASSUNZIONI???
+The metric is based on the following criminological assumption: 
+two criminal nodes hide their direct relation interposing some other nodes, mainly dedicated to let them interact.
+
+Formally, 
+(i) a direct link $(x,y)$ can be hidden by a path $\pi=(x,z_{1},\ldots,z_{h},y)$, where $z_{1},\ldots,z_{h}$ are called \textit{mediator nodes};
+(ii) the interaction weight $w_{z}$ involving the mediator node $z$ is mainly dedicated to convey the hidden interaction weight $w_{x,z}$ passing through that node, that is $\frac{w_{x,z}+w_{z,y}}{w_{z}} > \frac{1-w_{x,z}-w_{z,y}}{w_{z}}$.
 
 Let us consider a weighted undirected graph $G(V,E)$ with weights in $\Re_{\geq1}^{+}$ and a pair of nodes $x,y\in V$.
 We can build the following local metric:
