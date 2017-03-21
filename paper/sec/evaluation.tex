@@ -1,24 +1,24 @@
 \section{Evaluation}
 \label{sec:evaluation}
 
-Two standard metrics are used to measure the accuracy of prediction algorithms: \textit{area under the receiver operating characteristic curve} - AUC, and  \textit{Precision} \cite{Lu2011}.
+%Two standard metrics are used to measure the accuracy of prediction algorithms: \textit{area under the receiver operating characteristic curve} - AUC, and  \textit{Precision} \cite{Lu2011}.
 
-ARGOMENTARE LE METRICHE AUC E PRECISION
-ARGOMENTARE COME VENGONO GENERATI I TRAINING/TEST INTERVAL.
+%ARGOMENTARE LE METRICHE AUC E PRECISION
+%ARGOMENTARE COME VENGONO GENERATI I TRAINING/TEST INTERVAL.
 
-\begin{figure}
-	\centering
-	\includegraphics{./fig/fly}
-	\caption{AUC and Precision indices for link detection metric, considering both a criminal and a social network dataset.}
-	\label{fig:performance-detection}
-\end{figure}
+%\begin{figure}
+%	\centering
+%	\includegraphics{./fig/fly}
+%	\caption{AUC and Precision indices for link detection metric, considering both a criminal and a social network dataset.}
+%	\label{fig:performance-detection}
+%\end{figure}
 
-\begin{figure}
-	\centering
-	\includegraphics{./fig/fly}
-	\caption{AUC and Precision indices for link prediction metric, considering both a criminal and a social network dataset.}
-	\label{fig:performance-prediction}
-\end{figure}
+%\begin{figure}
+%	\centering
+%	\includegraphics{./fig/fly}
+%	\caption{AUC and Precision indices for link prediction metric, considering both a criminal and a social network dataset.}
+%	\label{fig:performance-prediction}
+%\end{figure}
 
 % DA INSERIRE
 %Formally, for two istants $t$ and $t' > t$, we denote $G[t,t']$ the subgraph of G consisting of all edges with a timestamp between $t$ and $t'$. Identified four times: $t_{0}, t'_{0}, t_{1}, t''_{1}$, with $t_{0}<t'_{0}<t_{1}<t'_{1}$, we refer to $[t_{0},t'_{0}]$ as the \textit{training interval} and $[t_{1},t'_{1}]$ as the \textit{test interval}. Applying a \textit{prediction algorithm} on the graph obtained after the training interval, as $G[t_{0},t'_{0}]$, we want to make a prediction on the edges that will be present in the graph $G[t_{1},t'_{1}]$ and not present in $G[t_{0},t'_{0}]$\cite{Liben-Nowell}.
