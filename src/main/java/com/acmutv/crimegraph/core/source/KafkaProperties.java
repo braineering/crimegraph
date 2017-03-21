@@ -1,7 +1,7 @@
 /*
   The MIT License (MIT)
 
-  Copyright (c) 2016 Giacomo Marciani and Michele Porretta
+  Copyright (c) 2017 Giacomo Marciani
 
   Permission is hereby granted, free of charge, to any person obtaining a copy
   of this software and associated documentation files (the "Software"), to deal
@@ -23,31 +23,54 @@
   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
   THE SOFTWARE.
  */
+package com.acmutv.crimegraph.core.source;
 
-package com.acmutv.crimegraph.config;
+import lombok.*;
 
-import org.junit.Assert;
-import org.junit.Test;
+import java.util.Properties;
 
 /**
- * JUnit tests for {@link AppConfiguration}.
+ * Collection of Kafka properties.
  * @author Giacomo Marciani {@literal <gmarciani@acm.org>}
- * @author Michele Porretta {@literal <mporretta@acm.org>}
  * @since 1.0
- * @see AppConfiguration
  */
-public class AppConfigurationTest {
+@Getter
+@NoArgsConstructor
+public class KafkaProperties extends Properties {
 
-  /**
-   * Tests the restoring of default configuration.
-   */
-  @Test
-  public void test_toDefault() {
-    AppConfiguration actual = new AppConfiguration();
-    actual.getNeo4jConfig().setHostname("Custom");
-    actual.toDefault();
-    final AppConfiguration expected = new AppConfiguration();
-    Assert.assertEquals(expected, actual);
+  private static final String BOOTSTRAP_SERVERS = "bootstrap.servers";
+
+  private static final String ZOOKEPER_CONNECT = "zookeper.connect";
+
+  private static final String GROUP_ID = "group.id";
+
+  private String bootstrapServers;
+
+  private String zookeperConnect;
+
+  private String groupId;
+
+  public KafkaProperties(String bootstrapServers, String zookeperConnect, String groupId) {
+    super();
+    super.put(BOOTSTRAP_SERVERS, bootstrapServers);
+    super.put(ZOOKEPER_CONNECT, zookeperConnect);
+    super.put(GROUP_ID, groupId);
+  }
+
+  public KafkaProperties(KafkaProperties other) {
+    super(other);
+  }
+
+  public void setBootstrapServers(String bootstrapServers) {
+    super.put(BOOTSTRAP_SERVERS, bootstrapServers);
+  }
+
+  public void setZookeperConnect(String zookeperConnect) {
+    super.put(ZOOKEPER_CONNECT, zookeperConnect);
+  }
+
+  public void setGroupId(String groupId) {
+    super.put(GROUP_ID, groupId);
   }
 
 }

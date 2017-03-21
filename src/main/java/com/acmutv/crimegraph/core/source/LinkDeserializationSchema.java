@@ -1,7 +1,7 @@
 /*
   The MIT License (MIT)
 
-  Copyright (c) 2016 Giacomo Marciani and Michele Porretta
+  Copyright (c) 2017 Giacomo Marciani
 
   Permission is hereby granted, free of charge, to any person obtaining a copy
   of this software and associated documentation files (the "Software"), to deal
@@ -23,31 +23,32 @@
   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
   THE SOFTWARE.
  */
+package com.acmutv.crimegraph.core.source;
 
-package com.acmutv.crimegraph.config;
+import com.acmutv.crimegraph.core.tuple.Link;
+import org.apache.flink.api.common.typeinfo.TypeInformation;
+import org.apache.flink.streaming.util.serialization.AbstractDeserializationSchema;
+import org.apache.flink.streaming.util.serialization.DeserializationSchema;
 
-import org.junit.Assert;
-import org.junit.Test;
+import java.io.IOException;
 
 /**
- * JUnit tests for {@link AppConfiguration}.
+ * The Kafka deserialization schema for Link.
  * @author Giacomo Marciani {@literal <gmarciani@acm.org>}
- * @author Michele Porretta {@literal <mporretta@acm.org>}
  * @since 1.0
- * @see AppConfiguration
  */
-public class AppConfigurationTest {
+public class LinkDeserializationSchema extends AbstractDeserializationSchema<Link> {
 
   /**
-   * Tests the restoring of default configuration.
+   * De-serializes the byte message.
+   *
+   * @param message The message, as a byte array.
+   * @return The de-serialized message as an object.
    */
-  @Test
-  public void test_toDefault() {
-    AppConfiguration actual = new AppConfiguration();
-    actual.getNeo4jConfig().setHostname("Custom");
-    actual.toDefault();
-    final AppConfiguration expected = new AppConfiguration();
-    Assert.assertEquals(expected, actual);
+  @Override
+  public Link deserialize(byte[] message) throws IOException {
+    final String str = new String(message);
+    final Link link = Link.valueOf(str);
+    return link;
   }
-
 }
