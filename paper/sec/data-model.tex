@@ -1,13 +1,11 @@
 \section{Data model}
 \label{sec:data-model}
 
-The criminological domain handles a wide variety of entities and relations between them.
-When representing a criminal network with a graph theory model, this variety must be addressed.
-Nodes and edges should not be limited to represent people and their mutual knowledge, but also places, assets, not yet investigated groups and every kind of interaction between them. 
+A \textit{criminal network} is a social structure made up of related actors sharing some criminal intent \cite{von2001organisierte}. The criminological domain deals with a wide variety of entities and relations between them, collected by heterogeneous data sources. When representing a criminal network with a graph theory model, this variety must be addressed.
 
-In this scenario, a generic node should be labeled with an IRI pointing to an external knowledge base.
-A generic edge should be undirected and weighted according to the EWMA  relevance of the observed interaction. 
+We model such a network with the weighted undirected graph $G(V,E,w)$, where $v\in V$ represents a person, a group, an assets or a place, and $E$ represents their relations, for which the tipology and relevance are encapsulated by the correspondent weight.
+A generic node should be labeled with an IRI pointing to an external knowledge base.
+A generic edge should be undirected and weighted according to the Exponential Weighted Moving Average (EWMA) relevance of the observed interaction.  Such a general model makes the link mining more flexible and adaptable to different criminal contexts and investigative practices.
 
-Furthermore, also the investigation dynamics should be considered. Since entities are observed in their interactions, isolated nodes has no sense in this model. This means that a node insertion occurs only through the insertion of an interaction in which it is involved.
+Furthermore, also the investigation dynamics should be considered. Since entities are observed in their interactions, isolated nodes has no sense in this model. This means that a node insertion occurs only through the insertion of an interaction involving it.
 
-Such a general model makes the link mining task more flexible and adaptable to different criminal contexts.

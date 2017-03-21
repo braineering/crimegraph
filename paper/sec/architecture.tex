@@ -11,9 +11,8 @@ Considering these requirements, in this research we prorpose an application that
 Data aggregation is provided by \textit{Apache Kafka}\cite{kafka}, an high-throughput message queuing system, designed for making streaming data available to consumer (Flink in our case). Kafka makes the streaming data by durable persisting incoming messages on disk, using a date structure log, and implements a \textit{publish/subscribe} mechanism to \textit{asynchronous communication} of data to Flink.
 
 Criminal network's graph is stored in \textit{Neo4j}\cite{neo4j}. Neo4j is a highly scalable, native graph database purpose-built to leverage not only data but also its relationships. We chose Neo4j because apart from being specific for problem, it allows interactive viewing of the graph through a webpage.
-In figure \ref{fig:toplogy} we represent the topology of architecture implemented with Flink and the interactions with Kafka and Neo4j.
 
-In figura 2 la topologia dell'architettura realizzata su Flink, e l'interazione con Kafka e Neo4j. Both mining techniques are performed in parallel. Scores are filtered with a thresholding process and the output is the set of hidden links and potential links, available on the webpage of Neo4j and Flink's log.
+In figure \ref{fig:topology} we represent the topology of architecture implemented with Flink and the interactions with Kafka and Neo4j. Both mining techniques are performed in parallel. Scores are filtered with a thresholding process and the output is the set of hidden links and potential links, available on the webpage of Neo4j and Flink's log.
  
 %\begin{figure}[]
 %	\centering
@@ -26,6 +25,5 @@ In figura 2 la topologia dell'architettura realizzata su Flink, e l'interazione 
 \centering
 \includegraphics[width=6in]{./fig/topology}
 \caption{The topology of architecture.}
-\label{fig:toplogy}
+\label{fig:topology}
 \end{figure*}
-
