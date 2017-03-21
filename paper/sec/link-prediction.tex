@@ -15,30 +15,30 @@ Let us consider an undirected graph $G(V,E)$ and a pair of nodes $x$,$y\in V$. W
 
 where $k_{z}$ is the degree of node $z$ and $\Gamma_{x,y}$ is the set of common neighbors between $x$ and $y$. 
 
-Let us now consider an undirected graph $G$, a pair of nodes $x,y\in V$, a locality degree $t\in \mathbb{Z}$, $\geq 1$ and a vector $\vec{\mu}=(\mu_{1}\ldots\mu_{t})$ such that $\sum_{i=1}^{t}\mu_{i}=1$. We denote with $\Theta(x,t)$ the set of nodes at distance $t$ from $x$. In another words, given a nodes $v \in G$, and a path $\pi_{x,v}$ of length $t$, $\pi_{x,v} = u,v_{2},...,v_{t-1},v$, the set $\Theta(x,t) = \{v\}$.
+% DA INSERIRE CHE IN berlusconi2016link RA è accettato come miglior metrica
 
-Now, we can build the following quasi-local metric:
+%Let us now consider an undirected graph $G$, a pair of nodes $x,y\in V$, a locality degree $t\in \mathbb{Z}$, $\geq 1$ and a vector $\vec{\mu}=(\mu_{1}\ldots\mu_{t})$ such that $\sum_{i=1}^{t}\mu_{i}=1$. We denote with $\Theta(x,t)$ the set of nodes at distance $t$ from $x$. In another words, given a nodes $v \in G$, and a path $\pi_{x,v}$ of length $t$, $\pi_{x,v} = u,v_{2},...,v_{t-1},v$, the set $\Theta(x,t) = \{v\}$.
 
-\begin{equation}
-\label{eqn:prediction-quasi-local-1}
-\Psi_{QL}(x,y,t,\vec{\mu})=\vec{\mu}\cdot\vec{\Psi}_{QL}(x,y,t)
-\end{equation}
+%Now, we can build the following quasi-local metric:
+
+%\begin{equation}
+%\label{eqn:prediction-quasi-local-1}
+%\Psi_{QL}(x,y,t,\vec{\mu})=\vec{\mu}\cdot\vec{\Psi}_{QL}(x,y,t)
+%\end{equation}
 
 
-where $\vec{\Psi}_{QL}(x,y,t)=(\Psi_{QL}(x,y,1)\ldots\Psi_{QL}(x,y,t))$ is a vector of scores with every element defined as follows:
+%where $\vec{\Psi}_{QL}(x,y,t)=(\Psi_{QL}(x,y,1)\ldots\Psi_{QL}(x,y,t))$ is a vector of scores with every element defined as follows:
 
-\begin{equation}
-\label{eqn:prediction-quasi-local-2}
-\Phi_{QL}(x,y,i)=
-\frac{\sum\limits_{z\in \Gamma_{x,y,i}}\frac{1}{k_{z}}}
-{\sum\limits_{z\in\Gamma_{x,y,i}}k_{z}}
-\end{equation}
+%\begin{equation}
+%\label{eqn:prediction-quasi-local-2}
+%\Phi_{QL}(x,y,i)=
+%\frac{\sum\limits_{z\in \Gamma_{x,y,i}}\frac{1}{k_{z}}}
+%{\sum\limits_{z\in\Gamma_{x,y,i}}k_{z}}
+%\end{equation}
 
-where $\Gamma_{x,y,i} = \Gamma(x,i) \cap \Gamma(y,i)$ is the set of common neighbors between $x$ and $y$ distant $i$ steps from each.
+%where $\Gamma_{x,y,i} = \Gamma(x,i) \cap \Gamma(y,i)$ is the set of common neighbors between $x$ and $y$ distant $i$ steps from each.
 
-The metrics \ref{eqn:prediction-local} [and its quasi-local extension \ref{eqn:prediction-quasi-local-1}] produces a normalized score $\Psi(x,y) \in (0,1)$, [$\Psi_{QL}(x,y,t,\vec{\mu}) \in (0,1)$], so the same considerations already made previously in Section \ref{sec:link-detection}, regarding a threshold, are still valid. 
+%The metrics \ref{eqn:prediction-local} [and its quasi-local extension \ref{eqn:prediction-quasi-local-1}] produces a normalized score $\Psi(x,y) \in (0,1)$, [$\Psi_{QL}(x,y,t,\vec{\mu}) \in (0,1)$], so the same considerations already made previously in Section \ref{sec:link-detection}, regarding a threshold, are still valid. 
 
 % DA INSERIRE
 %The metrics that will present in the following Sections~\ref{sec:link-detection,sec:link-prediction}, are a normalized extension of \textit{Resource Allocation Index (RA)} and \textit{Local Path (LP)}\cite{Lu2011,zhou2009predicting,lu2009similarity}.
-
-% DA INSERIRE CHE IN berlusconi2016link RA è accettato come miglior metrica
