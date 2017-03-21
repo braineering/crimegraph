@@ -1,0 +1,78 @@
+\section{Metrics update}
+\label{sec:metrics-update}
+
+When considering local metrics, a graph update should fire only local updates, avoiding combinatorial explosion of analytic updates.
+The following algorithm generates the set of metrics update required when adding a new interaction.
+Notice that the algorithm covers the updates of both metrics in Equations~\ref{eqn:detection-local}. 
+Algorithm~\ref{alg:metrics-update} is executed by the operator \texttt{GraphUpdate} in Figure~\ref{fig:architecture}, once every time it receive a new tuple $(x,y,w)$, representing the interaction between $x$ and $y$ of relevance $w$.
+
+Some called functions have not been formally defined because they are pretty self-explanatory. For reader's sake, we describe them here. 
+
+\texttt{emitHidden(u)} and \texttt{emitPotential(u)} let the operator emit tuples in the form \texttt{(x,y,HIDDEN)} and \texttt{(x,y,POTENTIAL)}, meaning that an hidden or potential score update is necessary for the edge $(x,y)$, respectively.
+\texttt{updateLink(x,y,w)} updates the existent edge $(x,y)$ with the new EWMA weight value. 
+\texttt{addLink(x,y,w)} inserts the edge $(x,y)$ with weight $w$. 
+\texttt{Neighbours(x)} return the set of neighbours of $x$.
+
+\begin{algorithm}
+  \SetKwProg{Fn}{Function}{}{}  
+  
+  \Fn{receive (x,y,w)} {
+  	
+	\If{$(x,y)\in E(G)$}{
+	  updateLink(x,y,w) \\
+	  $U \leftarrow update(x) \cup update(y)$ \\
+	  \For{$u\in U$}{
+	    emitHidden(u)\;
+	  }
+	}
+
+	\ElseIf{$x\in V(G) \land y\in V(G)$}{
+	  addLink(x,y,w) \\
+	  $U \leftarrow update(x) \cup update(y)$ \\
+	  \For{$u\in U$}{
+		emitHidden(u)\;
+		emitPotential(u)\;
+	  }
+    }
+
+	\ElseIf{$x\in V(G) \land y\notin V(G)$}{
+      addLink(x,y,w) \\
+	  $U \leftarrow update(y)$ \\
+	  \For{$u\in U$}{
+	    emitHidden(u)\;
+		  emitPotential(u)\;
+	  }
+    }
+
+	\ElseIf{$x\notin V(G) \land y\in V(G)$}{
+	  addLink(x,y,w) \\
+	  $U \leftarrow update(x)$ \\
+	  \For{$u\in U$}{
+		emitHidden(u)\;
+		emitPotential(u)\;
+	  }
+    }  
+
+	\Else{
+	  addLink(x,y,w)
+    }
+  }
+
+  \Fn{update (x)}{
+    $N \leftarrow Neighbours(x)$ \\
+    $U \leftarrow \emptyset$ \\
+    \For{$y\in N$}{
+      \If{$(x,y)\notin E(G)$}{
+        $U \leftarrow U \cup \{(x,y)\}$
+      }
+    }
+    \For{$z\in N$}{
+      \If{$(x,z)\notin E(G) \land z\neq y$}{
+        $U \leftarrow U \cup \{(y,z)\}$
+      }
+    }
+    \KwResult{$U$}
+  }
+  \caption{Required metrics update when inserting a new interaction}
+  \label{alg:metrics-update}
+\end{algorithm}
