@@ -14,11 +14,14 @@ Currently, these problems are a long-standing challenge in modern information sc
 The structural approach classifies links according to metric scores that encapsulate relevant topological features. 
 These metrics can be \textit{local}, \textit{quasi-local} and \textit{global}, depending on the locality of the topological features examined with respect to the considered entities.
 Tipically, link detection and prediction are based on the same metrics, mainly differing in the interpretation of experimental results.
+Quasi-local metrics are a good tradeoff of accuracy and computational complexity, because the global indices require considerable computational effort, while local indexes are limited. 
 
 %Let us consider the link prediction, because the link detection is analogous, the metrics used for this task are the same adopted: the difference concerns how the results are interpreted. The similarity metrics are so many and they and differ because the size in which focus the analysis. 
 %In detail, let $s_{x,y}$ the likelihood, i.e. the \textit{score}, as \textit{proximity} or \textit{similarity}, that between the nodes $x$,$y$ there will be a link in the future, provided by the algorithm that implements the similarity considered metric, and let $\pi_{x,y}$ a path between them, we denote \textit{local indices} the metrics that can only compute the $s_{x,y}$ at distance $d_{\pi}(x,y) = 2$ (i.e it's applicable on only nodes that have a common neighbor $\in \Gamma_{x,y}$). 
-%Other types of metrics are \textit{quasi-local} indices, that consider $d(x,y) \geq t$, where $t\in \mathbb{Z}, t\geq 1 $, as \textit{locality degree}, identifies a neighborhood with a max length equal to $t$ steps, starting from the node $x$ to $y$.Quasi-local metrics are a good tradeoff of accuracy and computational complexity, because the global indices require considerable computational effort, while local indexes are limited. 
+%Other types of metrics are \textit{quasi-local} indices, that consider $d(x,y) \geq t$, where $t\in \mathbb{Z}, t\geq 1 $, as \textit{locality degree}, identifies a neighborhood with a max length equal to $t$ steps, starting from the node $x$ to $y$.
+
 %Another metrics are \textit{global indices}, that computes the score between any pairs of nodes in $G$ not directly connected\cite{Lu2011}. The metrics used in this work are presented in Section~\ref{sec:link-detection,sec:link-prediction}.
+
 % leverei la descrizione di RA e LP, lasciando solamente la citazione dell'articolo che ne parla.
 %, that we report for simplicity:
 %\begin{equation}
@@ -34,9 +37,7 @@ Tipically, link detection and prediction are based on the same metrics, mainly d
 %A^{2} + \epsilon A^{3} + \epsilon^{2}A^{4}+...+\epsilon^{k-2}A^{k}
 %\end{equation}
 %where $k\geq 1$ is a locality degree, $A$ is the adjacency matrix, and $\epsilon$ is a free parameter. For example, $A_{xy}^{2}$ is also the number of different paths with length $2$ connecting $x$ and $y$.
-%Both metrics for link prediction assigned to a pair $x$,$y$ a score, representing their possible future relationship. This score can be viewed as a measure of similarity between nodes $x$ and $y$. Notice that for each pair of nodes, $x$, $y \in V$, we have that $s_{xy} = s_{yx}$. Performing an ranking among the RA score on a graph $G$, can be get the top most likely link those still not present in G.
 
-%Formally, for two times $t$ and $t' > t$, we denote $G[t,t']$ the subgraph of G consisting of all edges with a timestamp between $t$ and $t'$. Identified four times: $t_{0}, t'_{0}, t_{1}, t''_{1}$, with $t_{0}<t'_{0}<t_{1}<t'_{1}$, we refer to $[t_{0},t'_{0}]$ as the \textit{training interval} and $[t_{1},t'_{1}]$ as the \textit{test interval}. Applying a \textit{prediction algorithm} on the graph obtained after the training interval, as $G[t_{0},t'_{0}]$, we want to make a prediction on the edges that will be present in the graph $G[t_{1},t'_{1}]$ and not present in $G[t_{0},t'_{0}]$\cite{Liben-Nowell}.
-%In this work, the notions of training interval and test interval, are provided with the only purpose to test the algorithm that will be presented in the following. After all, this application produce an output of links mining in real time: in which each instant $t\textsuperscript{*}>t_{0}$ identifies a graph $G[t_{0},t\textsuperscript{*}]$ on which to execute the algorithm. More details about the real time processing are explained in Section \ref{sec:architecture}.
+%Both metrics for link prediction assigned to a pair $x$,$y$ a score, representing their possible future relationship. This score can be viewed as a measure of similarity between nodes $x$ and $y$. Notice that for each pair of nodes, $x$, $y \in V$, we have that $s_{xy} = s_{yx}$. Performing an ranking among the RA score on a graph $G$, can be get the top most likely link those still not present in G.
 
 %Notice that, in this work we assume that the graph is connected, therefore each pair of nodes is connected by a path. If we had in the case of a not connected graph, with a large connected component, as \textit{giant component}, and other small size connected components, the accuracy would be distorted by different \textit{density} of edges in a connected components.
