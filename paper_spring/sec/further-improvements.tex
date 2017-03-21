@@ -1,8 +1,13 @@
 \section{Further improvements}
 \label{sec:further-improvements}
 
-The criminological assumptions underlying the link detection metrics are in line with the studies on traffic matrix exstimation on IP networks \cite{medina2002traffic,benameur2004traffic,papagiannaki2004distributed}. 
-In fact, there could be an hidden link between two nodes, if the traffic matrix identifies a strict correlation between the outgoing and ingoing traffic from on another. The correlation could be detected by the traffic matrix decomposition techniques \cite{elgamal2015analysis,jiang2015covariance}.
-Is currently limited the literature on the implementation of data stream processing algorithms for the decomposition of sparse matrices.
+The application of big data analytics on criminal networks has a disruptive potential, opening new challeges for the field of social network analysis.
+The proposed metrics meet some novel requirements, showing satisfactory results, but can certainly be improved. 
+First of all, a scalable quasi-local extension of these metrics should be investigated to make them more flexible. 
+Then, Their main limitation concerns the impossibility to mine links on criminal networks made up of more than one connected components. 
 
-The proposed metrics do not address the link mining on criminal networks composed by distinct connected components. Statistical analysis and inference on traffic matrices would make it possible.
+A statistical approach could certainly overcome some of the limitations affecting structural metrics. In fact, their main limitation concerns the impossibility to mine links on criminal networks made up of more than one connected components.  
+The criminological context is in line with the studies on traffic matrix exstimation on IP networks  \cite{medina2002traffic,benameur2004traffic,papagiannaki2004distributed}. 
+For instance, there could be an hidden link between two nodes, if the traffic matrix identifies a strict correlation between the outgoing and ingoing traffic from one another. 
+The correlation could be detected by the traffic matrix decomposition techniques \cite{elgamal2015analysis,jiang2015covariance}. 
+In this sense, the design of efficient data stream processing algorithms for the decomposition of sparse matrices will play a key role in the criminologic domain.
