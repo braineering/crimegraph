@@ -1,0 +1,15 @@
+[Unit]
+Description=Kafka service
+After=network.target
+
+[Service]
+Type=forking
+ExecStart={{ kafka_manager_path }} start
+ExecStop={{ kafka_manager_path }} stop
+Restart=always
+StandardOutput=syslog
+StandardError=syslog
+SyslogIdentifier=kafka
+
+[Install]
+WantedBy=multi-user.target

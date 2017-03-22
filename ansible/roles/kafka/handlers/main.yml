@@ -1,0 +1,6 @@
+---
+# file: kafka/handlers/main.yml
+- name: restart Kafka
+  systemd:
+    name: kafka.service
+    state: restarted
