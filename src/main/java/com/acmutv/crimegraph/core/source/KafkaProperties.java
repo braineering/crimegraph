@@ -40,20 +40,20 @@ public class KafkaProperties extends Properties {
 
   private static final String BOOTSTRAP_SERVERS = "bootstrap.servers";
 
-  private static final String ZOOKEPER_CONNECT = "zookeper.connect";
+  private static final String ZOOKEEPER_CONNECT = "zookeeper.connect";
 
   private static final String GROUP_ID = "group.id";
 
   private String bootstrapServers;
 
-  private String zookeperConnect;
+  private String zookeeperConnect;
 
   private String groupId;
 
-  public KafkaProperties(String bootstrapServers, String zookeperConnect, String groupId) {
+  public KafkaProperties(String bootstrapServers, String zookeeperConnect, String groupId) {
     super();
     super.put(BOOTSTRAP_SERVERS, bootstrapServers);
-    super.put(ZOOKEPER_CONNECT, zookeperConnect);
+    super.put(ZOOKEEPER_CONNECT, zookeeperConnect);
     super.put(GROUP_ID, groupId);
   }
 
@@ -65,8 +65,8 @@ public class KafkaProperties extends Properties {
     super.put(BOOTSTRAP_SERVERS, bootstrapServers);
   }
 
-  public void setZookeperConnect(String zookeperConnect) {
-    super.put(ZOOKEPER_CONNECT, zookeperConnect);
+  public void setZookeeperConnect(String zookeeperConnect) {
+    super.put(ZOOKEEPER_CONNECT, zookeeperConnect);
   }
 
   public void setGroupId(String groupId) {

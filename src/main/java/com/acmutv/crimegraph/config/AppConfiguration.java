@@ -64,7 +64,7 @@ public class AppConfiguration {
   /**
    * Default value for property {@code topic}.
    */
-  public static final String TOPIC = "crimegraph";
+  public static final String TOPIC = "main-topic";
 
   /**
    * Default value for property {@code kafkaProperties}.

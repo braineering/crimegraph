@@ -5,8 +5,14 @@
 #===============================================================================
 # SOURCE
 #===============================================================================
-source: "FILE"
-dataset: "resources/crimegraph/data/crimegraph.data"
+#source: "FILE"
+#dataset: "resources/crimegraph/data/crimegraph.data"
+source: "KAFKA"
+kafka.topic: "main-topic"
+kafka.zookeeper: "localhost:2181"
+kafka.bootstrap: "localhost:9092"
+kafka.group: "main-topic"
+
 
 #===============================================================================
 # LINK DETECTION

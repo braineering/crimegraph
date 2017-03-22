@@ -87,14 +87,14 @@ public class AppConfigurationDeserializer extends StdDeserializer<AppConfigurati
       config.setTopic(topic);
     }
 
+    if (node.hasNonNull("kafka.zookeeper")) {
+      final String kafkaZookeper = node.get("kafka.zookeeper").asText();
+      config.getKafkaProperties().setZookeeperConnect(kafkaZookeper);
+    }
+
     if (node.hasNonNull("kafka.bootstrap")) {
       final String kafkaBootstrap = node.get("kafka.bootstrap").asText();
       config.getKafkaProperties().setBootstrapServers(kafkaBootstrap);
-    }
-
-    if (node.hasNonNull("kafka.zookeper")) {
-      final String kafkaZookeper = node.get("kafka.zookeper").asText();
-      config.getKafkaProperties().setZookeperConnect(kafkaZookeper);
     }
 
     if (node.hasNonNull("kafka.group")) {

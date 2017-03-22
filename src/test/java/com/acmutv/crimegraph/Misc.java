@@ -41,9 +41,6 @@ public class Misc {
 
   @Test
   public void test() throws IOException {
-    String filename = "resources/crimegraph/data/crimegraph.data";
-    String flinkHome = System.getenv("FLINK_HOME");
-    Path path = Paths.get(flinkHome, filename);
-    System.out.println(path);
+    //
   }
 }

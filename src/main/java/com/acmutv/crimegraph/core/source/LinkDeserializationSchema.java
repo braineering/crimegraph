@@ -29,6 +29,8 @@ import com.acmutv.crimegraph.core.tuple.Link;
 import org.apache.flink.api.common.typeinfo.TypeInformation;
 import org.apache.flink.streaming.util.serialization.AbstractDeserializationSchema;
 import org.apache.flink.streaming.util.serialization.DeserializationSchema;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 
@@ -39,6 +41,8 @@ import java.io.IOException;
  */
 public class LinkDeserializationSchema extends AbstractDeserializationSchema<Link> {
 
+  private static final Logger LOGGER = LoggerFactory.getLogger(LinkDeserializationSchema.class);
+
   /**
    * De-serializes the byte message.
    *
@@ -48,7 +52,13 @@ public class LinkDeserializationSchema extends AbstractDeserializationSchema<Lin
   @Override
   public Link deserialize(byte[] message) throws IOException {
     final String str = new String(message);
-    final Link link = Link.valueOf(str);
+    Link link;
+    try {
+      link = Link.valueOf(str);
+    } catch (IllegalArgumentException exc) {
+      LOGGER.warn(exc.getMessage());
+      link = null;
+    }
     return link;
   }
 }

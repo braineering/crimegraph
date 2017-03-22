@@ -8,7 +8,7 @@
 source: "KAFKA"
 kafka.topic: "CustomTopic"
 kafka.bootstrap: "CustomBootstrap"
-kafka.zookeper: "CustomZookeper"
+kafka.zookeeper: "CustomZookeper"
 kafka.group: "CustomGroup"
 
 #===============================================================================
