@@ -32,26 +32,26 @@ The metric produces a normalized score $\Phi(x,y)\in(0,1)$, hence it is suitable
 Given an arbitrary threshold $\tilde{\Phi}$, every edge $(x,y)$ such that $\Phi(x,y)\geq\tilde{\Phi}$ is considered an hidden link with a probability proportional to the score achieved.
 Since $\Phi$ is strictly related to the edge weights, the threshold must be chosen according to the maximum and minimum weights observed on the graph.
 
-%The Equation~\ref{eqn:detection-local} can be extended to the following quasi-local metric.
-%
-%Let us now consider an undirected weighted graph $G$ with $w:E\rightarrow\Re_{\geq1}^{+}$, a pair of nodes $x,y\in V$, a locality degree $t\in \mathbb{Z}$, $t\geq 1$, and a vector $\vec{\lambda}=(\lambda_{1}\ldots\lambda_{t})$ such that $\sum_{i=1}^{t}\lambda_{i}=1$.
-%We can build the following quasi-local metric:
+The Equation~\ref{eqn:detection-local} can be extended to the following quasi-local metric.
 
-%\begin{equation}
-%\label{eqn:detection-quasi-local-1}
-%\Phi_{QL}(x,y,t,\vec{\lambda})=\vec{\lambda}\cdot\vec{\Phi}_{QL}(x,y,t)
-%\end{equation}
+Let us now consider an undirected weighted graph $G$ with $w:E\rightarrow\Re_{\geq1}^{+}$, a pair of nodes $x,y\in V$, a locality degree $t\in \mathbb{Z}$, $t\geq 1$, and a vector $\vec{\lambda}=(\lambda_{1}\ldots\lambda_{t})$ such that $\sum_{i=1}^{t}\lambda_{i}=1$.
+We can build the following quasi-local metric:
 
-%where $\vec{\Phi}_{QL}(x,y,t)=(\Phi_{QL}(x,y,1)\ldots\Phi_{QL}(x,y,t))$ is a vector of scores with every element defined as follows:
-%\begin{equation}
-%\label{eqn:detection-quasi-local-2}
-%\Phi_{QL}(x,y,i)=
-%\frac{\sum\limits_{\pi\in\Pi_{x,y}^{(i+1)}}w_{\pi}}
-%{\sum\limits_{z\in\pi\in\Pi_{x,y}^{(i+1)}}w_{z}}
-%\end{equation}
+\begin{equation}
+\label{eqn:detection-quasi-local-1}
+\Phi_{QL}(x,y,t,\vec{\lambda})=\vec{\lambda}\cdot\vec{\Phi}_{QL}(x,y,t)
+\end{equation}
 
-%where $\Pi_{x,y}^{(i)}$ is the set of paths between $x$ and $y$ of lenght $i$,
-%$w_{\pi}$ is the weight of path $\pi$ and
-%$w_{z}$ is the total weight of edges incident to $z$.
+where $\vec{\Phi}_{QL}(x,y,t)=(\Phi_{QL}(x,y,1)\ldots\Phi_{QL}(x,y,t))$ is a vector of scores with every element defined as follows:
+\begin{equation}
+\label{eqn:detection-quasi-local-2}
+\Phi_{QL}(x,y,i)=
+\frac{\sum\limits_{\pi\in\Pi_{x,y}^{(i+1)}}w_{\pi}}
+{\sum\limits_{z\in\pi\in\Pi_{x,y}^{(i+1)}}w_{z}}
+\end{equation}
 
-%The metric produces a normalized score $\Phi_{QL}(x,y,t,\vec{\lambda})\in(0,1)$, hence thold here he same considerations about thresholding stated for the local metric.
+where $\Pi_{x,y}^{(i)}$ is the set of paths between $x$ and $y$ of lenght $i$,
+$w_{\pi}$ is the weight of path $\pi$ and
+$w_{z}$ is the total weight of edges incident to $z$.
+
+The metric produces a normalized score $\Phi_{QL}(x,y,t,\vec{\lambda})\in(0,1)$, hence thold here he same considerations about thresholding stated for the local metric.
