@@ -1,9 +1,11 @@
 \section{Link prediction}
 \label{sec:link-prediction}
 
-The link prediction is the problem of infer which new interactions in the near future in a graph.
-As the link detection, we present here a local metric for link prediction and its quasi-local extension.
+The link prediction is the problem of infer which new interactions in the near future in a graph. Formally, a link $(x,y)$ of a network is said to be potential when, given two times $t$ and $t'>t$, the link is not present in $G(t)$ but it will be in $G(t')$, where $G(t)$ denotes the graph at particular time $t$. 
 
+The following metrics are a normalized extension of \textit{Resource Allocation Index (RA)} \cite{berlusconi2016link, Lu2011,zhou2009predicting}. RA assigns a score to quantify similarity between vertices. Extensive tests in many complex networks have shown that RA is as one the best indicators on a large set of benchmark tests  \cite{berlusconi2016link,Lu2011}.
+
+Now, as the link detection, we present a local metric for link prediction and its quasi-local extension.
 Let us consider an undirected graph $G(V,E)$ and a pair of nodes $x$,$y\in V$. We can build the following local metric:
 
 \begin{equation}
@@ -13,9 +15,7 @@ Let us consider an undirected graph $G(V,E)$ and a pair of nodes $x$,$y\in V$. W
 {\sum\limits_{z\in\Gamma_{x,y}}k_{z}}
 \end{equation}
 
-where $k_{z}$ is the degree of node $z$ and $\Gamma_{x,y}$ is the set of common neighbors between $x$ and $y$. 
-
- DA INSERIRE CHE IN berlusconi2016link RA è accettato come miglior metrica
+where $k_{z}$ is the degree of node $z$ and $\Gamma_{x,y}$ is the set of common neighbors between $x$ and $y$. The role of the common neighbor $z$ in connecting $(x, y)$ is diluted if $z$ has many connections, since it will have less resources allocated to bridge $(x, y)$ \cite{berlusconi2016link}.
 
 Let us now consider an undirected graph $G$, a pair of nodes $x,y\in V$, a locality degree $t\in \mathbb{Z}$, $\geq 1$ and a vector $\vec{\mu}=(\mu_{1}\ldots\mu_{t})$ such that $\sum_{i=1}^{t}\mu_{i}=1$. We denote with $\Theta(x,t)$ the set of nodes at distance $t$ from $x$. In another words, given a nodes $v \in G$, and a path $\pi_{x,v}$ of length $t$, $\pi_{x,v} = u,v_{2},...,v_{t-1},v$, the set $\Theta(x,t) = \{v\}$.
 
@@ -37,7 +37,4 @@ where $\vec{\Psi}_{QL}(x,y,t)=(\Psi_{QL}(x,y,1)\ldots\Psi_{QL}(x,y,t))$ is a vec
 
 where $\Gamma_{x,y,i} = \Gamma(x,i) \cap \Gamma(y,i)$ is the set of common neighbors between $x$ and $y$ distant $i$ steps from each.
 
-The metrics \ref{eqn:prediction-local} [and its quasi-local extension \ref{eqn:prediction-quasi-local-1}] produces a normalized score $\Psi(x,y) \in (0,1)$, [$\Psi_{QL}(x,y,t,\vec{\mu}) \in (0,1)$], so the same considerations already made previously in Section \ref{sec:link-detection}, regarding a threshold, are still valid. 
-
-% DA INSERIRE
-The metrics that will present in the following Sections~\ref{sec:link-detection,sec:link-prediction}, are a normalized extension of \textit{Resource Allocation Index (RA)} and \textit{Local Path (LP)}\cite{Lu2011,zhou2009predicting,lu2009similarity}.
+The metrics in Equation~\ref{eqn:prediction-local} and  \ref{eqn:prediction-quasi-local-1}, produce a normalized score $\Psi(x,y) \in (0,1)$ and $\Psi_{QL}(x,y,t,\vec{\mu}) \in (0,1)$, respectively, so the same considerations about  threshold are still valid. 

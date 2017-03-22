@@ -1,20 +1,25 @@
 \section{Background}
 \label{sec:background}
-We assume that the reader is familiar with the fundamentals of graph theory. 
+We assume that the reader is familiar with the notation of graph theory. 
 However, we make a brief recap to introduce what we will see in the next sections.
 
 Let $G(V,E,w)$ be an undirected weighted graph, where $V$ is the set of vertices, $E$ is the set of edges and $w:E\rightarrow\Re$ is the weight function. 
 A \textit{path} $\pi_{x,y}$ between two vertices $x$,$y$ of \textit{length} $k$ in $G$ is a sequence of vertices $v_{1},v_{2},\ldots,v_{k}$, where $x = v_{1}$ and $y = v_{k}$, such that the edge $(v_{i},v_{i+1}) \in E$ for $i = 1, 2,\ldots,k-1$. 
 The distance $d(x,y)$ between $x$ and $y$, is the length of the shortest path from $x$ to $y$ (or vice versa).
 A graph is \textit{connected} if there is a path between every pair of vertices; otherwise, it is not connected and made of at least two \textit{connected components}.
+Notice that, in this work we assume a graph made up of one connected component only, namely \textit{giant component}.
 Given two vertices $x,y \in V$, we denote with $\Gamma_{x}$ the set of neighbors of $x$ (i.e. adjacent vertices) and with $\Gamma_{x,y} = \Gamma_{x} \bigcap \Gamma_{y}$ the set of common neighbors between $x$ and $y$.
+
 The \textit{link mining} refers to data mining techniques that consider data links when building descriptive or predictive models \cite{getoor2005link}. It comprises community detection, entity classification, link detection, link prediction and more. 
 %In this work we focus on link detection and prediction, namely the task of determining existent though invisible links, and the prediction of future interactions\cite{Hasan2011}.
 Currently, these problems are a long-standing challenge in modern information science, and the mainstream solutions leverages algorithms based on \textit{structural metrics} and \textit{statistical models} \cite{Liben-Nowell,Lu2011}.
 The structural approach classifies links according to metric scores that encapsulate relevant topological features. 
-These metrics can be \textit{local}, \textit{quasi-local} and \textit{global}, depending on the locality of the topological features examined with respect to the considered entities.
-Tipically, link detection and prediction are based on the same metrics, mainly differing in the interpretation of experimental results.
+These metrics can be \textit{local}, \textit{quasi-local} and \textit{global}, depending on the locality of the topological features examined with respect to the considered entities. 
+
+When tuning the locality degree, for a specific network, the  tradeoff between accuracy and computational complexity must be addressed.
+
 Quasi-local metrics are a good tradeoff of accuracy and computational complexity, because the global indices require considerable computational effort, while local indexes are limited. 
+Typically, link detection and prediction are based on the same metrics, mainly differing in the interpretation of experimental results.
 
 %Let us consider the link prediction, because the link detection is analogous, the metrics used for this task are the same adopted: the difference concerns how the results are interpreted. The similarity metrics are so many and they and differ because the size in which focus the analysis. 
 %In detail, let $s_{x,y}$ the likelihood, i.e. the \textit{score}, as \textit{proximity} or \textit{similarity}, that between the nodes $x$,$y$ there will be a link in the future, provided by the algorithm that implements the similarity considered metric, and let $\pi_{x,y}$ a path between them, we denote \textit{local indices} the metrics that can only compute the $s_{x,y}$ at distance $d_{\pi}(x,y) = 2$ (i.e it's applicable on only nodes that have a common neighbor $\in \Gamma_{x,y}$).
@@ -42,4 +47,4 @@ Quasi-local metrics are a good tradeoff of accuracy and computational complexity
 
 %Both metrics for link prediction assigned to a pair $x$,$y$ a score, representing their possible future relationship. This score can be viewed as a measure of similarity between nodes $x$ and $y$. Notice that for each pair of nodes, $x$, $y \in V$, we have that $s_{xy} = s_{yx}$. Performing an ranking among the RA score on a graph $G$, can be get the top most likely link those still not present in G.
 
-%Notice that, in this work we assume that the graph is connected, therefore each pair of nodes is connected by a path. If we had in the case of a not connected graph, with a large connected component, as \textit{giant component}, and other small size connected components, the accuracy would be distorted by different \textit{density} of edges in a connected components.
+

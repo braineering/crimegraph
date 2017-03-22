@@ -6,14 +6,7 @@ The following algorithm generates the set of metrics update required when adding
 Notice that the algorithm covers the updates of both metrics in Equations~\ref{eqn:detection-local}. 
 Algorithm~\ref{alg:metrics-update} is executed by the operator \texttt{GraphUpdate} in Figure~\ref{fig:topology}, once every time it receive a new tuple $(x,y,w)$, representing the interaction between $x$ and $y$ of relevance $w$.
 
-Some called functions have not been formally defined because they are pretty self-explanatory. For reader's sake, we describe them here. 
-
-\texttt{emitHidden(u)} and \texttt{emitPotential(u)} let the operator emit tuples in the form \texttt{(x,y,HIDDEN)} and \texttt{(x,y,POTENTIAL)}, meaning that an hidden or potential score update is necessary for the edge $(x,y)$, respectively.
-\texttt{updateLink(x,y,w)} updates the existent edge $(x,y)$ with the new EWMA weight value. 
-\texttt{addLink(x,y,w)} inserts the edge $(x,y)$ with weight $w$. 
-\texttt{Neighbours(x)} return the set of neighbours of $x$.
-
-\begin{algorithm}
+\begin{algorithm}[t]
   \SetKwProg{Fn}{Function}{}{}  
   
   \Fn{receive (x,y,w)} {
@@ -76,3 +69,8 @@ Some called functions have not been formally defined because they are pretty sel
   \caption{Required metrics update when inserting a new interaction}
   \label{alg:metrics-update}
 \end{algorithm}
+
+Some called functions have not been formally defined because they are pretty self-explanatory. For reader's sake, we describe them here. \texttt{emitHidden(u)} and \texttt{emitPotential(u)} let the operator emit tuples in the form \texttt{(x,y,HIDDEN)} and \texttt{(x,y,POTENTIAL)}, meaning that an hidden or potential score update is necessary for the edge $(x,y)$, respectively.
+\texttt{updateLink(x,y,w)} updates the existent edge $(x,y)$ with the new EWMA weight value. 
+\texttt{addLink(x,y,w)} inserts the edge $(x,y)$ with weight $w$. 
+\texttt{Neighbours(x)} return the set of neighbours of $x$.
