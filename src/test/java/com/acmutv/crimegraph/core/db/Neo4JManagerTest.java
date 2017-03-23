@@ -32,6 +32,7 @@ import org.apache.flink.api.java.tuple.Tuple2;
 import org.apache.flink.api.java.tuple.Tuple3;
 import org.apache.flink.api.java.tuple.Tuple4;
 import org.junit.*;
+import org.junit.runners.MethodSorters;
 import org.neo4j.driver.v1.*;
 
 import java.io.IOException;
@@ -59,7 +60,7 @@ public class Neo4JManagerTest {
 
   private static final String MATCH =
       "MATCH (a:Person {id:{src}})-[r:%s {weight:{weight}}]->(b:Person {id:{dst}}) " +
-          "RETURN a.id as src, b.id as dst";
+          "RETURN a.id as src, b.id as dst, r.weight as weight";
 
   private static final List<Link> DATA = new ArrayList<Link>(){{
     add(new Link(1,2,10.0, LinkType.REAL));
@@ -82,19 +83,42 @@ public class Neo4JManagerTest {
     }
     Assume.assumeTrue(neo4jActive);
     DRIVER = Neo4JManager.open(dbconf);
+
+    Session session = DRIVER.session();
+
+    for (Link link : DATA) Neo4JManager.save(session, link, 0.5);
+
+    // Check
+    for (Link link : DATA) {
+      String query = String.format(MATCH, link.f3.name());
+      Value params = parameters("src", link.f0, "dst", link.f1, "weight", link.f2);
+      StatementResult result = session.run(query, params);
+      Assert.assertTrue(result.hasNext());
+      Record record = result.next();
+      Long src = record.get("src").asLong();
+      Long dst = record.get("dst").asLong();
+      Double weight = record.get("weight").asDouble();
+      Assume.assumeTrue(link.f0.equals(src));
+      Assume.assumeTrue(link.f1.equals(dst));
+      Assume.assumeTrue(link.f2.equals(weight));
+    }
+
+    session.close();
   }
 
   @AfterClass
   public static void deinit() {
-    if (DRIVER != null) {
-      DRIVER.close();
-    }
+    Session session = DRIVER.session();
+    Neo4JManager.empyting(session);
+    session.close();
+    DRIVER.close();
   }
 
   /**
    * Tests creation of real/potential and hidden links on NEO4J.
    * @throws IOException when operator cannot be managed.
    */
+  /*
   @Test
   public void test_save() throws Exception {
     Session session = DRIVER.session();
@@ -116,6 +140,7 @@ public class Neo4JManagerTest {
 
     session.close();
   }
+  */
 
   /**
    * Tests matching of neighbours from NEO4J.
@@ -125,7 +150,7 @@ public class Neo4JManagerTest {
   public void test_neighbours() throws Exception {
     Session session = DRIVER.session();
 
-    for (Link link : DATA) Neo4JManager.save(session, link);
+    //for (Link link : DATA) Neo4JManager.save(session, link, 0.5);
 
     // Check
     Set<Long> actual = Neo4JManager.neighbours(session, 1);
@@ -145,7 +170,7 @@ public class Neo4JManagerTest {
   public void test_neighboursWithDegree() throws Exception {
     Session session = DRIVER.session();
 
-    for (Link link : DATA) Neo4JManager.save(session, link);
+    //for (Link link : DATA) Neo4JManager.save(session, link, 0.5);
 
     // Check
     Set<Tuple2<Long,Long>> actual = Neo4JManager.neighboursWithDegree(session, 1);
@@ -165,7 +190,7 @@ public class Neo4JManagerTest {
   public void test_neighboursWithinDistance() throws Exception {
     Session session = DRIVER.session();
 
-    for (Link link : DATA) Neo4JManager.save(session, link);
+    //for (Link link : DATA) Neo4JManager.save(session, link, 0.5);
 
     // Check
     Set<Long> actual = Neo4JManager.neighboursWithinDistance(session, 1, 2);
@@ -187,7 +212,7 @@ public class Neo4JManagerTest {
   public void test_neighboursWithDegreeWithinDistance() throws Exception {
     Session session = DRIVER.session();
 
-    for (Link link : DATA) Neo4JManager.save(session, link);
+    //for (Link link : DATA) Neo4JManager.save(session, link, 0.5);
 
     // Check
     Set<Tuple2<Long,Long>> actual = Neo4JManager.neighboursWithDegreeWithinDistance(session, 1, 2);
@@ -209,7 +234,7 @@ public class Neo4JManagerTest {
   public void test_commonNeighbours() throws Exception {
     Session session = DRIVER.session();
 
-    for (Link link : DATA) Neo4JManager.save(session, link);
+    //for (Link link : DATA) Neo4JManager.save(session, link, 0.5);
 
     // Check
     Set<Long> actual = Neo4JManager.commonNeighbours(session, 1, 4);
@@ -228,7 +253,7 @@ public class Neo4JManagerTest {
   public void test_commonNeighboursWithDegree() throws Exception {
     Session session = DRIVER.session();
 
-    for (Link link : DATA) Neo4JManager.save(session, link);
+    //for (Link link : DATA) Neo4JManager.save(session, link, 0.5);
 
     // Check
     Set<Tuple2<Long,Long>> actual = Neo4JManager.commonNeighboursWithDegree(session, 1, 4);
@@ -247,7 +272,7 @@ public class Neo4JManagerTest {
   public void test_commonNeighboursWithinDistance() throws Exception {
     Session session = DRIVER.session();
 
-    for (Link link : DATA) Neo4JManager.save(session, link);
+    //for (Link link : DATA) Neo4JManager.save(session, link, 0.5);
 
     // Check
     Set<Long> actual = Neo4JManager.commonNeighboursWithinDistance(session, 1, 4, 2);
@@ -267,7 +292,7 @@ public class Neo4JManagerTest {
   public void test_commonNeighboursWithDegreeWithinDistance() throws Exception {
     Session session = DRIVER.session();
 
-    for (Link link : DATA) Neo4JManager.save(session, link);
+    //for (Link link : DATA) Neo4JManager.save(session, link, 0.5);
 
     // Check
     Set<Tuple2<Long,Long>> actual = Neo4JManager.commonNeighboursWithDegreeWithinDistance(session, 1, 4, 2);
@@ -287,7 +312,7 @@ public class Neo4JManagerTest {
   public void test_checkExtremes() throws Exception {
     Session session = DRIVER.session();
 
-    for (Link link : DATA) Neo4JManager.save(session, link);
+    //for (Link link : DATA) Neo4JManager.save(session, link, 0.5);
 
     // Check
     Map<Tuple2<Long,Long>,Tuple3<Boolean,Boolean,Boolean>> expectedMap = new HashMap<>();
@@ -313,7 +338,7 @@ public class Neo4JManagerTest {
   public void test_pairsToUpdate() throws Exception {
     Session session = DRIVER.session();
 
-    for (Link link : DATA) Neo4JManager.save(session, link);
+    //for (Link link : DATA) Neo4JManager.save(session, link, 0.5);
 
     // Check
     Map<Long,Set<Tuple2<Long,Long>>> expectedMap = new HashMap<>();
@@ -339,7 +364,7 @@ public class Neo4JManagerTest {
   public void test_pairsToUpdateTwice() throws Exception {
     Session session = DRIVER.session();
 
-    for (Link link : DATA) Neo4JManager.save(session, link);
+    //for (Link link : DATA) Neo4JManager.save(session, link, 0.5);
 
     // Check
     Map<Tuple2<Long,Long>,Set<Tuple2<Long,Long>>> expectedMap = new HashMap<>();
@@ -369,7 +394,7 @@ public class Neo4JManagerTest {
   public void test_pairsToUpdateWithinDistance() throws Exception {
     Session session = DRIVER.session();
 
-    for (Link link : DATA) Neo4JManager.save(session, link);
+    //for (Link link : DATA) Neo4JManager.save(session, link, 0.5);
 
     // Check
     Map<Long,Set<Tuple2<Long,Long>>> expectedMap = new HashMap<>();
@@ -395,7 +420,7 @@ public class Neo4JManagerTest {
   public void test_pairsToUpdateTwiceWithinDistance() throws Exception {
     Session session = DRIVER.session();
 
-    for (Link link : DATA) Neo4JManager.save(session, link);
+    //for (Link link : DATA) Neo4JManager.save(session, link, 0.5);
 
     // Check
     Map<Tuple2<Long,Long>,Set<Tuple2<Long,Long>>> expectedMap = new HashMap<>();
@@ -424,7 +449,7 @@ public class Neo4JManagerTest {
   public void test_gammaIntersection() throws Exception {
     Session session = DRIVER.session();
 
-    for (Link link : DATA) Neo4JManager.save(session, link);
+    //for (Link link : DATA) Neo4JManager.save(session, link, 0.5);
 
     // Check
     Map<Tuple2<Long,Long>,Set<Tuple4<Long,Long,Double,Double>>> expectedMap = new HashMap<>();
@@ -448,7 +473,7 @@ public class Neo4JManagerTest {
   public void test_hIntersection() throws Exception {
     Session session = DRIVER.session();
 
-    for (Link link : DATA) Neo4JManager.save(session, link);
+    //for (Link link : DATA) Neo4JManager.save(session, link, 0.5);
 
     // Check
     Map<Tuple3<Long,Long,Long>,Set<Tuple2<Long,Long>>> expectedMap = new HashMap<>();
