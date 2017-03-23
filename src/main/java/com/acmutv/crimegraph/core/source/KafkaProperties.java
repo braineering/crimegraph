@@ -44,12 +44,6 @@ public class KafkaProperties extends Properties {
 
   private static final String GROUP_ID = "group.id";
 
-  private String bootstrapServers;
-
-  private String zookeeperConnect;
-
-  private String groupId;
-
   public KafkaProperties(String bootstrapServers, String zookeeperConnect, String groupId) {
     super();
     super.put(BOOTSTRAP_SERVERS, bootstrapServers);

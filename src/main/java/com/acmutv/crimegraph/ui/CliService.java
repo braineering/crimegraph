@@ -215,6 +215,12 @@ public class CliService {
       config.setPotentialThreshold(potentialThreshold);
     }
 
+    /* option: ewmaFactor */
+    if (cmd.hasOption("ewmaFactor")) {
+      final double ewmaFactor = Double.valueOf(cmd.getOptionValue("ewmaFactor"));
+      config.setEwmaFactor(ewmaFactor);
+    }
+
     /* option: neo4jHostname */
     if (cmd.hasOption("neo4jHostname")) {
       final String neo4jHostname = cmd.getOptionValue("neo4jHostname");

@@ -99,7 +99,7 @@ public class Neo4JManagerTest {
   public void test_save() throws Exception {
     Session session = DRIVER.session();
 
-    for (Link link : DATA) Neo4JManager.save(session, link);
+    for (Link link : DATA) Neo4JManager.save(session, link, 0.5);
 
     // Check
     for (Link link : DATA) {

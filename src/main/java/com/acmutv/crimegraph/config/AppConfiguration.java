@@ -117,6 +117,11 @@ public class AppConfiguration {
   public static final double POTENTIAL_THRESHOLD = 0.8;
 
   /**
+   * Default value for property {@code ewmaFactor}.
+   */
+  public static final double EWMA_FACTOR = 0.5;
+
+  /**
    * Default value for property {@code neo4j.config}.
    */
   public static final DbConfiguration NEO4J_CONFIG =
@@ -199,6 +204,12 @@ public class AppConfiguration {
   private double potentialThreshold = POTENTIAL_THRESHOLD;
 
   /**
+   * The EWMA factor.
+   * Default is: {@code 0.5}.
+   */
+  private double ewmaFactor = EWMA_FACTOR;
+
+  /**
    * Configuration for Neo4J instance.
    * Default is {@code (bolt://localhost:7474, neo4j, password)}.
    */
@@ -235,6 +246,7 @@ public class AppConfiguration {
     this.potentialLocality = other.potentialLocality;
     this.potentialWeights = new ArrayList<>(other.potentialWeights);
     this.potentialThreshold = other.potentialThreshold;
+    this.ewmaFactor = other.ewmaFactor;
     this.neo4jConfig = other.neo4jConfig;
     this.parallelism = other.parallelism;
   }
@@ -255,6 +267,7 @@ public class AppConfiguration {
     this.potentialLocality = POTENTIAL_LOCALITY;
     this.potentialWeights = POTENTIAL_WEIGHTS;
     this.potentialThreshold = POTENTIAL_THRESHOLD;
+    this.ewmaFactor = EWMA_FACTOR;
     this.neo4jConfig = NEO4J_CONFIG;
     this.parallelism = PARALLELISM;
   }

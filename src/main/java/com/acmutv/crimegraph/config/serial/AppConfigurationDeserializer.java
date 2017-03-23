@@ -157,6 +157,11 @@ public class AppConfigurationDeserializer extends StdDeserializer<AppConfigurati
       config.setPotentialThreshold(potentialThreshold);
     }
 
+    if (node.hasNonNull("ewma.factor")) {
+      final double ewmaFactor = node.get("ewma.factor").asDouble();
+      config.setEwmaFactor(ewmaFactor);
+    }
+
     if (node.hasNonNull("neo4j.hostname")) {
       final String neo4jHostname = node.get("neo4j.hostname").asText();
       config.getNeo4jConfig().setHostname(neo4jHostname);

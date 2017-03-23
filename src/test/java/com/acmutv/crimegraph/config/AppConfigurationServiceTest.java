@@ -84,6 +84,7 @@ public class AppConfigurationServiceTest {
       add(0.1);
     }});
     expected.setPotentialThreshold(0.8);
+    expected.setEwmaFactor(0.8);
     expected.setNeo4jConfig(new DbConfiguration(
         "CustomNeo4jHostname", "CustomNeo4jUsername", "CustomNeo4jPassword"
     ));
@@ -122,6 +123,7 @@ public class AppConfigurationServiceTest {
       add(0.1);
     }});
     expected.setPotentialThreshold(0.8);
+    expected.setEwmaFactor(0.8);
     expected.setNeo4jConfig(new DbConfiguration(
         "CustomNeo4jHostname", "CustomNeo4jUsername", "CustomNeo4jPassword"
     ));
