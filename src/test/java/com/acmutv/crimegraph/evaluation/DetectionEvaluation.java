@@ -24,10 +24,13 @@
   THE SOFTWARE.
  */
 
-package com.acmutv.crimegraph.core.data;
+package com.acmutv.crimegraph.evaluation;
 
+import com.acmutv.crimegraph.core.db.DbConfiguration;
+import com.acmutv.crimegraph.core.db.Neo4JManager;
 import com.acmutv.crimegraph.core.tuple.Link;
 import org.junit.Test;
+import org.neo4j.driver.v1.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -36,7 +39,14 @@ import java.io.BufferedWriter;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.*;
+import java.util.HashSet;
 import java.util.Random;
+import java.util.Set;
+
+import static com.acmutv.crimegraph.Common.HOSTNAME;
+import static com.acmutv.crimegraph.Common.PASSWORD;
+import static com.acmutv.crimegraph.Common.USERNAME;
+import static org.neo4j.driver.v1.Values.parameters;
 
 /**
  * Utility for dataset generation.
@@ -48,19 +58,33 @@ public class DetectionEvaluation {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(DetectionEvaluation.class);
 
+  /**
+   * The test set ratio.
+   */
   private static final double TEST_RATIO = 0.2;
 
   /**
-   * Creates the dataset to test link detection.
+   * The original dataset.
+   */
+  final Path origin = FileSystems.getDefault().getPath("data/test/original.data");
+
+  /**
+   * The learn dataset
+   */
+  final Path dest = FileSystems.getDefault().getPath(String.format("data/test/%.3f.detection.learn.data", 1 - TEST_RATIO));
+
+  /**
+   * The test dataset.
+   */
+  final Path test = FileSystems.getDefault().getPath(String.format("data/test/%.3f.detection.test.data", TEST_RATIO));
+
+  /**
+   * Creates the learn/test datasets for link detection.
    */
   @Test
   public void datasetDetection() throws IOException {
-
-    final Path origin = FileSystems.getDefault().getPath("data/test/original.data");
     final Path temp0 = FileSystems.getDefault().getPath(String.format("data/test/%.3f.detection.data-temp0", TEST_RATIO));
     final Path temp1 = FileSystems.getDefault().getPath(String.format("data/test/%.3f.detection.data-temp1", TEST_RATIO));
-    final Path dest = FileSystems.getDefault().getPath(String.format("data/test/%.3f.detection.learn.data", 1 - TEST_RATIO));
-    final Path test = FileSystems.getDefault().getPath(String.format("data/test/%.3f.detection.test.data", TEST_RATIO));
 
     long originLines = Files.lines(origin).count();
     long testLines = Math.round(TEST_RATIO * originLines);
@@ -121,7 +145,46 @@ public class DetectionEvaluation {
       Files.move(temp1, dest, StandardCopyOption.REPLACE_EXISTING);
       Files.deleteIfExists(temp0);
     }
-
   }
 
+  private static final String MATCH =
+      "MATCH (a:Person {id:{src}})-[r:HIDDEN]->(b:Person {id:{dst}}) " +
+          "WITH r " +
+          "RETURN r IS NOT NULL AS exists";
+
+  /**
+   * Evaluates detection results.
+   */
+  @Test
+  public void evaluate() throws IOException {
+    long total = 0;
+    long mined = 0;
+
+    DbConfiguration dbconf = new DbConfiguration(HOSTNAME, USERNAME, PASSWORD);
+    Driver driver = Neo4JManager.open(dbconf);
+    Session session = driver.session();
+
+    BufferedReader reader = Files.newBufferedReader(test);
+
+    while (reader.ready()) {
+      Link link = Link.valueOf(reader.readLine());
+      Value params = parameters("src", link.f0, "dst", link.f1);
+      StatementResult result = session.run(MATCH, params);
+      if (result.hasNext()) {
+        Record rec = result.next();
+        Boolean exists = rec.get("exists").asBoolean();
+        if (exists) {
+          mined ++;
+        }
+      }
+      total ++;
+    }
+
+    session.close();
+    driver.close();
+
+    double accuracy = mined / total;
+
+    LOGGER.info("ACCURACY %.3f", accuracy);
+  }
 }

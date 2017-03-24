@@ -38,6 +38,9 @@ import org.neo4j.driver.v1.*;
 import java.io.IOException;
 import java.util.*;
 
+import static com.acmutv.crimegraph.Common.HOSTNAME;
+import static com.acmutv.crimegraph.Common.PASSWORD;
+import static com.acmutv.crimegraph.Common.USERNAME;
 import static org.neo4j.driver.v1.Values.parameters;
 
 /**
@@ -48,15 +51,7 @@ import static org.neo4j.driver.v1.Values.parameters;
  */
 public class Neo4JManagerTest {
 
-  private static final String HOSTNAME = "bolt://localhost:7687";
-
-  private static final String USERNAME = "neo4j";
-
-  private static final String PASSWORD = "password";
-
   private static Driver DRIVER;
-
-  private static Config CONFIG = Config.build().withEncryptionLevel(Config.EncryptionLevel.NONE).toConfig();
 
   private static final String MATCH =
       "MATCH (a:Person {id:{src}})-[r:%s {weight:{weight}}]->(b:Person {id:{dst}}) " +
