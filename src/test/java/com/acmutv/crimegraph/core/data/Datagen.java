@@ -31,8 +31,7 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.BufferedWriter;
-import java.io.IOException;
+import java.io.*;
 import java.nio.charset.Charset;
 import java.nio.file.*;
 import java.util.*;
@@ -101,7 +100,6 @@ public class Datagen {
    * @param data the dataset to write.
    */
   private static void writeDataset(Path path, List<Link> data) {
-
     Charset charset = Charset.defaultCharset();
     try (BufferedWriter writer = Files.newBufferedWriter(path, charset)) {
       for (Link link : data) {
@@ -110,5 +108,112 @@ public class Datagen {
     } catch (IOException exc) {
       LOGGER.error(exc.getMessage());
     }
+  }
+
+  /**
+   * Creates the dataset to test link detection.
+   */
+  @Test
+  public void datasetDetection() throws IOException {
+    final double testRatio = 0.2; // test set ratio
+    final Path origin = FileSystems.getDefault().getPath("data/test/original.data");
+    final Path temp0 = FileSystems.getDefault().getPath(String.format("data/test/%.3f.detection.data-temp0", testRatio));
+    final Path temp1 = FileSystems.getDefault().getPath(String.format("data/test/%.3f.detection.data-temp1", testRatio));
+    final Path dest = FileSystems.getDefault().getPath(String.format("data/test/%.3f.detection.learn.data", 1 - testRatio));
+    final Path test = FileSystems.getDefault().getPath(String.format("data/test/%.3f.detection.test.data", testRatio));
+
+    long originLines = Files.lines(origin).count();
+    long testLines = Math.round(testRatio * originLines);
+    Random rnd = new Random();
+
+    BufferedReader reader = Files.newBufferedReader(origin, Charset.defaultCharset());
+    BufferedWriter writer = Files.newBufferedWriter(temp0, Charset.defaultCharset(), StandardOpenOption.CREATE);
+    BufferedWriter writerTest = Files.newBufferedWriter(test, Charset.defaultCharset(), StandardOpenOption.CREATE);
+    int candidate = 0;
+
+    long hidden = 0;
+    String line;
+
+    while (reader.ready()) {
+      line = reader.readLine();
+      if (hidden < testLines && rnd.nextBoolean()) {
+        writerTest.write(line + "\n");
+        hidden++;
+      } else {
+        writer.write(line + "\n");
+      }
+    }
+
+    reader.close();
+    writer.close();
+
+    while (hidden < testLines) {
+      candidate = (candidate + 1) % 2;
+
+      if (candidate == 0) {
+        reader = Files.newBufferedReader(temp1, Charset.defaultCharset());
+        writer = Files.newBufferedWriter(temp0, Charset.defaultCharset(), StandardOpenOption.CREATE);
+      } else if (candidate == 1) {
+        reader = Files.newBufferedReader(temp0, Charset.defaultCharset());
+        writer = Files.newBufferedWriter(temp1, Charset.defaultCharset(), StandardOpenOption.CREATE);
+      }
+
+      while (reader.ready()) {
+        line = reader.readLine();
+        if (hidden < testLines && rnd.nextBoolean()) {
+          writerTest.write(line + "\n");
+          hidden++;
+        } else {
+          writer.write(line + "\n");
+        }
+      }
+
+      reader.close();
+      writer.close();
+    }
+
+    writerTest.close();
+
+    if (candidate == 0) {
+      Files.move(temp0, dest, StandardCopyOption.REPLACE_EXISTING);
+      Files.deleteIfExists(temp1);
+    } else if (candidate == 1) {
+      Files.move(temp1, dest, StandardCopyOption.REPLACE_EXISTING);
+      Files.deleteIfExists(temp0);
+    }
+
+  }
+
+  /**
+   * Creates the dataset to test link prediction.
+   */
+  @Test
+  public void datasetPrediction() throws IOException {
+    final double testRatio = 0.2; // test set ratio
+    final Path origin = FileSystems.getDefault().getPath("data/test/original.data");
+    final Path dest = FileSystems.getDefault().getPath(String.format("data/test/%.3f.prediction.learn.data", 1 - testRatio));
+    final Path test = FileSystems.getDefault().getPath(String.format("data/test/%.3f.prediction.test.data", testRatio));
+
+    long originLines = Files.lines(origin).count();
+    long trainingLines = Math.round((1.0 - testRatio) * originLines);
+
+    BufferedReader reader = Files.newBufferedReader(origin, Charset.defaultCharset());
+    BufferedWriter writer = Files.newBufferedWriter(dest, Charset.defaultCharset(), StandardOpenOption.CREATE);
+    BufferedWriter writerTest = Files.newBufferedWriter(test, Charset.defaultCharset(), StandardOpenOption.CREATE);
+
+    String line;
+    for (long lines = 1; lines <= trainingLines; lines++) {
+      line = reader.readLine();
+      writer.write(line + "\n");
+    }
+
+    while (reader.ready()) {
+      line = reader.readLine();
+      writerTest.write(line + "\n");
+    }
+
+    reader.close();
+    writer.close();
+    writerTest.close();
   }
 }
