@@ -18,6 +18,7 @@ To execute the app locally you need the following to be installed to your system
 * Flink
 * Neo4J
 * Kafka
+* Kafka client (Python)
 
 To deploy the app to a Digital Ocean droplet, you need the following to be installed on your system:
 * Vagrant

@@ -89,10 +89,12 @@ public class CrimegraphToplogy {
       final String topic = config.getTopic();
       links = env.addSource(new LinkKafkaSource(topic, props));
     } else {
-      final String dataset = FileSystems.getDefault().getPath(
-          System.getenv("FLINK_HOME"), config.getDataset()
+      final String dataset = config.getDataset();
+      final String datasetPath = (dataset.startsWith("/")) ?
+          dataset : FileSystems.getDefault().getPath(
+              System.getenv("FLINK_HOME"), config.getDataset()
       ).toAbsolutePath().toString();
-      links = env.addSource(new LinkSource(dataset));
+      links = env.addSource(new LinkSource(datasetPath));
     }
 
     DataStream<NodePair> updates = links.flatMap(new GraphUpdate(dbconf)).shuffle();

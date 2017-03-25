@@ -26,12 +26,14 @@ app.use(bodyParser.json());
 * OPTIONS
 ******************************************************************************/
 
-const port = argv.port || 3000;
-const flinkPort = argv.flink_port || 8081;
-const neo4jPort = argv.neo4j_http_port || 7474;
-const neo4jBoltPort = argv.neo4j_bolt_port || 7687;
-const neo4jUsername = argv.neo4j_username || "neo4j";
-const neo4jPassword = argv.neo4j_password || "password";
+const port           = argv.port || 3000;
+const flinkPort      = argv.flink_port || 8081;
+const neo4jPort      = argv.neo4j_http_port || 7474;
+//const neo4jBoltPort  = argv.neo4j_bolt_port || 7687;
+//const neo4jUsername  = argv.neo4j_username || 'neo4j';
+//const neo4jPassword  = argv.neo4j_password || 'password';
+const kafkaBoostrap  = argv.kafka_zookeeper || 'localhost:9092';
+const kafkaTopic     = argv.kafka_topic || 'main-topic';
 
 /******************************************************************************
 * HANDLERS
@@ -53,12 +55,45 @@ function fnStart(req, res) {
   var COMMAND = req.body;
   winston.info('New command submitted: ', JSON.stringify(COMMAND));
 
-  if(command.type == "second") 
-  {
-    /* gestire il secondo tipo di interfaccia grafica.
-       input a disposizione [command.firstid] [command.secondid] [command.weight]
-     */
-  }
+  var src = COMMAND.firstid;
+  var dst = COMMAND.secondid;
+  var weight = COMMAND.weight;
+
+  var link = '('+src+','+dst+','+weight+')';
+
+  var cmd = 'echo \"' + link + '\" | /opt/kafka/bin/kafka-console-producer.sh --broker-list ' + kafkaBoostrap + ' --topic ' + kafkaTopic;
+
+  winston.info('Executing command: ', cmd);
+
+  exec(cmd, function (error, stdout, stderr) {
+    winston.info(stdout);
+    if (error !== null) {
+      winston.info('exec error: ', error);
+    }
+  });
+
+  /*
+
+  var payload = [
+    { topic: kafkaTopic, messages: [link] }
+  ];
+
+  winston.info('Publishing payload: ' + JSON.stringify(payload));
+
+  producer.on('ready', function () {
+    producer.send(payload, function (err, data) {
+      winston.info(data);
+      opn("http://crimegraph.braineering.it:"+flinkPort, "_blank");
+      opn("http://crimegraph.braineering.it:"+neo4jPort, "_blank");
+    });
+  });
+
+  producer.on('error', function (err) {
+    winston.info(err);
+  });
+  */
+
+  /*
   var dataset;
   switch(COMMAND.dataset) { // S, M, L
     case 'S':
@@ -127,10 +162,12 @@ function fnStart(req, res) {
     session.close();
     driver.close();
   });
+  */
 
   res.send('Command submitted');
 }
 
+/*
 function callback(err, results) {
       if (err) throw err;
       var result = results[0];
@@ -141,6 +178,7 @@ function callback(err, results) {
           console.log(user);
       }
   };
+  */
 
 /******************************************************************************
 * REST API
