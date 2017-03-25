@@ -26,6 +26,8 @@
 
 package com.acmutv.crimegraph.config;
 
+import com.acmutv.crimegraph.config.serial.AppConfigurationYamlMapper;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -42,10 +44,11 @@ public class AppConfigurationTest {
    * Tests the restoring of default configuration.
    */
   @Test
-  public void test_toDefault() {
+  public void test_toDefault() throws JsonProcessingException {
     AppConfiguration actual = new AppConfiguration();
     actual.getNeo4jConfig().setHostname("Custom");
     actual.toDefault();
+    System.out.println(new AppConfigurationYamlMapper().writeValueAsString(actual));
     final AppConfiguration expected = new AppConfiguration();
     Assert.assertEquals(expected, actual);
   }

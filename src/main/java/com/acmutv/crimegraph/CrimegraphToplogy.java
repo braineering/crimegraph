@@ -28,6 +28,7 @@ package com.acmutv.crimegraph;
 
 import com.acmutv.crimegraph.config.AppConfiguration;
 import com.acmutv.crimegraph.config.AppConfigurationService;
+import com.acmutv.crimegraph.config.serial.AppConfigurationYamlMapper;
 import com.acmutv.crimegraph.core.db.DbConfiguration;
 import com.acmutv.crimegraph.core.db.Neo4JManager;
 import com.acmutv.crimegraph.core.keyer.NodePairScoreKeyer;
@@ -72,14 +73,13 @@ public class CrimegraphToplogy {
     /* CONFIGURATION */
     CliService.handleArguments(args);
     AppConfiguration config = AppConfigurationService.getConfigurations();
-    System.out.println(config);
+    System.out.println(new AppConfigurationYamlMapper().writeValueAsString(config));
     final SourceType source = config.getSource();
     final DbConfiguration dbconf = config.getNeo4jConfig();
-    final int parallelism = config.getParallelism();
 
     /* ENVIRONMENT */
     final StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
-    env.setParallelism(parallelism);
+    env.setParallelism(config.getParallelism());
     Neo4JManager.empyting(dbconf);
 
     /* TOPOLOGY */

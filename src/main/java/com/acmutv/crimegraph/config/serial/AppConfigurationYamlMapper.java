@@ -47,6 +47,7 @@ public class AppConfigurationYamlMapper extends YAMLMapper {
   public AppConfigurationYamlMapper() {
     super();
     SimpleModule module = new SimpleModule();
+    module.addSerializer(AppConfiguration.class, AppConfigurationSerializer.getInstance());
     module.addDeserializer(AppConfiguration.class, AppConfigurationDeserializer.getInstance());
     super.registerModule(module);
   }
