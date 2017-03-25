@@ -6,7 +6,7 @@ The following algorithm generates the set of metrics update required when adding
 Notice that the algorithm covers the updates of both metrics in Equations~\ref{eqn:detection-local}. 
 Algorithm~\ref{alg:metrics-update} is executed by the operator \texttt{GraphUpdate} in Figure~\ref{fig:topology}, once every time it receive a new tuple $(x,y,w)$, representing the interaction between $x$ and $y$ of relevance $w$.
 
-\begin{algorithm}[!ht]
+\begin{algorithm}[t]
   \SetKwProg{Fn}{Function}{}{}  
   
   \Fn{receive (x,y,w)} {
