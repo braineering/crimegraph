@@ -13,7 +13,7 @@ function RestAPI(type)
     var potentialThreshold = document.getElementById('potentialThreshold').value;
 
     var command = {};
-
+    command.type = "first";
     command.dataset = datasetchoice;
     command.potentialMetric = potentialchoice;
     command.hiddenMetric = hiddenchoice;
@@ -117,4 +117,35 @@ function RestAPI(type)
       data: JSON.stringify(command)
     });
   }
+
+  if(type="start2") {
+
+    var firstid = document.getElementById('first_id_option').value;
+    var secondid = document.getElementById('second_id_option').value;
+    var weight = document.getElementById('weight_option').value;
+
+    var command = {};
+
+    command.type = "second";
+    command.firstid = firstid;
+    command.secondid = secondid;
+
+    if(!weight.match(/(^(0{0,1}|([1-9][0-9]*))(\.[0-9]{1,2})?$)/)){
+      alert("The inserted weight is not correct. Correct usage:[(x...x).xx] for x = {0,...9}");
+      return false;
+    }else{
+      command.weight = weight;
+    }
+
+    console.log(JSON.stringify(command));
+
+    $.ajax({
+      type: 'POST',
+      url: '/start',
+      dataType: 'json',
+      contentType: 'application/json',
+      data: JSON.stringify(command)
+    });
+  }
+
 };

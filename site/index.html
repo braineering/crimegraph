@@ -79,7 +79,8 @@
                 <div class="col-lg-8 col-lg-offset-2 text-center">
                     <h2 class="section-heading">What is it?</h2>
                     <hr class="light">
-                    <p class="text-faded">Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim. Donec pede justo, fringilla vel, aliquet nec, vulputate eget, arcu. In enim justo, rhoncus ut, imperdiet a, venenatis vitae, justo. Nullam dictum felis eu pede mollis pretium. Integer tincidunt.</p>
+                    <p class="text-faded">Big data analytics is a disruptive technology that can reshape core tasks of security intelligence. The real-time discovery of hidden criminal patterns is an outstanding challenge for security and law enforcement agencies. In particular, predicting the evolution of criminal networks and uncovering concealed relationships can efficiently guide investigations for better decision-making.
+                    In this context, it is necessary to develop social network metrics that are both domainaware and ready to be executed in a data stream environment. That is why we propose two metrics for link detection and prediction, together with their data stream processing implementation. The experimental results show that the proposed metrics can reach up to ??% accuracy with an average latency of ?? ms.</p>
                     <a href="#metrics" class="page-scroll btn btn-default btn-xl sr-button">Get Started!</a>
                 </div>
             </div>
@@ -93,31 +94,11 @@
                     <!--<a href="graphics/img/portfolio/fullsize/1.jpg" class="portfolio-box">-->
                     <div class="portfolio-box">
                         <img src="graphics/img/portfolio/thumbnails/1.jpg" class="img-responsive" alt="">
-                        <div class="portfolio-box-caption">
-                            <div class="portfolio-box-caption-content">
-                                <div class="project-category text-faded">
-                                    Description
-                                </div>
-                                <div class="project-name">
-                                    Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim. Donec pede justo, fringilla vel, aliquet nec, vulputate eget, arcu. In enim justo, rhoncus ut, imperdiet a, venenatis vitae, justo. Nullam dictum felis eu pede mollis pretium. Integer tincidunt.
-                                </div>
-                            </div>
-                        </div>
                     </div>
                 </div>
                 <div class="col-lg-6 col-sm-6">
                     <div class="portfolio-box">
                         <img src="graphics/img/portfolio/thumbnails/2.jpg" class="img-responsive" alt="">
-                        <div class="portfolio-box-caption">
-                            <div class="portfolio-box-caption-content">
-                                <div class="project-category text-faded">
-                                    Description
-                                </div>
-                                <div class="project-name">
-                                    Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim. Donec pede justo, fringilla vel, aliquet nec, vulputate eget, arcu. In enim justo, rhoncus ut, imperdiet a, venenatis vitae, justo. Nullam dictum felis eu pede mollis pretium. Integer tincidunt.
-                                </div>
-                            </div>
-                        </div>
                     </div>
                 </div>
             </div>
@@ -166,7 +147,7 @@
             </div>
         </div>
         <hr>
-        <div class="container">
+        <!--<div class="container" id="select_section">
             <div class="row">
                 <div class="col-lg-3 col-md-6 text-center">
                     <br>
@@ -239,9 +220,38 @@
                 </div>
             </div>
             </div>
+        </div>-->
+    </section>
+
+    <section padding-top="0" padding-bottom="0" id="workflow2">
+        <div class="container" id="select_section2">
+            <div class="row">
+                <div class="col-lg-3 col-md-6 text-center">
+                    <div class="" id="first_id">
+                        <h4>First Id</h4>
+                        <input type="number" id="first_id_option" placeholder="1231" min="0">
+                    </div>  
+                </div>
+                <div class="col-lg-3 col-md-6 text-center">
+                    <div class="" id="second_id">
+                        <h4>Second Id</h4>
+                        <input type="number" id="second_id_option" placeholder="2134" min="0">
+                    </div>  
+                </div>
+                <div class="col-lg-3 col-md-6 text-center">
+                    <div class="" id="weight">
+                        <h4>Weight</h4>
+                        <input type="textbox" id="weight_option" placeholder="3.67">
+                    </div>  
+                </div>
+                <div class="col-lg-3 col-md-6 text-center">
+                    <br>
+                    <a class="btn btn-primary btn-xl sr-button" onclick="RestAPI('start2');">START ANALYSIS</a>
+                </div>
+            </div>
         </div>
     </section>
-    
+
     <aside class="bg-dark">
         <div class="container text-center">
             <div class="call-to-action">
@@ -291,6 +301,9 @@
     <!-- initialize page -->
     <script type="text/javascript">
         // hide elements
+        $('#select_section').css("display","none");
+        $('#workflow').css("padding","0");
+        $('#workflow2').css("padding-top","0");
         $('#div_locality_option_potential').css("display","none");
         $('#div_weights_option_potential').css("display","none");
         $('#div_locality_option_hidden').css("display","none");

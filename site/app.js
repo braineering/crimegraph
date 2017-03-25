@@ -53,6 +53,12 @@ function fnStart(req, res) {
   var COMMAND = req.body;
   winston.info('New command submitted: ', JSON.stringify(COMMAND));
 
+  if(command.type == "second") 
+  {
+    /* gestire il secondo tipo di interfaccia grafica.
+       input a disposizione [command.firstid] [command.secondid] [command.weight]
+     */
+  }
   var dataset;
   switch(COMMAND.dataset) { // S, M, L
     case 'S':
