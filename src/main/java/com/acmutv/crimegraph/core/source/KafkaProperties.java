@@ -38,11 +38,11 @@ import java.util.Properties;
 @NoArgsConstructor
 public class KafkaProperties extends Properties {
 
-  private static final String BOOTSTRAP_SERVERS = "bootstrap.servers";
+  public static final String BOOTSTRAP_SERVERS = "bootstrap.servers";
 
-  private static final String ZOOKEEPER_CONNECT = "zookeeper.connect";
+  public static final String ZOOKEEPER_CONNECT = "zookeeper.connect";
 
-  private static final String GROUP_ID = "group.id";
+  public static final String GROUP_ID = "group.id";
 
   public KafkaProperties(String bootstrapServers, String zookeeperConnect, String groupId) {
     super();

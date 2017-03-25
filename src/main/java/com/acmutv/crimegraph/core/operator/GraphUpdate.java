@@ -78,6 +78,8 @@ public class GraphUpdate extends RichFlatMapFunction<Link, NodePair> {
     long x = value.f0;
     long y = value.f1;
 
+    if (x == y) return;
+
     Tuple3<Boolean,Boolean,Boolean> check = Neo4JManager.checkExtremes(this.session, x, y);
     boolean xInG = check.f0;
     boolean yinG = check.f1;

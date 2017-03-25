@@ -2,7 +2,13 @@
 
 *Crime network analysis leveraging data stream processing*
 
-Social Network Analysis (SNA) applied to criminal networks leveraging Apache Flink.
+Big data analytics is a disruptive technology that can reshape core tasks of security intelligence.
+The real-time discovery of hidden criminal patterns is an outstanding challenge for security and law enforcement agencies.
+In particular, predicting the evolution of criminal networks and uncovering concealed relationships can efficiently guide investigations for better decision-making.
+
+In this context, it is necessary to develop social network metrics that are both domain-aware and ready to be executed in a data stream environment. 
+That is why we propose two structural local metrics for link detection and prediction, together with their data stream processing implementation.
+The experimental results show that the proposed metrics can reach up to ??\% accuracy with an average latency of ?? ms.
 
 ## Requirements
 To execute the app locally you need the following to be installed to your system:
@@ -11,6 +17,7 @@ To execute the app locally you need the following to be installed to your system
 * Maven
 * Flink
 * Neo4J
+* Kafka
 
 To deploy the app to a Digital Ocean droplet, you need the following to be installed on your system:
 * Vagrant
