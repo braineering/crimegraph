@@ -5,13 +5,13 @@ start)  echo "[kafka-manager] starting kafka"
         {{ kafka_home }}/bin/zookeeper-server-start.sh {{ kafka_home }}/config/zookeeper.properties > /dev/null &
         sleep 10
         {{ kafka_home }}/bin/kafka-server-start.sh -daemon {{ kafka_home }}/config/server.properties
-        if [[ "main-topic" -ne "$({{ kafka_home }}/bin/kafka-topics.sh --list --zookeeper localhost:{{ kafka_http_port }})" ]]; then
+        if [[ "main-topic" != "$({{ kafka_home }}/bin/kafka-topics.sh --list --zookeeper localhost:{{ kafka_http_port }})" ]]; then
           {{ kafka_home }}/bin/kafka-topics.sh --create --topic {{ kafka_topic }} --zookeeper localhost:{{ kafka_zookeeper_port }} --partitions 1 --replication-factor 1
         fi
         echo "[kafka-manager] waiting kafka to warm up (max: {{ kafka_start_wait }} seconds)"
         end="$(( SECONDS + {{ kafka_start_wait }} ))"
         while true; do
-            [[ "{{ kafka_topic }}" = "$({{ kafka_home }}/bin/kafka-topics.sh --list --zookeeper localhost:{{ kafka_http_port }})" ]] && break
+            [[ "{{ kafka_topic }}" == "$({{ kafka_home }}/bin/kafka-topics.sh --list --zookeeper localhost:{{ kafka_http_port }})" ]] && break
             [[ "${SECONDS}" -ge "${end}" ]] && exit 1
             sleep "{{ kafka_start_pool }}"
         done
