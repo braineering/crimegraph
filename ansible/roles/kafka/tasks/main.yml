@@ -1,0 +1,85 @@
+---
+# file: kafka/tasks/main.yml
+- name: check Kafka (binary)
+  stat:
+    path: "{{ kafka_home }}/bin/kafka"
+  register: kafkaBin
+
+- name: download Kafka
+  get_url:
+    url: "{{ kafka_download }}"
+    dest: "{{ kafka_archive_path }}"
+  when: not kafkaBin.stat.exists
+
+- name: check Kafka (archive)
+  stat:
+    path: "{{ kafka_archive_path }}"
+  register: kafkaArchive
+
+- name: unarchive Kafka
+  unarchive:
+    src: "{{ kafka_archive_path }}"
+    dest: "{{ kafka_home | dirname }}"
+    remote_src: True
+    mode: 755
+  when: kafkaArchive.stat.exists
+
+- name: remove archive Kafka
+  file:
+    path: "{{ kafka_archive_path }}"
+    state: absent
+
+- name: configure permissions for Kafka
+  file:
+    path: "{{ kafka_home }}/bin/{{ item }}"
+    mode: 755
+  with_items:
+    - zookeeper-server-start.sh
+    - zookeeper-server-stop.sh
+    - kafka-server-start.sh
+    - kafka-topics.sh
+    - kafka-console-consumer.sh
+    - kafka-console-producer.sh
+    - connect-standalone.sh
+
+- name: configure envars Kafka
+  lineinfile:
+    name: /etc/profile.d/crimegraph-env.sh
+    regexp: "^KAFKA_HOME="
+    line: "KAFKA_HOME={{ kafka_home }}"
+    state: present
+    insertbefore: BOF
+    create: yes
+
+- name: create directory for manager Kafka
+  file:
+    path: "{{ kafka_manager_path | dirname }}"
+    state: directory
+    mode: 755
+
+- name: create manager Neo4J
+  template:
+    src: kafka-manager.sh
+    dest: "{{ kafka_manager_path }}"
+    mode: 755
+
+- name: create service Kafka
+  template:
+    src: kafka.service
+    dest: /etc/systemd/system/kafka.service
+    mode: 664
+
+- name: start service Kafka
+  systemd:
+    name: kafka
+    state: started
+    enabled: yes
+
+- name: configure Kafka
+  template:
+    src: "{ item }"
+    dest: "{{ kafka_home }}/conf/{ item }"
+  notify: restart Kafka
+  with_items:
+    - zookeeper.properties
+    - server.properties

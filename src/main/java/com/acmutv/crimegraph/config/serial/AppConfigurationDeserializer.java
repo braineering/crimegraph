@@ -87,14 +87,14 @@ public class AppConfigurationDeserializer extends StdDeserializer<AppConfigurati
       config.setTopic(topic);
     }
 
+    if (node.hasNonNull("kafka.zookeeper")) {
+      final String kafkaZookeper = node.get("kafka.zookeeper").asText();
+      config.getKafkaProperties().setZookeeperConnect(kafkaZookeper);
+    }
+
     if (node.hasNonNull("kafka.bootstrap")) {
       final String kafkaBootstrap = node.get("kafka.bootstrap").asText();
       config.getKafkaProperties().setBootstrapServers(kafkaBootstrap);
-    }
-
-    if (node.hasNonNull("kafka.zookeper")) {
-      final String kafkaZookeper = node.get("kafka.zookeper").asText();
-      config.getKafkaProperties().setZookeperConnect(kafkaZookeper);
     }
 
     if (node.hasNonNull("kafka.group")) {
@@ -155,6 +155,11 @@ public class AppConfigurationDeserializer extends StdDeserializer<AppConfigurati
     if (node.hasNonNull("potential.threshold")) {
       final double potentialThreshold = node.get("potential.threshold").asDouble();
       config.setPotentialThreshold(potentialThreshold);
+    }
+
+    if (node.hasNonNull("ewma.factor")) {
+      final double ewmaFactor = node.get("ewma.factor").asDouble();
+      config.setEwmaFactor(ewmaFactor);
     }
 
     if (node.hasNonNull("neo4j.hostname")) {

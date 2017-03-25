@@ -39,6 +39,9 @@ import org.slf4j.LoggerFactory;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.FileSystems;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -96,7 +99,8 @@ public class CliService {
     }
 
     if (!configured) {
-      final String configPath = AppConfigurationService.DEFAULT_CONFIG_FILENAME;
+      final String localConfig = AppConfigurationService.DEFAULT_CONFIG_FILENAME;
+      String configPath = FileSystems.getDefault().getPath(localConfig).toAbsolutePath().toString();
       LOGGER.trace("Loading local configuration {}", configPath);
       try {
         loadConfiguration(configPath);
@@ -140,7 +144,7 @@ public class CliService {
     /* option: kafkaZookeper */
     if (cmd.hasOption("kafkaZookeper")) {
       final String kafkaZookeper = cmd.getOptionValue("kafkaZookeper");
-      config.getKafkaProperties().setZookeperConnect(kafkaZookeper);
+      config.getKafkaProperties().setZookeeperConnect(kafkaZookeper);
     }
 
     /* option: kafkaGroup */
@@ -209,6 +213,12 @@ public class CliService {
     if (cmd.hasOption("potentialThreshold")) {
       final double potentialThreshold = Double.valueOf(cmd.getOptionValue("potentialThreshold"));
       config.setPotentialThreshold(potentialThreshold);
+    }
+
+    /* option: ewmaFactor */
+    if (cmd.hasOption("ewmaFactor")) {
+      final double ewmaFactor = Double.valueOf(cmd.getOptionValue("ewmaFactor"));
+      config.setEwmaFactor(ewmaFactor);
     }
 
     /* option: neo4jHostname */

@@ -8,7 +8,7 @@
 source: "KAFKA"
 kafka.topic: "CustomTopic"
 kafka.bootstrap: "CustomBootstrap"
-kafka.zookeper: "CustomZookeper"
+kafka.zookeeper: "CustomZookeper"
 kafka.group: "CustomGroup"
 
 #===============================================================================
@@ -26,6 +26,11 @@ potential.metric: "WEIGHTED_QUASI_LOCAL"
 potential.locality: 3
 potential.weights: [0.6,0.3,0.1]
 potential.threshold: 0.8
+
+#===============================================================================
+# EWMA
+#===============================================================================
+ewma.factor: 0.8
 
 #===============================================================================
 # NEO4J

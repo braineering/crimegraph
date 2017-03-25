@@ -3,12 +3,23 @@
     CREATE CONSTRAINT ON (u:Person) IS UNIQUE n.id
 
 
-## SAVE REAL LINK
+## SAVE REAL LINK (AVERAGE)
     MERGE (u1:Person {id:{src}})
     MERGE (u2:Person {id:{dst}})
     MERGE (u1)-[r:REAL]-(u2)
     ON CREATE SET r.weight={weight},r.num=1,r.created=timestamp(),r.updated=r.created
     ON MATCH SET r.weight=(r.weight*r.num+{weight})/(r.num+1),r.num=r.num+1,r.updated=timestamp()
+    WITH u1,u2
+    MATCH (u1)-[r2]-(u2)
+    WHERE type(r2)='POTENTIAL' OR type(r2)='HIDDEN'
+    DELETE r2
+    
+## SAVE REAL LINK (EWMA)
+    MERGE (u1:Person {id:{src}})
+    MERGE (u2:Person {id:{dst}})
+    MERGE (u1)-[r:REAL]-(u2)
+    ON CREATE SET r.weight={weight},r.num=1,r.created=timestamp(),r.updated=r.created
+    ON MATCH SET r.weight={ewma} * {weight} + (1- {ewma}) * r.weight,r.num=r.num+1,r.updated=timestamp()
     WITH u1,u2
     MATCH (u1)-[r2]-(u2)
     WHERE type(r2)='POTENTIAL' OR type(r2)='HIDDEN'

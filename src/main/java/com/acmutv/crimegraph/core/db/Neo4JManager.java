@@ -47,9 +47,23 @@ import static org.neo4j.driver.v1.Values.parameters;
 public class Neo4JManager {
 
   /**
-   * Query to create a new real link.
+   * Query to create a new real link (AVERAGE).
    */
-  private static final String SAVE_LINK_REAL =
+  private static final String SAVE_LINK_REAL_AVERAGE =
+      "MERGE (u1:Person {id:{src}}) " +
+          "MERGE (u2:Person {id:{dst}}) " +
+          "MERGE (u1)-[r:REAL]-(u2) " +
+          "ON CREATE SET r.weight={weight},r.num=1,r.created=timestamp(),r.updated=r.created " +
+          "ON MATCH SET r.weight=(r.weight*r.num+{weight})/(r.num+1),r.num=r.num+1,r.updated=timestamp() " +
+          "WITH u1,u2 " +
+          "MATCH (u1)-[r2]-(u2) " +
+          "WHERE type(r2)='POTENTIAL' OR type(r2)='HIDDEN' " +
+          "DELETE r2";
+
+  /**
+   * Query to create a new real link (EWMA).
+   */
+  private static final String SAVE_LINK_REAL_EWMA =
       "MERGE (u1:Person {id:{src}}) " +
           "MERGE (u2:Person {id:{dst}}) " +
           "MERGE (u1)-[r:REAL]-(u2) " +
@@ -298,7 +312,29 @@ public class Neo4JManager {
     Value params = parameters("src", src, "dst", dst, "weight", weight);
 
     switch (type) {
-      case REAL: session.run(SAVE_LINK_REAL, params); break;
+      case REAL: session.run(SAVE_LINK_REAL_AVERAGE, params); break;
+      case POTENTIAL: session.run(SAVE_LINK_POTENTIAL, params); break;
+      case HIDDEN: session.run(SAVE_LINK_HIDDEN, params); break;
+      default: break;
+    }
+  }
+
+  /**
+   * Saves a new link.
+   * @param session the NEO4J open session.
+   * @param link the link to save.
+   * @param ewmaFactor the EWMA factor for recent observation.
+   */
+  public static void save(Session session, Link link, double ewmaFactor) {
+    long src = link.f0;
+    long dst = link.f1;
+    double weight = link.f2;
+    LinkType type = link.f3;
+
+    Value params = parameters("src", src, "dst", dst, "weight", weight, "ewma", ewmaFactor);
+
+    switch (type) {
+      case REAL: session.run(SAVE_LINK_REAL_EWMA, params); break;
       case POTENTIAL: session.run(SAVE_LINK_POTENTIAL, params); break;
       case HIDDEN: session.run(SAVE_LINK_HIDDEN, params); break;
       default: break;

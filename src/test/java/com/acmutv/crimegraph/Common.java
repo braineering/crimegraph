@@ -23,42 +23,19 @@
   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
   THE SOFTWARE.
  */
-package com.acmutv.crimegraph.core.source;
-
-import com.acmutv.crimegraph.core.tuple.Link;
-import org.apache.flink.api.common.typeinfo.TypeInformation;
-import org.apache.flink.streaming.util.serialization.AbstractDeserializationSchema;
-import org.apache.flink.streaming.util.serialization.DeserializationSchema;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.io.IOException;
+package com.acmutv.crimegraph;
 
 /**
- * The Kafka deserialization schema for Link.
+ * This class realizes ...
+ *
  * @author Giacomo Marciani {@literal <gmarciani@acm.org>}
  * @since 1.0
  */
-public class LinkDeserializationSchema extends AbstractDeserializationSchema<Link> {
+public class Common {
 
-  private static final Logger LOGGER = LoggerFactory.getLogger(LinkDeserializationSchema.class);
+  public static final String HOSTNAME = "bolt://localhost:7687";
 
-  /**
-   * De-serializes the byte message.
-   *
-   * @param message The message, as a byte array.
-   * @return The de-serialized message as an object.
-   */
-  @Override
-  public Link deserialize(byte[] message) throws IOException {
-    final String str = new String(message);
-    Link link;
-    try {
-      link = Link.valueOf(str);
-    } catch (IllegalArgumentException exc) {
-      LOGGER.warn(exc.getMessage());
-      link = null;
-    }
-    return link;
-  }
+  public static final String USERNAME = "neo4j";
+
+  public static final String PASSWORD = "password";
 }

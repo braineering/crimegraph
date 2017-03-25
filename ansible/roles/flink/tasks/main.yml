@@ -72,7 +72,7 @@
   template:
     src: flink.service
     dest: /etc/systemd/system/flink.service
-    mode: 644
+    mode: 664
 
 - name: start service Flink
   systemd:

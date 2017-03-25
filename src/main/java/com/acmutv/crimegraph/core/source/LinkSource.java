@@ -81,8 +81,12 @@ public class LinkSource extends RichSourceFunction<Link> {
     String line;
     Link link;
     while ((line = this.reader.readLine()) != null && line.length() != 0) {
+      try {
         link = Link.valueOf(line);
         ctx.collect(link);
+      } catch (IllegalArgumentException exc) {
+        LOGGER.warn(exc.getMessage());
+      }
     }
 
     this.reader.close();

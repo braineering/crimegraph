@@ -132,6 +132,10 @@ public class BaseOptions extends Options {
   private static final String DESCRIPTION_POTENTIAL_THRESHOLD = "The threshold for link prediction. The threshold must be in (0,1).";
 
   /**
+   * The CLI description for the option `ewmaFactor`.
+   */
+  private static final String DESCRIPTION_EWMA_FACTOR = "The EWMA factor for recent observations.";
+  /**
    * The CLI description for the option `neo4jHostname`.
    */
   private static final String DESCRIPTION_NEO4J_HOSTNAME = "The Neo4J hostname.";
@@ -189,6 +193,7 @@ public class BaseOptions extends Options {
     Option potentialLocality = this.optPotentialLocality();
     Option potentialWeight = this.optPotentialWeights();
     Option potentialThreshold = this.optPotentialThreshold();
+    Option ewmaFactor = this.optEwmaFactor();
     Option parallelism = this.optParallelism();
 
     Option neo4jHostname = this.optNeo4jHostname();
@@ -213,6 +218,7 @@ public class BaseOptions extends Options {
     super.addOption(potentialLocality);
     super.addOption(potentialWeight);
     super.addOption(potentialThreshold);
+    super.addOption(ewmaFactor);
     super.addOption(neo4jHostname);
     super.addOption(neo4jUsername);
     super.addOption(neo4jPassword);
@@ -478,6 +484,21 @@ public class BaseOptions extends Options {
     return Option.builder()
         .longOpt("potentialThreshold")
         .desc(DESCRIPTION_POTENTIAL_THRESHOLD)
+        .required(false)
+        .hasArg(true)
+        .numberOfArgs(1)
+        .argName("NUMBER")
+        .build();
+  }
+
+  /**
+   * Builds the option `ewmaFactor`.
+   * @return the option.
+   */
+  private Option optEwmaFactor() {
+    return Option.builder()
+        .longOpt("ewmaFactor")
+        .desc(DESCRIPTION_EWMA_FACTOR)
         .required(false)
         .hasArg(true)
         .numberOfArgs(1)

@@ -8,6 +8,7 @@
     - java
     - scala
     - node
+    - kafka
     - flink
     - neo4j
     - app
