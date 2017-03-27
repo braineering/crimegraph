@@ -119,21 +119,21 @@
                 <div class="col-lg-3 col-md-6 text-center">
                     <div class="service-box">
                         <i class="fa fa-4x fa-database text-primary sr-icons"></i>
-                        <h3>Select Dataset</h3>
+                        <h3>Dataset</h3>
                         <p class="text-muted">You can use this theme as is, or you can make changes!</p>
                     </div>
                 </div>
                 <div class="col-lg-3 col-md-6 text-center">
                     <div class="service-box">
                         <i class="fa fa-4x fa-connectdevelop  text-primary sr-icons"></i>
-                        <h3>Start Analysis</h3>
+                        <h3>Analysis</h3>
                         <p class="text-muted">You can use this theme as is, or you can make changes!</p>
                     </div>
                 </div>
                 <div class="col-lg-3 col-md-6 text-center">
                     <div class="service-box">
                         <i class="fa fa-4x fa-bar-chart-o text-primary sr-icons"></i>
-                        <h3>Inspect Results</h3>
+                        <h3>Results</h3>
                         <p class="text-muted">We update dependencies to keep things fresh.</p>
                     </div>
                 </div>
@@ -246,11 +246,30 @@
                 </div>
                 <div class="col-lg-3 col-md-6 text-center">
                     <br>
-                    <a class="btn btn-primary btn-xl sr-button" onclick="RestAPI('start2');">START ANALYSIS</a>
+                    <a class="btn btn-primary btn-xl sr-button" onclick="RestAPI('start2');">ADD INTERACTION</a>
                 </div>
             </div>
         </div>
     </section>
+
+    <aside class="bg-primary">
+        <div class="container text-center">
+            <div class="row">
+                <div class="col-lg-6 col-md-6 text-center">
+                    <div class="" id="weight">
+                        <h3>App Monitoring</h3>
+                        <a class="btn btn-default btn-xl sr-button" onclick="RestAPI('flink');"> FLINK DASHBOARD</a>
+                    </div>  
+                </div>
+                <div class="col-lg-6 col-md-6 text-center">
+                    <div class="" id="weight">
+                        <h3>Interactive Graph </h3>
+                        <a class="btn btn-default btn-xl sr-button" onclick="RestAPI('neo4j');"> NEO4J DASHBOARD</a>
+                    </div>  
+                </div>
+            </div>
+        </div>
+    </aside>
 
     <aside class="bg-dark">
         <div class="container text-center">

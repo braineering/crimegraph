@@ -118,7 +118,7 @@ function RestAPI(type)
     });
   }
 
-  if(type="start2") {
+  if(type == "start2") {
 
     var firstid = document.getElementById('first_id_option').value;
     var secondid = document.getElementById('second_id_option').value;
@@ -145,6 +145,22 @@ function RestAPI(type)
       dataType: 'json',
       contentType: 'application/json',
       data: JSON.stringify(command)
+    });
+  }
+
+  if(type == "flink") {
+
+    $.ajax({
+      type: 'GET',
+      url: '/flink',
+    });
+  }
+
+  if(type == "neo4j") {
+
+    $.ajax({
+      type: 'GET',
+      url: '/neo4j',
     });
   }
 
