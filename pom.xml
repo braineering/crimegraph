@@ -130,6 +130,7 @@
     <fasterxml.jackson.yaml.version>2.8.3</fasterxml.jackson.yaml.version>
 
     <!-- Utilities -->
+    <apache.math>3.6.1</apache.math>
 
     <!-- Log -->
     <slf4j.version>1.7.24</slf4j.version>
@@ -253,6 +254,11 @@
     </dependency>
 
     <!-- Utilities -->
+    <dependency>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-math3</artifactId>
+      <version>${apache.math}</version>
+    </dependency>
 
     <!-- Log -->
     <dependency>

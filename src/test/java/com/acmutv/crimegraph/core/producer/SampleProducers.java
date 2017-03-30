@@ -70,14 +70,19 @@ public class SampleProducers {
     Path path = FileSystems.getDefault().getPath("data/crimegraph.data");
     StringKafkaProducer producer = new StringKafkaProducer(KAFKA_BOOTSTRAP_SERVERS);
 
+    System.out.println("Path: " + path.toString());
+
     BufferedReader reader = Files.newBufferedReader(path);
 
+    int i = 1;
     while (reader.ready()) {
       Link link = Link.valueOf(reader.readLine());
-      LOGGER.info("Publishing link %s", link);
       producer.send("main-topic", link);
+      System.out.format("Published link (%d): %s", i++, link);
     }
 
     producer.close();
+
+    reader.close();
   }
 }
