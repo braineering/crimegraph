@@ -18,6 +18,8 @@ start)  echo "[kafka-manager] starting kafka"
         echo "[kafka-manager] kafka started"
         ;;
 stop)   echo "[kafka-manager] stopping kafka..."
+        {{ kafka_home }}/bin/kafka-server-stop.sh
+        {{ kafka_home }}/bin/zookeeper-server-stop.sh
         {{ kafka_home }}/bin/zookeeper-server-stop.sh
         echo "[kafka-manager] kafka stopped"
         ;;

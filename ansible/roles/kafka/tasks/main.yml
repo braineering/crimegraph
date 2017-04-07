@@ -57,11 +57,16 @@
     state: directory
     mode: 755
 
-- name: create manager Neo4J
+- name: create manager Kafka
   template:
     src: kafka-manager.sh
     dest: "{{ kafka_manager_path }}"
     mode: 755
+
+- name: create Kafka topics
+  shell: "{{ kafka_home }}"/bin/kafka-topics.sh --create --zookeeper localhost:2181 --replication-factor 1 --partitions 1 --topic "{{ item }}"
+  with_items:
+    - main-topic
 
 - name: create service Kafka
   template:

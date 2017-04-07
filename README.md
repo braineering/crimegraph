@@ -6,7 +6,7 @@ Big data analytics is a disruptive technology that can reshape core tasks of sec
 The real-time discovery of hidden criminal patterns is an outstanding challenge for security and law enforcement agencies.
 In particular, predicting the evolution of criminal networks and uncovering concealed relationships can efficiently guide investigations for better decision-making.
 
-In this context, it is necessary to develop social network metrics that are both domain-aware and ready to be executed in a data stream environment. 
+In this context, it is necessary to develop social network metrics that are both domain-aware and ready to be executed in a data stream environment.
 That is why we propose two structural local metrics for link detection and prediction, together with their data stream processing implementation.
 The experimental results show that the proposed metrics can reach up to ??\% accuracy with an average latency of ?? ms.
 
@@ -24,6 +24,17 @@ To deploy the app to a Digital Ocean droplet, you need the following to be insta
 * Vagrant
 * Vagrant plugin for Digital Ocean
 * Ansible
+
+## Setup
+First you need to create the Kafka topic `main-topic`.
+
+    $kafka-home> bin/kafka-topics.sh --create --zookeeper localhost:2181 --replication-factor 1 --partitions 1 --topic main-topic
+
+To test message publishing:
+
+    $kafka-home> bin/kafka-console-producer.sh --broker-list localhost:9092 --topic main-topic
+
+    $kafka-home> bin/kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic main-topic
 
 
 ## Build
