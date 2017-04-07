@@ -5,7 +5,7 @@ The link prediction is the problem of infer which new interactions in the near f
 
 The following metrics are a normalized extension of \textit{Resource Allocation Index (RA)} \cite{berlusconi2016link, Lu2011,zhou2009predicting}. RA assigns a score to quantify similarity between vertices. Extensive tests in many complex networks have shown that RA is as one the best indicators on a large set of benchmark tests  \cite{berlusconi2016link,Lu2011}.
 
-Now, as the link detection, we present a local metric for link prediction and its quasi-local extension.
+Now, we present both a local and quasi-local metrics for link prediction and its quasi-local extension.
 Let us consider an undirected graph $G(V,E)$ and a pair of nodes $x$,$y\in V$. We can build the following local metric:
 
 \begin{equation}
@@ -17,8 +17,8 @@ Let us consider an undirected graph $G(V,E)$ and a pair of nodes $x$,$y\in V$. W
 
 where $k_{z}$ is the degree of node $z$ and $\Gamma_{x,y}$ is the set of common neighbors between $x$ and $y$. The role of the common neighbor $z$ in connecting $(x, y)$ is diluted if $z$ has many connections, since it will have less resources allocated to bridge $(x, y)$ \cite{berlusconi2016link}.
 
-Let us now consider an undirected graph $G$, a pair of nodes $x,y\in V$, a locality degree $t\in \mathbb{Z}$, $\geq 1$ and a vector $\vec{\mu}=(\mu_{1}\ldots\mu_{t})$ such that $\sum_{i=1}^{t}\mu_{i}=1$. We denote with $\Theta(x,t)$ the set of nodes at distance $t$ from $x$. In another words, given a nodes $v \in G$, and a path $\pi_{x,v}$ of length $t$, $\pi_{x,v} = u,v_{2},...,v_{t-1},v$, the set $\Theta(x,t) = \{v\}$.
-
+Let us now consider an undirected graph $G$, a pair of nodes $x,y\in V$, a locality degree $t\in \mathbb{Z}$, $\geq 1$ and a vector $\vec{\mu}=(\mu_{1}\ldots\mu_{t})$ such that $\sum_{i=1}^{t}\mu_{i}=1$. 
+%We denote with $\Theta(x,t)$ the set of nodes at distance $t$ from $x$. In another words, given a nodes $v \in G$, and a path $\pi_{x,v}$ of length $t$, $\pi_{x,v} = u,v_{2},...,v_{t-1},v$, the set $\Theta(x,t) = \{v\}$.
 Now, we can build the following quasi-local metric:
 
 \begin{equation}
