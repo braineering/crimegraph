@@ -1,0 +1,30 @@
+\section{Introduction}
+\label{sec:introduction}
+
+The data-driven fight against organized crime is opening new research challenges and directions. 
+Today, it is widely accepted that social network analysis (SNA) has a great potential to uncover complexities of criminal networks \cite{berlusconi2017social}.
+In particular, the real-time discovery of hidden criminal patterns is an outstanding challenge for security and law enforcement agencies \cite{berlusconi2016link}.
+
+In this context, it is necessary to develop big data analytics systems leveraging social network analysis models that are both aware of criminological results and ready to be executed in a data stream environment \cite{xu2005criminal,xu2004analyzing}.
+In this work we focus on link detection and prediction, namely the task of determining existent though invisible interactions, and the prediction of future ones \cite{Hasan2011}.
+%Currently, these problems are a long-standing challenge in modern information science, and the mainstream solutions leverages algorithms based on \textit{structural metrics} and \textit{statistical models} \cite{berlusconi2016link,Liben-Nowell,Lu2011}.
+Although the SNA metrics and their application in criminology have been widely addressed in literature, only recent works focused on their development as a big data analytics solution \cite{pramanik2016framework}.
+
+%The \textit{social network analysis (SNA)} is an interdisciplinary field from social sciences, statistics, graph theory and computer science. SNA has received considerable attention from the scientific community, in order to find algorithmic solutions to extract missing information, identify hidden interactions between individuals, and so on.
+ 
+%There are many domains that can be represented with a social network and to do that on network analysis, for example social interactions between people, biological interaction between proteins, systems informations. An additional field of application relates to criminal networks, to facilitate the authorities in the investigation of organized crime, such as terrorism, drug trafficking, fraud, armed gang crimes and others\cite{xu2005criminal}.
+
+%The analysis on large volumes of data produced by a criminal network, such as phone records, bank transitions, interceptions, sales of weapons or vehicles, and more, significantly reduces the raw data and provides the mechanisms to study the structural hidden properties of network\cite{xu2005criminal}.
+
+%In this paper, we focus on a criminal scenario and describe it on a graph where apply the link mining techniques. 
+%In particular, we want to predict the likelihood that a link, between two entities, is hidden or that may arise in the future. These problems are called respectively the \textit{link detection problem} and \textit{link prediction problem}. 
+
+The remainder of the paper is organized as follows:
+Section~\ref{sec:background} gives the background, useful to better understand our work;
+Section~\ref{sec:data-model} defines the data model adopted to describe criminal entities and interactions;
+Section~\ref{sec:link-detection} and Section~\ref{sec:link-prediction} defines the proposed local metrics for link detection and prediction;
+Section~\ref{sec:architecture} shows the data stream processing architecture to deploy these metrics;
+Section~\ref{sec:metrics-update} shows the data stream algorithm to detect the necessary metrics updates in a data stream processing environment.
+Section~\ref{sec:evaluation} gives the experimental results about the performance achieved with the proposed metrics;
+Section~\ref{sec:further-improvements} outlines the possible improvements for the proposed metrics;
+Section~\ref{sec:conclusions} concludes this article, summarizing our work and results.
