@@ -28,6 +28,7 @@ package com.acmutv.crimegraph.evaluation;
 
 import com.acmutv.crimegraph.core.db.DbConfiguration;
 import com.acmutv.crimegraph.core.db.Neo4JManager;
+import com.acmutv.crimegraph.core.producer.StringKafkaProducer;
 import com.acmutv.crimegraph.core.tuple.Link;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -38,7 +39,9 @@ import org.slf4j.LoggerFactory;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.nio.file.FileSystems;
 import java.nio.file.Files;
+import java.nio.file.Path;
 
 import static com.acmutv.crimegraph.Common.*;
 import static com.acmutv.crimegraph.evaluation.EvaluationCommon.PREDICTION_TRAINING;
@@ -54,6 +57,12 @@ public class DataUtilities {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(DataUtilities.class);
 
+  private static final String KAFKA_BOOTSTRAP_SERVERS = "localhost:9092";
+
+  /**
+   * Writes links to Neo4J from file.
+   * @throws IOException
+   */
   @Test
   @Ignore
   public void writeLinksOnNeo4j() throws IOException {
@@ -62,14 +71,38 @@ public class DataUtilities {
     Session session = driver.session();
 
     try (BufferedReader reader = Files.newBufferedReader(PREDICTION_TRAINING)) {
+      int i = 1;
       while (reader.ready()) {
         Link link = Link.valueOf(reader.readLine());
         Neo4JManager.save(session, link, 0.5);
-        LOGGER.warn("WRITING ON NEO4J: {}", link);
+        System.out.format("WRITING LINK ON NEO4J (%d): %s", i++, link);
       }
     }
 
     session.close();
     driver.close();
+  }
+
+  /**
+   * Publish links from file.
+   */
+  @Test
+  @Ignore
+  public void publishFromFile() throws Exception {
+    Path path = FileSystems.getDefault().getPath("data/crimegraph.data");
+    StringKafkaProducer producer = new StringKafkaProducer(KAFKA_BOOTSTRAP_SERVERS);
+
+    System.out.println("Path: " + path.toString());
+
+    try (BufferedReader reader = Files.newBufferedReader(path)) {
+      int i = 1;
+      while (reader.ready()) {
+        Link link = Link.valueOf(reader.readLine());
+        producer.send("main-topic", link);
+        System.out.format("PUBLISHING LINK TO KAFKA (%d): %s", i++, link);
+      }
+    }
+
+    producer.close();
   }
 }
