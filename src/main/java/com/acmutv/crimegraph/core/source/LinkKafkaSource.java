@@ -27,7 +27,6 @@ package com.acmutv.crimegraph.core.source;
 
 import com.acmutv.crimegraph.core.tuple.Link;
 import org.apache.flink.streaming.connectors.kafka.FlinkKafkaConsumer010;
-import org.apache.flink.streaming.util.serialization.DeserializationSchema;
 
 import java.util.Properties;
 

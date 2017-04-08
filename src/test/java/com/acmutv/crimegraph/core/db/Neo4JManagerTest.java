@@ -32,7 +32,6 @@ import org.apache.flink.api.java.tuple.Tuple2;
 import org.apache.flink.api.java.tuple.Tuple3;
 import org.apache.flink.api.java.tuple.Tuple4;
 import org.junit.*;
-import org.junit.runners.MethodSorters;
 import org.neo4j.driver.v1.*;
 
 import java.io.IOException;

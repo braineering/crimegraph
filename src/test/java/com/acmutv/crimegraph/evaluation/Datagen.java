@@ -26,18 +26,11 @@
 
 package com.acmutv.crimegraph.evaluation;
 
-import com.acmutv.crimegraph.core.db.DbConfiguration;
-import com.acmutv.crimegraph.core.db.Neo4JManager;
 import com.acmutv.crimegraph.core.tuple.Link;
-import org.apache.commons.lang3.tuple.ImmutablePair;
-import org.apache.commons.lang3.tuple.Pair;
-import org.junit.Ignore;
 import org.junit.Test;
-import org.neo4j.driver.v1.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.nio.charset.Charset;
@@ -46,14 +39,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.util.*;
-
-import static com.acmutv.crimegraph.Common.HOSTNAME;
-import static com.acmutv.crimegraph.Common.PASSWORD;
-import static com.acmutv.crimegraph.Common.USERNAME;
-import static com.acmutv.crimegraph.evaluation.EvaluationCommon.PREDICTION_ORIGIN;
-import static com.acmutv.crimegraph.evaluation.EvaluationCommon.PREDICTION_TEST;
-import static com.acmutv.crimegraph.evaluation.EvaluationCommon.PREDICTION_TRAINING;
-import static org.neo4j.driver.v1.Values.parameters;
 
 /**
  * Utility for the original dataset generation.

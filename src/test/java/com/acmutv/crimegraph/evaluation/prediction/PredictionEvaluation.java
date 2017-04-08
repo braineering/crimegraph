@@ -30,8 +30,6 @@ import com.acmutv.crimegraph.core.db.DbConfiguration;
 import com.acmutv.crimegraph.core.db.Neo4JManager;
 import com.acmutv.crimegraph.core.tuple.Link;
 import com.acmutv.crimegraph.core.tuple.LinkType;
-import org.apache.commons.math3.util.CombinatoricsUtils;
-import org.junit.Assert;
 import org.junit.Test;
 import org.neo4j.driver.v1.*;
 import org.slf4j.Logger;
