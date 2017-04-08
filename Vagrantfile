@@ -4,10 +4,10 @@ Vagrant.configure("2") do |config|
 
   config.vm.define "crimegraph" do |config|
     config.vm.provider :digital_ocean do |provider, override|
-      override.ssh.private_key_path = "~/.ssh/crimegraph.digitalocean.com"
+      override.ssh.private_key_path = "~/.ssh/vagrant@digitalocean"
       override.vm.box = "digital_ocean"
       override.vm.box_url = "https://github.com/devops-group-io/vagrant-digitalocean/raw/master/box/digital_ocean.box"
-      provider.token = "d9367e99a669643ad233106acdcceb38d6046844f2e4bceeb14063a3812bd587"
+      provider.token = "6fac9c763921a69ddd79f3594ee7394e72a6ba01428f5b0e2a6754ffc1ed486d"
       provider.image = "debian-8-x64"
       provider.region = "ams2"
       provider.size = "8gb"

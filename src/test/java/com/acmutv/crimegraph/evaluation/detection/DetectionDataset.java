@@ -26,11 +26,8 @@
 
 package com.acmutv.crimegraph.evaluation.detection;
 
-import com.acmutv.crimegraph.core.db.DbConfiguration;
-import com.acmutv.crimegraph.core.db.Neo4JManager;
 import com.acmutv.crimegraph.core.tuple.Link;
 import org.junit.Test;
-import org.neo4j.driver.v1.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,9 +38,7 @@ import java.nio.charset.Charset;
 import java.nio.file.*;
 import java.util.Random;
 
-import static com.acmutv.crimegraph.Common.*;
 import static com.acmutv.crimegraph.evaluation.EvaluationCommon.*;
-import static org.neo4j.driver.v1.Values.parameters;
 
 /**
  * Utility for dataset generation for link detection.
@@ -51,9 +46,9 @@ import static org.neo4j.driver.v1.Values.parameters;
  * @since 1.0
  * @see Link
  */
-public class DetectionEvaluationDataset {
+public class DetectionDataset {
 
-  private static final Logger LOGGER = LoggerFactory.getLogger(DetectionEvaluationDataset.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger(DetectionDataset.class);
 
   /**
    * Creates the training and test set for link detection.

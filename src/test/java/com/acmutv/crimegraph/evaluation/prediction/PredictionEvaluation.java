@@ -48,6 +48,7 @@ import static com.acmutv.crimegraph.Common.PASSWORD;
 import static com.acmutv.crimegraph.Common.USERNAME;
 import static com.acmutv.crimegraph.evaluation.EvaluationCommon.PREDICTION_ORIGIN;
 import static com.acmutv.crimegraph.evaluation.EvaluationCommon.PREDICTION_TEST;
+import static com.acmutv.crimegraph.evaluation.EvaluationCommon.PREDICTION_TRAINING;
 import static org.neo4j.driver.v1.Values.parameters;
 
 /**
@@ -61,18 +62,20 @@ public class PredictionEvaluation {
   private static final Logger LOGGER = LoggerFactory.getLogger(PredictionEvaluation.class);
 
   private static final String MATCH_POTENTIAL =
-      "MATCH (a:Person {id:{src}})-[r:POTENTIAL]->(b:Person {id:{dst}}) " +
-          "WITH r " +
-          "RETURN r IS NOT NULL AS exists";
+      "OPTIONAL MATCH (a:Person {id:{src}}) " +
+          "OPTIONAL MATCH (b:Person {id:{dst}}) " +
+          "WITH a,b " +
+          "OPTIONAL MATCH (a)-[r:POTENTIAL]-(b) " +
+          "RETURN a IS NOT NULL AS existsSrc, b IS NOT NULL AS existsDst, r IS NOT NULL AS existsRel";
 
   private static final String GET_PARTIAL_N1N2_POTENTIAL =
-      "MATCH (x1 {id:{src1}})-[r1:POTENTIAL]->(y1 {id:{dst1}}) " +
-          "MATCH (x2 {id:{src2}})-[r2:POTENTIAL]->(y2 {id:{dst2}}) " +
+      "MATCH (x1 {id:{src1}})-[r1:POTENTIAL]-(y1 {id:{dst1}}) " +
+          "MATCH (x2 {id:{src2}})-[r2:POTENTIAL]-(y2 {id:{dst2}}) " +
           "WITH r1,r2 " +
           "RETURN r1.weight > r2.weight AS n1, r1.weight = r2.weight AS n2";
 
   private static final String GET_TOP_POTENTIAL =
-      "MATCH (x)-[r:POTENTIAL]->(y) " +
+      "MATCH (x)-[r:POTENTIAL]-(y) " +
           "RETURN x.id AS src, y.id AS dst " +
           "ORDER BY (r.weight) DESC " +
           "LIMIT {top}";
@@ -96,12 +99,16 @@ public class PredictionEvaluation {
         StatementResult result = session.run(MATCH_POTENTIAL, params);
         if (result.hasNext()) {
           Record rec = result.next();
-          Boolean exists = rec.get("exists").asBoolean();
-          if (exists) {
-            mined ++;
+          Boolean existsSrc = rec.get("existsSrc").asBoolean();
+          Boolean existsDst = rec.get("existsDst").asBoolean();
+          Boolean existsRel = rec.get("existsRel").asBoolean();
+          if (existsSrc && existsDst) { // can be predicted
+            total ++;
+            if (existsRel) { // has been predicted
+              mined ++;
+            }
           }
         }
-        total ++;
       }
     }
 
@@ -122,52 +129,57 @@ public class PredictionEvaluation {
     Driver driver = Neo4JManager.open(dbconf);
     Session session = driver.session();
 
-    Set<Long> nodes = new HashSet<>();
-    Set<Link> edges = new HashSet<>();
-    try (BufferedReader originReader = Files.newBufferedReader(PREDICTION_ORIGIN)) {
+    Set<Long> nodes_training = new HashSet<>(); // existent nodes in training set
+    Set<Link> links_training = new HashSet<>(); // existent links in training set
+    try (BufferedReader originReader = Files.newBufferedReader(PREDICTION_TRAINING)) {
       while (originReader.ready()) {
         Link link = Link.valueOf(originReader.readLine());
         long src = link.f0;
         long dst = link.f1;
-        nodes.add(src);
-        nodes.add(dst);
+        nodes_training.add(src);
+        nodes_training.add(dst);
         link.f3 = LinkType.REAL;
         link.f2 = 1.0;
-        edges.add(link);
+        links_training.add(link);
       }
     }
 
-    int numnodes = nodes.size();
-    int numedges = edges.size();
+    int numnodes_training = nodes_training.size();
+    int numlinks_training = links_training.size();
 
-    Set<Link> absentLinks = new HashSet<>();
-    for (long src : nodes) {
-      for (long dst : nodes) {
+    Set<Link> absentLinks_training = new HashSet<>(); // not existent links in training set
+    for (long src : nodes_training) {
+      for (long dst : nodes_training) {
+        if (dst <= src) continue;
         Link link = new Link(src, dst, 1.0, LinkType.REAL);
-        if (!edges.contains(link) && src != dst) {
-          absentLinks.add(link);
+        if (!links_training.contains(link)) {
+          absentLinks_training.add(link);
         }
       }
     }
-    long absent = absentLinks.size();
-    Assert.assertEquals(absent, CombinatoricsUtils.binomialCoefficient(numnodes, 2) - numedges);
+    long numabsentlinks_training = absentLinks_training.size();
+    Assert.assertEquals(numabsentlinks_training, CombinatoricsUtils.binomialCoefficient(numnodes_training, 2) - numlinks_training);
 
-    Set<Link> testLinks = new HashSet<>();
-    try(BufferedReader testReader = Files.newBufferedReader(PREDICTION_TEST)) {
+    Set<Link> testLinks = new HashSet<>(); // test links
+    try (BufferedReader testReader = Files.newBufferedReader(PREDICTION_TEST)) {
       while (testReader.ready()) {
         Link link = Link.valueOf(testReader.readLine());
-        link.f3 = LinkType.REAL;
-        link.f2 = 1.0;
-        testLinks.add(link);
+        long src = link.f0;
+        long dst = link.f1;
+        if (nodes_training.contains(src) && nodes_training.contains(dst)) { // can be predicted
+          link.f3 = LinkType.REAL;
+          link.f2 = 1.0;
+          testLinks.add(link);
+        }
       }
     }
 
-    long n1 = 0; // numero di volte in cui lo score di un potential existent è maggiore di un non existent.
-    long n2 = 0; // numero di volte in cui lo score di un potential existent è uguale ad un non existent.
-    for (Link truePotential : testLinks) {
-      for (Link absentLink : absentLinks) {
-        long src1 = truePotential.f0;
-        long dst1 = truePotential.f1;
+    long n1 = 0; // numero di volte in cui lo score di un test link è maggiore di quello di un link non esistente nel training set.
+    long n2 = 0; // numero di volte in cui lo score di un test link è uguale a quello di un link non esistente nel training set.
+    for (Link testLink : testLinks) {
+      for (Link absentLink : absentLinks_training) {
+        long src1 = testLink.f0;
+        long dst1 = testLink.f1;
         long src2 = absentLink.f0;
         long dst2 = absentLink.f1;
         Value params = parameters("src1", src1, "dst1", dst1, "src2", src2, "dst2", dst2);
@@ -182,7 +194,7 @@ public class PredictionEvaluation {
       }
     }
 
-    long n = testLinks.size() * absent; // potential existent scores * non existent
+    long n = testLinks.size() * numabsentlinks_training; // potential existent scores * non existent
     double auc = n1 + 0.5*n2 / n;
 
     LOGGER.info("AUC %.3f", auc);
@@ -200,10 +212,10 @@ public class PredictionEvaluation {
     Driver driver = Neo4JManager.open(dbconf);
     Session session = driver.session();
 
-    int top = 3;
+    int k = 3;
 
-    Set<Link> topLinksTraining = new HashSet<>();
-    Value params = parameters("top", top);
+    Set<Link> topLinksTraining = new HashSet<>(); // top k predicted
+    Value params = parameters("top", k);
     StatementResult topTrainingResult = session.run(GET_TOP_POTENTIAL, params);
     while (topTrainingResult.hasNext()) {
       Record rec = topTrainingResult.next();
@@ -213,13 +225,28 @@ public class PredictionEvaluation {
       topLinksTraining.add(link);
     }
 
+    Set<Long> nodes_training = new HashSet<>(); // existent nodes in training set
+    try (BufferedReader originReader = Files.newBufferedReader(PREDICTION_TRAINING)) {
+      while (originReader.ready()) {
+        Link link = Link.valueOf(originReader.readLine());
+        long src = link.f0;
+        long dst = link.f1;
+        nodes_training.add(src);
+        nodes_training.add(dst);
+      }
+    }
+
     Set<Link> linksTest = new HashSet<>();
     try (BufferedReader testReader = Files.newBufferedReader(PREDICTION_TEST)) {
       while (testReader.ready()) {
         Link link = Link.valueOf(testReader.readLine());
-        link.f3 = LinkType.REAL;
-        link.f2 = 1.0;
-        linksTest.add(link);
+        long src = link.f0;
+        long dst = link.f1;
+        if (nodes_training.contains(src) && nodes_training.contains(dst)) { // can be predicted
+          link.f3 = LinkType.REAL;
+          link.f2 = 1.0;
+          linksTest.add(link);
+        }
       }
     }
     long numTestLinks = linksTest.size();

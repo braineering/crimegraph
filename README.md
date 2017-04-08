@@ -26,7 +26,11 @@ To deploy the app to a Digital Ocean droplet, you need the following to be insta
 * Ansible
 
 ## Setup
-First you need to create the Kafka topic `main-topic`.
+First you need to create the Kafka topic `main-topic`:
+
+    $kafka-home> bin/kafka-topics.sh --create --zookeeper localhost:2181 --replication-factor 1 --partitions 1 --topic main-topic
+
+Test the topic creation:
 
     $kafka-home> bin/kafka-topics.sh --create --zookeeper localhost:2181 --replication-factor 1 --partitions 1 --topic main-topic
 

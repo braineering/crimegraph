@@ -53,20 +53,22 @@ public class Datagen {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(Datagen.class);
 
-  private static final int NUM_NODES = 250;
+  private static final int NUM_NODES = 100;
 
-  private static final int NUM_LINKS = 1000;
+  private static final int NUM_LINKS = 500;
 
   private static final double MIN_WEIGHT = 1.0;
 
-  private static final double MAX_WEIGHT = 10.0;
+  private static final double MAX_WEIGHT = 100.0;
 
   /**
    * Generates a simple random dataset.
    */
   @Test
   public void simple() throws Exception {
-    Path path = FileSystems.getDefault().getPath("data/crimegraph.data");
+    final String datasetName = "crimegraph-datagen-simple.data";
+
+    Path path = FileSystems.getDefault().getPath("data/" + datasetName);
 
     if (!Files.isDirectory(path.getParent())) {
       Files.createDirectories(path.getParent());
@@ -93,7 +95,7 @@ public class Datagen {
     String flinkHome = System.getenv("FLINK_HOME");
 
     if (flinkHome != null) {
-      Path flinkPath = FileSystems.getDefault().getPath(flinkHome + "/resources/crimegraph/data/crimegraph.data");
+      Path flinkPath = FileSystems.getDefault().getPath(flinkHome + "/resources/crimegraph/data/" + datasetName);
       if (!Files.isDirectory(flinkPath.getParent())) {
         Files.createDirectories(flinkPath.getParent());
       }
@@ -106,7 +108,9 @@ public class Datagen {
    */
   @Test
   public void circular() throws Exception {
-    Path path = FileSystems.getDefault().getPath("data/crimegraph.data");
+    final String datasetName = "crimegraph-datagen-circular.data";
+
+    Path path = FileSystems.getDefault().getPath("data/" + datasetName);
 
     if (!Files.isDirectory(path.getParent())) {
       Files.createDirectories(path.getParent());
@@ -127,7 +131,7 @@ public class Datagen {
     String flinkHome = System.getenv("FLINK_HOME");
 
     if (flinkHome != null) {
-      Path flinkPath = FileSystems.getDefault().getPath(flinkHome + "/resources/crimegraph/data/crimegraph.data");
+      Path flinkPath = FileSystems.getDefault().getPath(flinkHome + "/resources/crimegraph/data/" + datasetName);
       if (!Files.isDirectory(flinkPath.getParent())) {
         Files.createDirectories(flinkPath.getParent());
       }

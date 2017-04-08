@@ -26,15 +26,8 @@
 
 package com.acmutv.crimegraph.evaluation.prediction;
 
-import com.acmutv.crimegraph.core.db.DbConfiguration;
-import com.acmutv.crimegraph.core.db.Neo4JManager;
 import com.acmutv.crimegraph.core.tuple.Link;
-import com.acmutv.crimegraph.core.tuple.LinkType;
-import com.acmutv.crimegraph.evaluation.EvaluationCommon;
-import org.apache.commons.math3.util.CombinatoricsUtils;
-import org.junit.Assert;
 import org.junit.Test;
-import org.neo4j.driver.v1.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -42,16 +35,12 @@ import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.nio.charset.Charset;
-import java.nio.file.FileSystems;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.util.HashSet;
 import java.util.Set;
 
-import static com.acmutv.crimegraph.Common.*;
 import static com.acmutv.crimegraph.evaluation.EvaluationCommon.*;
-import static org.neo4j.driver.v1.Values.parameters;
 
 /**
  * Utility for dataset generation for link prediction.
@@ -59,9 +48,9 @@ import static org.neo4j.driver.v1.Values.parameters;
  * @since 1.0
  * @see Link
  */
-public class PredictionEvaluationDataset {
+public class PredictionDataset {
 
-  private static final Logger LOGGER = LoggerFactory.getLogger(PredictionEvaluationDataset.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger(PredictionDataset.class);
 
   /**
    * Creates the training and test set for link prediction.
@@ -74,6 +63,8 @@ public class PredictionEvaluationDataset {
     BufferedReader reader = Files.newBufferedReader(PREDICTION_ORIGIN, Charset.defaultCharset());
     BufferedWriter writer = Files.newBufferedWriter(PREDICTION_TRAINING, Charset.defaultCharset(), StandardOpenOption.CREATE);
     BufferedWriter writerTest = Files.newBufferedWriter(PREDICTION_TEST, Charset.defaultCharset(), StandardOpenOption.CREATE);
+
+    Set<Long> knownNodes = new HashSet<>();
 
     String line;
     for (long lines = 1; lines <= trainingLines; lines++) {
