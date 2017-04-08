@@ -26,11 +26,18 @@
 
 package com.acmutv.crimegraph.evaluation;
 
+import com.acmutv.crimegraph.core.db.DbConfiguration;
+import com.acmutv.crimegraph.core.db.Neo4JManager;
 import com.acmutv.crimegraph.core.tuple.Link;
+import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.apache.commons.lang3.tuple.Pair;
+import org.junit.Ignore;
 import org.junit.Test;
+import org.neo4j.driver.v1.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.nio.charset.Charset;
@@ -38,9 +45,15 @@ import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
+
+import static com.acmutv.crimegraph.Common.HOSTNAME;
+import static com.acmutv.crimegraph.Common.PASSWORD;
+import static com.acmutv.crimegraph.Common.USERNAME;
+import static com.acmutv.crimegraph.evaluation.EvaluationCommon.PREDICTION_ORIGIN;
+import static com.acmutv.crimegraph.evaluation.EvaluationCommon.PREDICTION_TEST;
+import static com.acmutv.crimegraph.evaluation.EvaluationCommon.PREDICTION_TRAINING;
+import static org.neo4j.driver.v1.Values.parameters;
 
 /**
  * Utility for the original dataset generation.
@@ -53,9 +66,9 @@ public class Datagen {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(Datagen.class);
 
-  private static final int NUM_NODES = 100;
+  private static final int NUM_NODES = 50;
 
-  private static final int NUM_LINKS = 500;
+  private static final int NUM_LINKS = 100;
 
   private static final double MIN_WEIGHT = 1.0;
 
@@ -77,17 +90,22 @@ public class Datagen {
     Random rnd = new Random();
 
     List<Link> data = new ArrayList<>();
+    Map<Integer,Set<Integer>> pairs = new HashMap<>();
 
     for (int i = 0; i < NUM_LINKS; i++) {
-      int x = rnd.nextInt(NUM_NODES);
-      int y;
+      int x = 0;
+      int y = 0;
       do {
         y = rnd.nextInt(NUM_NODES);
-      } while (y == x);
+        if (y == 0) continue;
+        x = rnd.nextInt(y);
+      } while (y <= x || (pairs.containsKey(x) && pairs.get(x).contains(y)));
 
       double weight = rnd.nextDouble() * (MAX_WEIGHT - MIN_WEIGHT) + MIN_WEIGHT;
       Link link = new Link(x, y, weight);
       data.add(link);
+      pairs.putIfAbsent(x, new HashSet<>());
+      pairs.get(x).add(y);
     }
 
     writeDataset(path, data);
