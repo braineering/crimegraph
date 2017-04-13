@@ -105,4 +105,19 @@ public class DataUtilities {
 
     producer.close();
   }
+
+  /**
+   * Publish links from file.
+   */
+  @Test
+  @Ignore
+  public void publish() throws Exception {
+    StringKafkaProducer producer = new StringKafkaProducer("54.229.245.205:9092");
+
+    Link link = new Link(1,2,1.0);
+    producer.send("main-topic", link);
+    System.out.format("PUBLISHING LINK TO KAFKA: %s", link);
+
+    producer.close();
+  }
 }

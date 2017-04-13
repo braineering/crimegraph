@@ -1,14 +1,32 @@
 ---
-- name: install Crimegraph
+# file: playbook.yml
+- name: common configuration
   hosts: all
-  remote_user: root
+  remote_user: admin
+  become: true
   roles:
     - common
-    - nginx
+    - ec2
     - java
-    - scala
-    - node
+
+- name: provision kafka nodes
+  hosts: kafka
+  remote_user: admin
+  become: true
+  roles:
     - kafka
+
+- name: provision flink nodes
+  hosts: flink
+  remote_user: admin
+  become: true
+  roles:
     - flink
+    - flink-app
+
+- name: provision neo4j nodes
+  hosts: neo4j
+  remote_user: admin
+  become: true
+  roles:
     - neo4j
-    - app

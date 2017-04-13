@@ -1,0 +1,3 @@
+---
+# file: group_vars/kafka
+var1: "value-var1-kafka"

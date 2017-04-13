@@ -1,8 +1,20 @@
 ---
 # file: kafka/tasks/main.yml
+- name: gather ec2 facts
+  ec2_facts:
+
+- name: report ec2 facts
+  debug:
+    msg: "{{ ansible_ec2_public_ipv4 }}"
+
+- name: setting hostnames
+  template:
+    src: hosts.txt
+    dest: /etc/hosts
+
 - name: check Kafka (binary)
   stat:
-    path: "{{ kafka_home }}/bin/kafka"
+    path: "{{ kafka_home }}/bin/kafka-server-start.sh"
   register: kafkaBin
 
 - name: download Kafka
@@ -37,10 +49,10 @@
     - zookeeper-server-start.sh
     - zookeeper-server-stop.sh
     - kafka-server-start.sh
+    - kafka-server-stop.sh
     - kafka-topics.sh
     - kafka-console-consumer.sh
     - kafka-console-producer.sh
-    - connect-standalone.sh
 
 - name: configure envars Kafka
   lineinfile:
@@ -63,11 +75,6 @@
     dest: "{{ kafka_manager_path }}"
     mode: 755
 
-- name: create Kafka topics
-  shell: "{{ kafka_home }}"/bin/kafka-topics.sh --create --zookeeper localhost:2181 --replication-factor 1 --partitions 1 --topic "{{ item }}"
-  with_items:
-    - main-topic
-
 - name: create service Kafka
   template:
     src: kafka.service
@@ -82,8 +89,8 @@
 
 - name: configure Kafka
   template:
-    src: "{ item }"
-    dest: "{{ kafka_home }}/conf/{ item }"
+    src: "{{ item }}"
+    dest: "{{ kafka_home }}/config/{{ item }}"
   notify: restart Kafka
   with_items:
     - zookeeper.properties

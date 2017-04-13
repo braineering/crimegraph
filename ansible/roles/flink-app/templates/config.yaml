@@ -1,0 +1,22 @@
+#===============================================================================
+# Configuration file
+#===============================================================================
+
+#===============================================================================
+# SOURCE
+#===============================================================================
+kafka.topic: {{ flink_app_kafka_topic }}
+kafka.zookeeper: {{ flink_app_kafka_zookeeper_hostname }}:{{ flink_app_kafka_zookeeper_port }}
+kafka.bootstrap: {{ flink_app_kafka_broker_hostname }}:{{ flink_app_kafka_broker_port }}
+
+#===============================================================================
+# NEO4J
+#===============================================================================
+neo4j.hostname: bolt://{{ flink_app_neo4j_hostname }}:{{ flink_app_neo4j_bolt_port }}
+neo4j.username: {{ flink_app_neo4j_username }}
+neo4j.password: {{ flink_app_neo4j_password }}
+
+#===============================================================================
+# TOPOLOGY
+#===============================================================================
+parallelism: {{ flink_app_parallelism }}

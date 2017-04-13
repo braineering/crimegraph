@@ -1,0 +1,3 @@
+---
+# file: group_vars/flink
+var1: "value-var1-flink"

@@ -1,45 +1,81 @@
+#*******************************************************************************
+# PACKAGES
+#*******************************************************************************
+require "vagrant-aws"
+require "yaml"
+
+#*******************************************************************************
+# REQUIREMENTS
+#*******************************************************************************
 Vagrant.require_version ">= 1.9.1"
+VAGRANTFILE_API_VERSION = "2"
+ENV["VAGRANT_DEFAULT_PROVIDER"] = "aws"
+inventory = YAML.load_file(File.join(File.dirname(__FILE__), "inventory.yaml"))
 
-Vagrant.configure("2") do |config|
-
-  config.vm.define "crimegraph" do |config|
-    config.vm.provider :digital_ocean do |provider, override|
-      override.ssh.private_key_path = "~/.ssh/vagrant@digitalocean"
-      override.vm.box = "digital_ocean"
-      override.vm.box_url = "https://github.com/devops-group-io/vagrant-digitalocean/raw/master/box/digital_ocean.box"
-      provider.token = "6fac9c763921a69ddd79f3594ee7394e72a6ba01428f5b0e2a6754ffc1ed486d"
-      provider.image = "debian-8-x64"
-      provider.region = "ams2"
-      provider.size = "8gb"
-    end
+ansible_groups = {}
+inventory.each do |cluster|
+  ansible_groups[cluster["name"]] = []
+  cluster["instances"].each do |instance|
+    ansible_groups[cluster["name"]] << instance["name"]
   end
-
-  config.vm.synced_folder ".", "/vagrant",
-    id: "default",
-    disabled: true,
-    type: "rsync",
-    create: true
-
-  config.vm.synced_folder "data/", "/vagrant/data",
-    id: "data",
-    disabled: false,
-    type: "rsync",
-    create: true
-
-  config.vm.synced_folder "target/", "/vagrant/target",
-    id: "target",
-    disabled: false,
-    type: "rsync",
-    create: true
-
-  config.vm.synced_folder "site/", "/vagrant/site",
-    id: "target",
-    disabled: false,
-    type: "rsync",
-    create: true
-
-  config.vm.provision "ansible" do |ansible|
-    ansible.playbook = "ansible/playbook.yml"
-  end
-
 end
+
+#*******************************************************************************
+# CONFIGURATION
+#*******************************************************************************
+Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
+
+  config.vm.box = "dummy"
+
+  config.vm.provider :aws do |aws, override|
+    aws.access_key_id = ENV["AWS_ACCESS_KEY_ID"]
+    aws.secret_access_key = ENV["AWS_SECRET_ACCESS_KEY"]
+    aws.keypair_name = ENV["AWS_KEYPAIR_NAME"]
+
+    aws.region = "eu-west-1"
+  end # config.vm.provider aws
+
+  inventory.each do |cluster|
+    cluster["instances"].each do |instance|
+      config.vm.define instance["name"] do |srv|
+        srv.vm.provider :aws do |aws, override|
+          aws.instance_type = instance["type"]
+          aws.ami = instance["ami"]
+          aws.security_groups = instance["security_groups"]
+          aws.tags = {
+            "Name" => instance["name"]
+          }
+          override.ssh.username = instance["user"]
+          override.ssh.private_key_path = ENV["AWS_KEYPAIR_PATH"]
+        end # config.vm.provider aws
+
+        srv.vm.synced_folder ".", "/vagrant", disabled: true
+
+        srv.vm.synced_folder "data/common", "/vagrant/data/common",
+          id: "data_common",
+          disabled: false,
+          type: "rsync",
+          create: true
+
+        srv.vm.synced_folder "data/" + cluster["name"] + "/common", "/vagrant/data/cluster",
+          id: "data_cluster",
+          disabled: false,
+          type: "rsync",
+          create: true
+
+        srv.vm.synced_folder "data/" + cluster["name"] + "/" + instance["name"], "/vagrant/data/instance",
+          id: "data_instance",
+          disabled: false,
+          type: "rsync",
+          create: true
+      end # config.vm.define instance[name]
+    end # cluster.each do instance
+  end # inventory.each do cluster
+
+  config.vm.provision :ansible do |ansible|
+    ansible.playbook = "ansible/playbook.yml"
+    ansible.groups = ansible_groups
+    ansible.verbose = true
+  end # config.vm.provision ansible
+
+end # Vagrant.configure

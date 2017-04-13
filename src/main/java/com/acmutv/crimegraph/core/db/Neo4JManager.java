@@ -68,7 +68,7 @@ public class Neo4JManager {
           "MERGE (u2:Person {id:{dst}}) " +
           "MERGE (u1)-[r:REAL]-(u2) " +
           "ON CREATE SET r.weight={weight},r.num=1,r.created=timestamp(),r.updated=r.created " +
-          "ON MATCH SET r.weight=(r.weight*r.num+{weight})/(r.num+1),r.num=r.num+1,r.updated=timestamp() " +
+          "ON MATCH SET r.weight=({weight}*{ewma} + r.weight*(1-{ewma}),r.num=r.num+1,r.updated=timestamp() " +
           "WITH u1,u2 " +
           "MATCH (u1)-[r2]-(u2) " +
           "WHERE type(r2)='POTENTIAL' OR type(r2)='HIDDEN' " +
@@ -182,11 +182,11 @@ public class Neo4JManager {
   private static final String PAIRS_TO_UPDATE =
       "MATCH (x:Person {id:{x}})-[:REAL*2]-(n:Person) " +
           "WHERE NOT (x)-[:REAL]-(n) " +
-          "RETURN [x.id,n.id] AS pair " +
+          "RETURN DISTINCT [x.id,n.id] AS pair " +
           "UNION ALL " +
           "MATCH (n1:Person)-[:REAL*2]-(x:Person {id:{x}})-[:REAL*2]-(n2:Person) " +
           "WHERE id(n1) > id(n2) AND NOT (x)-[:REAL]-(n1) AND NOT (x)-[:REAL]-(n2) " +
-          "RETURN [n1.id,n2.id] as pair";
+          "RETURN DISTINCT [n1.id,n2.id] as pair";
 
   /**
    * Query to find pairs of unlinked nodes to update, with double node insertion.
@@ -194,19 +194,19 @@ public class Neo4JManager {
   private static final String PAIRS_TO_UPDATE_TWICE =
       "MATCH (x:Person {id:{x}})-[:REAL*2]-(n:Person) " +
           "WHERE NOT (x)-[:REAL]-(n) " +
-          "RETURN [x.id,n.id] AS pair " +
+          "RETURN DISTINCT [x.id,n.id] AS pair " +
           "UNION ALL " +
           "MATCH (n1:Person)-[:REAL*2]-(x:Person {id:{x}})-[:REAL*2]-(n2:Person) " +
           "WHERE id(n1) > id(n2) AND NOT (x)-[:REAL]-(n1) AND NOT (x)-[:REAL]-(n2) " +
-          "RETURN [n1.id,n2.id] as pair " +
+          "RETURN DISTINCT [n1.id,n2.id] as pair " +
           "UNION ALL " +
           "MATCH (y:Person {id:{y}})-[:REAL*2]-(n:Person) " +
           "WHERE NOT (y)-[:REAL]-(n) " +
-          "RETURN [y.id,n.id] AS pair " +
+          "RETURN DISTINCT [y.id,n.id] AS pair " +
           "UNION ALL " +
           "MATCH (n1:Person)-[:REAL*2]-(y:Person {id:{y}})-[:REAL*2]-(n2:Person) " +
           "WHERE id(n1) > id(n2) AND NOT (y)-[:REAL]-(n1) AND NOT (y)-[:REAL]-(n2) " +
-          "RETURN [n1.id,n2.id] as pair";
+          "RETURN DISTINCT [n1.id,n2.id] as pair";
 
   /**
    * Query to find pairs of unlinked nodes to update, with single node insertion.
@@ -214,11 +214,11 @@ public class Neo4JManager {
   private static final String PAIRS_TO_UPDATE_WITHIN_DISTANCE =
       "MATCH (x:Person {id:{x}})-[:REAL*%d]-(n:Person) " +
           "WHERE NOT (x)-[:REAL*%d]-(n) " +
-          "RETURN [x.id,n.id] AS pair " +
+          "RETURN DISTINCT [x.id,n.id] AS pair " +
           "UNION ALL " +
           "MATCH (n1:Person)-[:REAL*%d]-(x:Person {id:{x}})-[:REAL*%d]-(n2:Person) " +
           "WHERE id(n1) > id(n2) AND NOT (x)-[:REAL*%d]-(n1) AND NOT (x)-[:REAL*%d]-(n2) " +
-          "RETURN [n1.id,n2.id] as pair";
+          "RETURN DISTINCT [n1.id,n2.id] as pair";
 
   /**
    * Query to find pairs of unlinked nodes to update, with double node insertion.
@@ -226,19 +226,19 @@ public class Neo4JManager {
   private static final String PAIRS_TO_UPDATE_TWICE_WITHIN_DISTANCE =
       "MATCH (x:Person {id:{x}})-[:REAL*%d]-(n:Person) " +
           "WHERE NOT (x)-[:REAL*%d]-(n) " +
-          "RETURN [x.id,n.id] AS pair " +
+          "RETURN DISTINCT [x.id,n.id] AS pair " +
           "UNION ALL " +
           "MATCH (n1:Person)-[:REAL*%d]-(x:Person {id:{x}})-[:REAL*%d]-(n2:Person) " +
           "WHERE id(n1) > id(n2) AND NOT (x)-[:REAL*%d]-(n1) AND NOT (x)-[:REAL*%d]-(n2) " +
-          "RETURN [n1.id,n2.id] as pair " +
+          "RETURN DISTINCT [n1.id,n2.id] as pair " +
           "UNION ALL " +
           "MATCH (y:Person {id:{y}})-[:REAL*%d]-(n:Person) " +
           "WHERE NOT (y)-[:REAL*%d]-(n) " +
-          "RETURN [y.id,n.id] AS pair " +
+          "RETURN DISTINCT [y.id,n.id] AS pair " +
           "UNION ALL " +
           "MATCH (n1:Person)-[:REAL*%d]-(y:Person {id:{y}})-[:REAL*%d]-(n2:Person) " +
           "WHERE id(n1) > id(n2) AND NOT (y)-[:REAL*%d]-(n1) AND NOT (y)-[:REAL*%d]-(n2) " +
-          "RETURN [n1.id,n2.id] as pair";
+          "RETURN DISTINCT [n1.id,n2.id] as pair";
 
   /**
    * Query to find common neighborhood and related details for score formulas.
