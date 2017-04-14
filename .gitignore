@@ -9,7 +9,7 @@
 # Project specific
 #==============================================================================#
 _ignore
-.credentials
+.credentials.sh
 .vagrant
 ansible/playbook.retry
 site/node_modules/
