@@ -24,65 +24,100 @@
   THE SOFTWARE.
  */
 
-package com.acmutv.crimegraph.core.producer;
+package com.acmutv.crimegraph.evaluation;
 
+import com.acmutv.crimegraph.core.db.DbConfiguration;
+import com.acmutv.crimegraph.core.db.Neo4JManager;
+import com.acmutv.crimegraph.core.producer.StringKafkaProducer;
 import com.acmutv.crimegraph.core.tuple.Link;
+import org.junit.Ignore;
 import org.junit.Test;
+import org.neo4j.driver.v1.Driver;
+import org.neo4j.driver.v1.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
+import static com.acmutv.crimegraph.Common.*;
+import static com.acmutv.crimegraph.evaluation.EvaluationCommon.PREDICTION_TRAINING;
+
 /**
- * Utility for message publishing to Kafka sources.
+ * Utility for the dataset interaction with Neo4J.
  * @author Giacomo Marciani {@literal <gmarciani@acm.org>}
  * @author Michele Porretta {@literal <mporretta@acm.org>}
  * @since 1.0
  * @see Link
  */
-public class SampleProducers {
+public class DataUtilities {
 
-  private static final Logger LOGGER = LoggerFactory.getLogger(SampleProducers.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger(DataUtilities.class);
 
   private static final String KAFKA_BOOTSTRAP_SERVERS = "localhost:9092";
 
-
   /**
-   * Produces links as string.
+   * Writes links to Neo4J from file.
+   * @throws IOException
    */
   @Test
-  public void simple() throws Exception {
-    Link link = new Link(1, 2, 10.0);
-    StringKafkaProducer producer = new StringKafkaProducer(KAFKA_BOOTSTRAP_SERVERS);
-    LOGGER.info("Publishing link %s", link);
-    producer.send("main-topic", link);
-    producer.close();
+  @Ignore
+  public void writeLinksOnNeo4j() throws IOException {
+    DbConfiguration dbconf = new DbConfiguration(HOSTNAME, USERNAME, PASSWORD);
+    Driver driver = Neo4JManager.open(dbconf);
+    Session session = driver.session();
+
+    try (BufferedReader reader = Files.newBufferedReader(PREDICTION_TRAINING)) {
+      int i = 1;
+      while (reader.ready()) {
+        Link link = Link.valueOf(reader.readLine());
+        Neo4JManager.save(session, link, 0.5);
+        System.out.format("WRITING LINK ON NEO4J (%d): %s", i++, link);
+      }
+    }
+
+    session.close();
+    driver.close();
   }
 
   /**
-   * Produces links from file
+   * Publish links from file.
    */
   @Test
+  @Ignore
   public void publishFromFile() throws Exception {
     Path path = FileSystems.getDefault().getPath("data/crimegraph.data");
     StringKafkaProducer producer = new StringKafkaProducer(KAFKA_BOOTSTRAP_SERVERS);
 
     System.out.println("Path: " + path.toString());
 
-    BufferedReader reader = Files.newBufferedReader(path);
-
-    int i = 1;
-    while (reader.ready()) {
-      Link link = Link.valueOf(reader.readLine());
-      producer.send("main-topic", link);
-      System.out.format("Published link (%d): %s", i++, link);
+    try (BufferedReader reader = Files.newBufferedReader(path)) {
+      int i = 1;
+      while (reader.ready()) {
+        Link link = Link.valueOf(reader.readLine());
+        producer.send("main-topic", link);
+        System.out.format("PUBLISHING LINK TO KAFKA (%d): %s", i++, link);
+      }
     }
 
     producer.close();
+  }
 
-    reader.close();
+  /**
+   * Publish links from file.
+   */
+  @Test
+  @Ignore
+  public void publish() throws Exception {
+    StringKafkaProducer producer = new StringKafkaProducer("54.229.245.205:9092");
+
+    Link link = new Link(1,2,1.0);
+    producer.send("main-topic", link);
+    System.out.format("PUBLISHING LINK TO KAFKA: %s", link);
+
+    producer.close();
   }
 }

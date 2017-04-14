@@ -26,9 +26,7 @@
 package com.acmutv.crimegraph.core.source;
 
 import com.acmutv.crimegraph.core.tuple.Link;
-import org.apache.flink.api.common.typeinfo.TypeInformation;
 import org.apache.flink.streaming.util.serialization.AbstractDeserializationSchema;
-import org.apache.flink.streaming.util.serialization.DeserializationSchema;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

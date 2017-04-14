@@ -48,7 +48,7 @@ public class EvaluationCommon {
   /**
    * Prediction: the training set.
    */
-  public static final Path PREDICTION_TRAINING = FileSystems.getDefault().getPath(String.format("data/test/%.3f.prediction.learn.data", 1 - PREDICTION_TEST_RATIO));
+  public static final Path PREDICTION_TRAINING = FileSystems.getDefault().getPath(String.format("data/test/%.3f.prediction.training.data", 1 - PREDICTION_TEST_RATIO));
 
   /**
    * Prediction: the test set.
@@ -68,7 +68,7 @@ public class EvaluationCommon {
   /**
    * Detection: the training set.
    */
-  public static final Path DETECTION_TRAINING = FileSystems.getDefault().getPath(String.format("data/test/%.3f.detection.learn.data", 1 - DETECTION_TEST_RATIO));
+  public static final Path DETECTION_TRAINING = FileSystems.getDefault().getPath(String.format("data/test/%.3f.detection.training.data", 1 - DETECTION_TEST_RATIO));
 
   /**
    * Detection: the test set.

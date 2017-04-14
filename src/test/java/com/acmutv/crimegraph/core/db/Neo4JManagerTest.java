@@ -32,7 +32,6 @@ import org.apache.flink.api.java.tuple.Tuple2;
 import org.apache.flink.api.java.tuple.Tuple3;
 import org.apache.flink.api.java.tuple.Tuple4;
 import org.junit.*;
-import org.junit.runners.MethodSorters;
 import org.neo4j.driver.v1.*;
 
 import java.io.IOException;
@@ -104,10 +103,12 @@ public class Neo4JManagerTest {
 
   @AfterClass
   public static void deinit() {
-    Session session = DRIVER.session();
-    Neo4JManager.empyting(session);
-    session.close();
-    DRIVER.close();
+    if (DRIVER != null) {
+      Session session = DRIVER.session();
+      Neo4JManager.empyting(session);
+      session.close();
+      DRIVER.close();
+    }
   }
 
   /**

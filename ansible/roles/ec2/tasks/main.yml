@@ -1,0 +1,8 @@
+---
+# file: ec2/tasks/main.yml
+- name: gather ec2 facts
+  ec2_facts:
+
+- name: report ec2 facts
+  debug:
+    msg: "{{ ansible_ec2_public_ipv4 }}"

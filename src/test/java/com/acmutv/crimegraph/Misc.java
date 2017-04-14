@@ -29,8 +29,6 @@ package com.acmutv.crimegraph;
 import org.junit.Test;
 
 import java.io.*;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 
 /**
  * Miscellanea JUnit tests (for personal use only)

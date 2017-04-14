@@ -26,9 +26,13 @@ To deploy the app to a Digital Ocean droplet, you need the following to be insta
 * Ansible
 
 ## Setup
-First you need to create the Kafka topic `main-topic`.
+First you need to create the Kafka topic `main-topic`:
 
     $kafka-home> bin/kafka-topics.sh --create --zookeeper localhost:2181 --replication-factor 1 --partitions 1 --topic main-topic
+
+Test the topic creation:
+
+    $kafka-home> bin/kafka-topics.sh --list --zookeeper localhost:2181
 
 To test message publishing:
 
@@ -52,27 +56,15 @@ If you want to skip tests, add the profile `skip-tests`.
 
 
 ## Usage
-Start Neo4J
-
-    $neo4j-home>./bin/neo4j start
-
-Start the Flink cluster
-
-    $flink-home>./bin/start-local.sh
+Start Neo4J, Kafka and Flink
 
 Submit the app to the cluster
 
-    $> flink run path/to/crimegraph/target/crimegraph-1.0.jar
+    $> flink run path/to/crimegraph/target/crimegraph-1.0.jar --config [PATH_TO_CONFIG]
+    
+where *[PATH_TO_CONFIG]* is the absolute path to crimegraph config file.
 
 You can inspect SNA results navigating the graph with Neo4J browser running at *http://localhost:7474*.
-
-Once you have finished the analysis, stop the Flink cluster
-
-    $flink-home>./bin/stop-local.sh
-
-and Neo4J
-
-    $neo4j-home>./bin/neo4j stop
 
 ## Deploy
 Run the provisioning with Vagrant

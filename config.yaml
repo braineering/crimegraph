@@ -20,7 +20,7 @@ kafka.group: "main-topic"
 hidden.metric: "LOCAL"
 hidden.locality: 1
 hidden.weights: [1.0]
-hidden.threshold: 0.8
+hidden.threshold: 0.0
 
 #===============================================================================
 # LINK PREDICTION
@@ -28,7 +28,7 @@ hidden.threshold: 0.8
 potential.metric: "LOCAL"
 potential.locality: 1
 potential.weights: [1.0]
-potential.threshold: 0.8
+potential.threshold: 0.0
 
 #===============================================================================
 # EWMA

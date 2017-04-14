@@ -1,5 +1,17 @@
 ---
 # file: neo4j/tasks/main.yml
+- name: gather ec2 facts
+  ec2_facts:
+
+- name: report ec2 facts
+  debug:
+    msg: "{{ ansible_ec2_public_ipv4 }}"
+
+- name: setting hostnames
+  template:
+    src: hosts.txt
+    dest: /etc/hosts
+
 - name: check Neo4J (binary)
   stat:
     path: "{{ neo4j_home }}/bin/neo4j"

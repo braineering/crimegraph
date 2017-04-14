@@ -1,0 +1,3 @@
+---
+# file: group_vars/neo4j
+var1: "value-var1-neo4j"

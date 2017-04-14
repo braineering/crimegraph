@@ -38,9 +38,7 @@ import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 /**
  * Utility for the original dataset generation.
@@ -53,20 +51,22 @@ public class Datagen {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(Datagen.class);
 
-  private static final int NUM_NODES = 250;
+  private static final int NUM_NODES = 50;
 
-  private static final int NUM_LINKS = 1000;
+  private static final int NUM_LINKS = 100;
 
   private static final double MIN_WEIGHT = 1.0;
 
-  private static final double MAX_WEIGHT = 10.0;
+  private static final double MAX_WEIGHT = 100.0;
 
   /**
    * Generates a simple random dataset.
    */
   @Test
   public void simple() throws Exception {
-    Path path = FileSystems.getDefault().getPath("data/crimegraph.data");
+    final String datasetName = "crimegraph-datagen-simple.data";
+
+    Path path = FileSystems.getDefault().getPath("data/" + datasetName);
 
     if (!Files.isDirectory(path.getParent())) {
       Files.createDirectories(path.getParent());
@@ -75,17 +75,22 @@ public class Datagen {
     Random rnd = new Random();
 
     List<Link> data = new ArrayList<>();
+    Map<Integer,Set<Integer>> pairs = new HashMap<>();
 
     for (int i = 0; i < NUM_LINKS; i++) {
-      int x = rnd.nextInt(NUM_NODES);
-      int y;
+      int x = 0;
+      int y = 0;
       do {
         y = rnd.nextInt(NUM_NODES);
-      } while (y == x);
+        if (y == 0) continue;
+        x = rnd.nextInt(y);
+      } while (y <= x || (pairs.containsKey(x) && pairs.get(x).contains(y)));
 
       double weight = rnd.nextDouble() * (MAX_WEIGHT - MIN_WEIGHT) + MIN_WEIGHT;
       Link link = new Link(x, y, weight);
       data.add(link);
+      pairs.putIfAbsent(x, new HashSet<>());
+      pairs.get(x).add(y);
     }
 
     writeDataset(path, data);
@@ -93,7 +98,7 @@ public class Datagen {
     String flinkHome = System.getenv("FLINK_HOME");
 
     if (flinkHome != null) {
-      Path flinkPath = FileSystems.getDefault().getPath(flinkHome + "/resources/crimegraph/data/crimegraph.data");
+      Path flinkPath = FileSystems.getDefault().getPath(flinkHome + "/resources/crimegraph/data/" + datasetName);
       if (!Files.isDirectory(flinkPath.getParent())) {
         Files.createDirectories(flinkPath.getParent());
       }
@@ -106,7 +111,9 @@ public class Datagen {
    */
   @Test
   public void circular() throws Exception {
-    Path path = FileSystems.getDefault().getPath("data/crimegraph.data");
+    final String datasetName = "crimegraph-datagen-circular.data";
+
+    Path path = FileSystems.getDefault().getPath("data/" + datasetName);
 
     if (!Files.isDirectory(path.getParent())) {
       Files.createDirectories(path.getParent());
@@ -127,7 +134,7 @@ public class Datagen {
     String flinkHome = System.getenv("FLINK_HOME");
 
     if (flinkHome != null) {
-      Path flinkPath = FileSystems.getDefault().getPath(flinkHome + "/resources/crimegraph/data/crimegraph.data");
+      Path flinkPath = FileSystems.getDefault().getPath(flinkHome + "/resources/crimegraph/data/" + datasetName);
       if (!Files.isDirectory(flinkPath.getParent())) {
         Files.createDirectories(flinkPath.getParent());
       }
