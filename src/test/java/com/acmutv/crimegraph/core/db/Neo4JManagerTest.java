@@ -103,10 +103,12 @@ public class Neo4JManagerTest {
 
   @AfterClass
   public static void deinit() {
-    Session session = DRIVER.session();
-    Neo4JManager.empyting(session);
-    session.close();
-    DRIVER.close();
+    if (DRIVER != null) {
+      Session session = DRIVER.session();
+      Neo4JManager.empyting(session);
+      session.close();
+      DRIVER.close();
+    }
   }
 
   /**
