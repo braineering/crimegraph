@@ -44,13 +44,7 @@ To test message publishing:
 ## Build
 The app building is provided by Apache Maven. To build the app you need to run
 
-    $app> mvn clean package -P [YOUR-SNA-CLASS]
-
-where *[YOUR-SNA-CLASS]* could be one of the following:
-
-* `local`: potential and hidden links are evaluated using local metrics.
-
-* `quasi-local`: potential links are evaluated using quasi-local metrics, whereas hidden links are evaluated using local metrics.
+    $app> mvn clean package -Pbuild-jar
 
 If you want to skip tests, add the profile `skip-tests`.
 
@@ -61,7 +55,7 @@ Start Neo4J, Kafka and Flink
 Submit the app to the cluster
 
     $> flink run path/to/crimegraph/target/crimegraph-1.0.jar --config [PATH_TO_CONFIG]
-    
+
 where *[PATH_TO_CONFIG]* is the absolute path to crimegraph config file.
 
 You can inspect SNA results navigating the graph with Neo4J browser running at *http://localhost:7474*.

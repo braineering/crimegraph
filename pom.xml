@@ -394,60 +394,6 @@
         </plugins>
       </build>
     </profile>
-
-    <!-- PROFILE: optimize -->
-    <profile>
-      <id>optimize</id>
-      <activation>
-        <activeByDefault>false</activeByDefault>
-      </activation>
-      <build>
-        <plugins>
-          <!-- Proguard -->
-          <plugin>
-            <groupId>com.github.wvengen</groupId>
-            <artifactId>proguard-maven-plugin</artifactId>
-            <version>${proguard.version}</version>
-            <executions>
-              <execution>
-                <id>obfuscation-packaging</id>
-                <phase>package</phase>
-                <goals>
-                    <goal>proguard</goal>
-                </goals>
-                <configuration>
-                  <proguardVersion>${proguard.tool.version}</proguardVersion>
-                  <obfuscate>true</obfuscate>
-                  <injar>${project.build.finalName}.jar</injar>
-                  <outjar>${project.build.finalName}-small.jar</outjar>
-                  <outputDirectory>${project.build.directory}</outputDirectory>
-                  <proguardInclude>${basedir}/proguard.conf</proguardInclude>
-                  <libs>
-                    <lib>${java.home}/lib/rt.jar</lib>
-                    <lib>${java.home}/lib/jsse.jar</lib>
-                  </libs>
-                  <options>
-                    <option>-allowaccessmodification</option>
-                    <option>-optimizationpasses 3</option>
-                    <option>-overloadaggressively</option>
-                    <option>-overloadaggressively</option>
-                    <option>-overloadaggressively</option>
-                    <option>-keep public class ${project.main} { public static void main(java.lang.String[]); }</option>
-                  </options>
-                </configuration>
-              </execution>
-            </executions>
-            <dependencies>
-              <dependency>
-                <groupId>net.sf.proguard</groupId>
-                <artifactId>proguard-base</artifactId>
-                <version>${proguard.tool.version}</version>
-              </dependency>
-            </dependencies>
-          </plugin>
-        </plugins>
-      </build>
-    </profile>
   </profiles>
 
   <build>

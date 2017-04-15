@@ -16,6 +16,13 @@
   roles:
     - kafka
 
+- name: provision neo4j nodes
+  hosts: neo4j
+  remote_user: admin
+  become: true
+  roles:
+    - neo4j
+
 - name: provision flink nodes
   hosts: flink
   remote_user: admin
@@ -23,10 +30,3 @@
   roles:
     - flink
     - flink-app
-
-- name: provision neo4j nodes
-  hosts: neo4j
-  remote_user: admin
-  become: true
-  roles:
-    - neo4j

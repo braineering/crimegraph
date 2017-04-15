@@ -3,7 +3,7 @@
 - name: "kafka"
   instances:
     - name: "kafka_master"
-      type: "t2.medium"
+      type: "t2.large"
       ami: "ami-3291be54"
       user: "admin"
       security_groups: ["kafka-group"]
@@ -11,7 +11,7 @@
 - name: "flink"
   instances:
     - name: "flink_master"
-      type: "t2.medium"
+      type: "m4.2xlarge"
       ami: "ami-3291be54"
       user: "admin"
       security_groups: ["flink-group"]
@@ -19,12 +19,7 @@
 - name: "neo4j"
   instances:
     - name: "neo4j_master"
-      type: "t2.medium"
-      ami: "ami-3291be54"
-      user: "admin"
-      security_groups: ["neo4j-group"]
-    - name: "neo4j_slave"
-      type: "t2.medium"
+      type: "m4.2xlarge"
       ami: "ami-3291be54"
       user: "admin"
       security_groups: ["neo4j-group"]
