@@ -1,0 +1,7 @@
+---
+# file: php/handlers/main.yml
+- name: Restart php-fpm
+  systemd:
+    name: php-fpm
+    state: restarted
+    enabled: yes

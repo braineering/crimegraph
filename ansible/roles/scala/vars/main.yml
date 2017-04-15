@@ -1,5 +1,0 @@
----
-# file: scala/vars/main.yml
-scala_download: http://downloads.lightbend.com/scala/2.11.8/scala-2.11.8.tgz
-scala_archive_path: /tmp/scala-2.11.8.tgz
-scala_home: /opt/scala-2.11.8

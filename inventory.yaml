@@ -23,3 +23,8 @@
       ami: "ami-3291be54"
       user: "admin"
       security_groups: ["neo4j-group"]
+    - name: "neo4j_slave"
+      type: "t2.medium"
+      ami: "ami-3291be54"
+      user: "admin"
+      security_groups: ["neo4j-group"]

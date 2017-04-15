@@ -10,6 +10,8 @@ require "yaml"
 Vagrant.require_version ">= 1.9.1"
 VAGRANTFILE_API_VERSION = "2"
 ENV["VAGRANT_DEFAULT_PROVIDER"] = "aws"
+PROJECT_NAME = "aws-kafka-flink-neo4j"
+
 inventory = YAML.load_file(File.join(File.dirname(__FILE__), "inventory.yaml"))
 
 ansible_groups = {}
@@ -43,7 +45,8 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
           aws.ami = instance["ami"]
           aws.security_groups = instance["security_groups"]
           aws.tags = {
-            "Name" => instance["name"]
+            "Name" => instance["name"],
+            "Project" => PROJECT_NAME
           }
           override.ssh.username = instance["user"]
           override.ssh.private_key_path = ENV["AWS_KEYPAIR_PATH"]

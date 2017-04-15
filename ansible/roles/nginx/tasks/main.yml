@@ -1,26 +1,19 @@
 ---
 # file: nginx/tasks/main.yml
-- name: install nginx
+- name: Install nginx
   apt:
     name: nginx
     state: latest
+    update_cache: yes
 
-- name: configure nginx default
+- name: Configure nginx
+  template:
+    src: nginx.conf
+    dest: /etc/nginx/nginx.conf
+  notify: Restart nginx
+
+- name: Configure nginx site default
   template:
     src: default.conf
     dest: /etc/nginx/sites-available/default
-
-- name: configure nginx app
-  template:
-    src: app.conf
-    dest: /etc/nginx/sites-available/app
-
-- name: enabling nginx configurations
-  file:
-    src: "/etc/nginx/sites-available/{{ item }}"
-    dest: "/etc/nginx/sites-enabled/{{ item }}"
-    state: link
-  with_items:
-    - "default"
-    - "app"
-  notify: restart nginx
+  notify: Restart nginx

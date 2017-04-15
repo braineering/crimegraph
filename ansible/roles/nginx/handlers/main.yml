@@ -1,6 +1,6 @@
 ---
 # file: nginx/handlers/main.yml
-- name: restart nginx
+- name: Restart nginx
   systemd:
     name: nginx
     state: restarted

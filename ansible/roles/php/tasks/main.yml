@@ -1,0 +1,40 @@
+---
+# file: php/tasks/main.yml
+- name: Configure APT keys (dotdeb)
+  apt_key:
+    url: "https://www.dotdeb.org/dotdeb.gpg"
+    state: present
+
+- name: Configure sources (dotdeb)
+  apt_repository:
+    repo: "{{ item }}"
+    state: present
+  with_items:
+    - "deb http://packages.dotdeb.org jessie all"
+    - "deb-src http://packages.dotdeb.org jessie all"
+
+- name: Install php-fpm and dependencies
+  apt:
+    name: "{{ item }}"
+    state: latest
+    update_cache: yes
+  with_items:
+    - php7.0
+    - php7.0-fpm
+    - php7.0-mysql
+
+#- name: Configure php-fpm (php.ini)
+#  template:
+#    src: php.ini
+#    dest: /etc/php/7.0/php.ini
+#  notify: Restart php-fpm
+#
+#- name: Configure php-fpm (php-fpm.conf)
+#  template:
+#    src: php-fpm.conf
+#    dest: /etc/php/7.0/php-fpm.conf
+#
+#- name: Configure php-fpm (magento.conf)
+#  template:
+#    src: magento.conf
+#    dest: /etc/php/7.0/pool.d/magento.conf
