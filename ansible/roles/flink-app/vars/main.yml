@@ -1,15 +1,15 @@
 ---
 # file: flink-app/vars/main.yml
-flink_app_config_path: "/vagrant/data/app/kafka-flink-neo4j/config.yaml"
-flink_app_jar_path: "/vagrant/data/app/kafka-flink-neo4j/app.jar"
-flink_app_parallelism: 2
+flink_app_config_path: "/vagrant/data/instance/crimegraph/config.yaml"
+flink_app_jar_path: "/vagrant/data/instance/crimegraph/crimegraph.jar"
+flink_app_parallelism: 16
 flink_app_neo4j_username: "neo4j"
 flink_app_neo4j_password: "password"
-flink_app_neo4j_hostname: "54.246.145.168"
+flink_app_neo4j_hostname: "{{ hostvars['neo4j_master']['ansible_ssh_host'] }}"
 flink_app_neo4j_bolt_port: "7687"
-flink_app_kafka_zookeeper_hostname: "54.229.245.205"
+flink_app_kafka_zookeeper_hostname: "{{ hostvars['kafka_master']['ansible_ssh_host'] }}"
 flink_app_kafka_zookeeper_port: "2181"
-flink_app_kafka_broker_hostname: "54.229.245.205"
+flink_app_kafka_broker_hostname: "{{ hostvars['kafka_master']['ansible_ssh_host'] }}"
 flink_app_kafka_broker_port: "9092"
 flink_app_kafka_topic: "main-topic"
 

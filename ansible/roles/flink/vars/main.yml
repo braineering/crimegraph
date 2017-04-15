@@ -8,7 +8,7 @@ flink_hostname: localhost
 flink_port: 8081
 flink_start_wait: 60 # seconds
 flink_start_pool: 3 # seconds
-flink_jobmanager_heap_mb: 256 # MB
-flink_taskmanager_heap_mb: 512 # MB
-flink_taskmanager_slots: 2
-flink_taskmanager_memory_preallocate: false
+flink_jobmanager_heap_mb: 2048 # MB
+flink_taskmanager_heap_mb: 4096 # MB
+flink_taskmanager_slots: 16
+flink_taskmanager_memory_preallocate: true
