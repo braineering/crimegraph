@@ -44,45 +44,35 @@ To test message publishing:
 ## Build
 The app building is provided by Apache Maven. To build the app you need to run
 
-    $app> mvn clean package -Pbuild-jar
+    $crimegraph> mvn clean package -Pbuild-jar
 
 If you want to skip tests, add the profile `skip-tests`.
 
+Copy the target `target/crimegraph-1.0.jar` into `data/flink/flink_master/crimegraph/crimegraph-1.0.jar`.
 
-## Usage
-Start Neo4J, Kafka and Flink
-
-Submit the app to the cluster
-
-    $> flink run path/to/crimegraph/target/crimegraph-1.0.jar --config [PATH_TO_CONFIG]
-
-where *[PATH_TO_CONFIG]* is the absolute path to crimegraph config file.
-
-You can inspect SNA results navigating the graph with Neo4J browser running at *http://localhost:7474*.
 
 ## Deploy
-Run the provisioning with Vagrant
+Provision EC2 instances:
 
-  $crimegraph> vagrant up --provider=digital_ocean
+  $crimegraph> vagrant up
 
-When provisioning is complete, visit the following
+Every time you want to test some changes, run:
 
-  http://x.x.x.x:7474
+  $crimegraph>vagrant provision
 
-To destroy the droplet, run
+To destroy all the EC2 instances:
 
   $crimegraph>vagrant destroy
 
-## Provisioning
-The provider supports the following Vagrant sub-commands:
 
-* `vagrant destroy` - Destroys the Droplet instance.
-* `vagrant ssh` - Logs into the Droplet instance using the configured user account.
-* `vagrant halt` - Powers off the Droplet instance.
-* `vagrant provision` - Runs the configured provisioners and rsyncs any specified config.vm.synced_folder.
-* `vagrant reload` - Reboots the Droplet instance.
-* `vagrant rebuild` - Destroys the Droplet instance and recreates it with the same IP address which was previously assigned.
-* `vagrant status` - Outputs the status (active, off, not created) for the Droplet instance.
+## Usage
+Log into the flink master:
+
+    $crimegraph>vagrant ssh flink_master
+
+and launch crimegraph:
+
+    $flink_master>sudo flink run /vagrant/data/instance/crimegraph/crimegraph-1.0.jar --config /vagrant/data/instance/crimegraph/config.yaml
 
 
 ## Authors
