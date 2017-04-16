@@ -81,12 +81,6 @@
     dest: /etc/systemd/system/kafka.service
     mode: 664
 
-- name: start service Kafka
-  systemd:
-    name: kafka
-    state: started
-    enabled: yes
-
 - name: configure Kafka
   template:
     src: "{{ item }}"
