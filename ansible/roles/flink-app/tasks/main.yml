@@ -11,5 +11,5 @@
   register: flinkAppJar
 
 - name: start Flink app
-  shell: "{{ flink_home }}/bin/flink run {{ flink_app_jar_path }} --config {{ flink_app_config_path }}"
+  shell: "{{ flink_home }}/bin/flink run {{ flink_app_jar_path }} --config {{ flink_app_config_path }} &"
   when: flinkAppJar.stat.exists

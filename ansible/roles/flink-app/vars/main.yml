@@ -1,7 +1,7 @@
 ---
 # file: flink-app/vars/main.yml
 flink_app_config_path: "/vagrant/data/instance/crimegraph/config.yaml"
-flink_app_jar_path: "/vagrant/data/instance/crimegraph/crimegraph.jar"
+flink_app_jar_path: "/vagrant/target/crimegraph-1.0.jar"
 flink_app_parallelism: 16
 flink_app_neo4j_username: "neo4j"
 flink_app_neo4j_password: "password"
