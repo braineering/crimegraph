@@ -58,6 +58,10 @@ Provision EC2 instances:
 
 Every time you want to test some changes, run:
 
+  $crimegraph>mvn clean package -Pbuild-jar
+
+  $crimegraph>vagrant rsync
+
   $crimegraph>vagrant provision
 
 To destroy all the EC2 instances:

@@ -10,7 +10,7 @@ require "yaml"
 Vagrant.require_version ">= 1.9.1"
 VAGRANTFILE_API_VERSION = "2"
 ENV["VAGRANT_DEFAULT_PROVIDER"] = "aws"
-PROJECT_NAME = "aws-kafka-flink-neo4j"
+PROJECT_NAME = "crimegraph"
 
 inventory = YAML.load_file(File.join(File.dirname(__FILE__), "inventory.yaml"))
 
@@ -71,6 +71,14 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
           disabled: false,
           type: "rsync",
           create: true
+
+        if instance["name"] === "flink_master" then
+          srv.vm.synced_folder "target", "/vagrant/target",
+            id: "target",
+            disabled: false,
+            type: "rsync",
+            create: true
+        end # if instance["name"] === "flink_master"
       end # config.vm.define instance[name]
     end # cluster.each do instance
   end # inventory.each do cluster

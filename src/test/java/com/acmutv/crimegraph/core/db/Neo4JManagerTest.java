@@ -81,7 +81,7 @@ public class Neo4JManagerTest {
 
     Session session = DRIVER.session();
 
-    for (Link link : DATA) Neo4JManager.save(session, link, 0.5);
+    for (Link link : DATA) Neo4JManager.save(session, link);
 
     // Check
     for (Link link : DATA) {

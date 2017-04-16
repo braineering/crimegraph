@@ -95,3 +95,8 @@
   with_items:
     - zookeeper.properties
     - server.properties
+
+- name: restart Kafka
+  systemd:
+    name: kafka.service
+    state: restarted

@@ -295,17 +295,6 @@
   </dependencies>
 
   <profiles>
-    <!-- PROFILE: crimegraph -->
-    <profile>
-      <id>crimegraph</id>
-      <activation>
-        <activeByDefault>true</activeByDefault>
-      </activation>
-      <properties>
-        <project.main>com.acmutv.crimegraph.CrimegraphToplogy</project.main>
-      </properties>
-    </profile>
-
     <!-- PROFILE: skip-tests -->
     <profile>
       <id>skip-tests</id>
