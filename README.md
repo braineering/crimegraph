@@ -70,14 +70,56 @@ To destroy all the EC2 instances:
 
 
 ## Usage
-Log into the flink master:
 
-    $crimegraph>vagrant ssh flink_master
+    $crimegraph> vagrant ssh kafka_master -c "sudo systemctl restart kafka"
 
-and launch crimegraph:
+    $crimegraph-monitor> vagrant ssh -c "sudo crimegraph-monitor check_kafka --kafkaBroker [EC2_KAFKA_MASTER]:9092 --kafkaTopic main-topic"
 
-    $flink_master>sudo flink run /vagrant/data/instance/crimegraph/crimegraph-1.0.jar --config /vagrant/data/instance/crimegraph/config.yaml
+    $crimegraph-monitor> vagrant ssh -c "sudo crimegraph-monitor check_kafka --kafkaBroker [EC2_KAFKA_MASTER]:9092 --kafkaTopic main-topic"
 
+where *[EC2_KAFKA_MASTER]* is the public address of the EC2 instance named *kafka_master*.
+
+You need to run *crimegraph-monitor check_kafka* twice, because the first time creates the topic, while the second one tests that everything is ok.
+
+If *crimegraph check_kafka* returns *true*, everything is ok, and you can proceed to start Crimegraph.
+
+    $crimegraph> vagrant ssh flink_master -c "sudo systemctl restart flink"
+
+    $crimegraph> vagrant ssh flink_master -c "sudo flink run /vagrant/target/crimegraph-1.0.jar --config /vagrant/data/instance/crimegraph/config.yaml"
+
+Now you can monitor the running application, visiting `[EC2_FLINK_MASTER]:8081` and `[EC2_NEO4J_MASTER]:7474`.
+
+It is time to submit some data!
+
+First of all, list all the available datasets:
+
+    $crimegraph-monitor> vagrant ssh -c "sudo ls /vagrant/data/datasets"
+
+Generate trainset and testset for detection:
+
+    $crimegraph-monitor> vagrant ssh -c "sudo crimegraph-monitor traintest_detection --dataset /vagrant/data/datasets/[DATASET] --trainset /vagrant/data/datasets/[DATASET]\_train_detection.data --testset /vagrant/data/datasets/[DATASET]\_test_detection.data --testRatio [RATIO]"
+
+where *[DATASET]* is the chosen dataset and *[RATIO]* is the test ratio, that is a number in (0.0,1.0) indicating the percentage of original dataset that will be deleted (a typical value is 0.10).
+
+Verify that datasets have been created:
+
+  $crimegraph-monitor> vagrant ssh -c "sudo ls /vagrant/data/datasets"
+
+Now publish the trainset against Crimegraph:
+
+    $crimegraph-monitor> vagrant ssh -c "sudo crimegraph-monitor publish --dataset /vagrant/data/datasets/[DATASET]\_train_detection.data --kafkaBroker [EC2_KAFKA_MASTER]:9092 --kafkaTopic main-topic"
+
+where *[EC2_KAFKA_MASTER]* is the public address of the EC2 instance named *kafka_master*.
+
+Check the publication status:
+
+    $crimegraph-monitor> vagrant ssh -c "sudo crimegraph-monitor check_dataset_db --dataset /vagrant/data/datasets/[DATASET]\_train_detection.data --neo4jHostname bolt://[EC2_NEO4J_MASTER] --neo4jUsername neo4j --neo4jPassword password --timeout 10"
+
+where *[EC2_NEO4J_MASTER]* is the public address of the EC2 instance named *neo4j_master*.
+
+Now evaluate AUC for detection:
+
+    $crimegraph-monitor> vagrant ssh -c "sudo crimegraph-monitor auc_detection --neo4jHostname bolt://[EC2_NEO4J_MASTER]:7687 --neo4jUsername neo4j --neo4jPassword password --dataset /vagrant/data/datasets/[DATASET] --trainset /vagrant/data/datasets/[DATASET]\_train_detection.data --testset /vagrant/data/datasets/[DATASET]\_test_detection.data --output /vagrant/data/[DATASET]\_auc_detection.out"
 
 ## Authors
 Giacomo Marciani, [gmarciani@acm.org](mailto:gmarciani@acm.org)
