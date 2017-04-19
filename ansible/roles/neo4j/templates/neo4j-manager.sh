@@ -17,8 +17,8 @@ stop)   echo "[neo4j-manager] stopping Neo4J..."
         echo "[neo4j-manager] Neo4J stopped"
         ;;
 restart) echo "[neo4j-manager] restarting Neo4J..."
-        service neo4j stop
-        service neo4j start
+        systemctl stop neo4j
+        systemctl start neo4j
         echo "[neo4j-manager] Neo4J restarted"
         ;;
 reload|force-reload) echo "[neo4j-manager] Not yet implemented"

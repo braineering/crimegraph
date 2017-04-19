@@ -14,8 +14,8 @@ stop)   echo "[kafka-manager] stopping kafka..."
         echo "[kafka-manager] kafka stopped"
         ;;
 restart) echo "[kafka-manager] restarting kafka..."
-        service kafka stop
-        service kafka start
+        systemctl stop kafka
+        systemctl start kafka
         echo "[kafka-manager] kafka restarted"
         ;;
 reload|force-reload) echo "[kafka-manager] Not yet implemented"
