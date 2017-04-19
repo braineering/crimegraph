@@ -54,7 +54,7 @@ public class LinkDeserializationSchema extends AbstractDeserializationSchema<Lin
     try {
       link = Link.valueOf(str);
     } catch (IllegalArgumentException exc) {
-      LOGGER.warn(exc.getMessage());
+      LOGGER.warn("Malformed link: {}", message);
       link = null;
     }
     return link;

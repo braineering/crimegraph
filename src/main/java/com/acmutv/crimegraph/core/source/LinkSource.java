@@ -85,7 +85,7 @@ public class LinkSource extends RichSourceFunction<Link> {
         link = Link.valueOf(line);
         ctx.collect(link);
       } catch (IllegalArgumentException exc) {
-        LOGGER.warn(exc.getMessage());
+        LOGGER.warn("Malformed link: {}", line);
       }
     }
 

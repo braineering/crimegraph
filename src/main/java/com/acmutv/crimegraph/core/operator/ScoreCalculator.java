@@ -36,6 +36,7 @@ import org.apache.flink.api.common.functions.RichFlatMapFunction;
 import org.apache.flink.api.java.tuple.Tuple4;
 import org.apache.flink.configuration.Configuration;
 import org.apache.flink.util.Collector;
+import org.neo4j.driver.v1.AccessMode;
 import org.neo4j.driver.v1.Driver;
 import org.neo4j.driver.v1.Session;
 
@@ -77,7 +78,7 @@ public class ScoreCalculator extends RichFlatMapFunction<NodePair, NodePairScore
   @Override
   public void open(Configuration parameters) throws Exception {
     this.driver = Neo4JManager.open(this.dbconfig);
-    this.session = driver.session();
+    this.session = driver.session(AccessMode.READ);
   }
 
   @Override

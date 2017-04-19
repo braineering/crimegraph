@@ -33,6 +33,7 @@ import com.acmutv.crimegraph.core.tuple.LinkType;
 import com.acmutv.crimegraph.core.tuple.NodePairScore;
 import org.apache.flink.configuration.Configuration;
 import org.apache.flink.streaming.api.functions.sink.RichSinkFunction;
+import org.neo4j.driver.v1.AccessMode;
 import org.neo4j.driver.v1.Driver;
 import org.neo4j.driver.v1.Session;
 
@@ -91,7 +92,7 @@ public class PotentialSink extends RichSinkFunction<NodePairScore> {
   @Override
   public void open(Configuration parameters) throws Exception {
     this.driver = Neo4JManager.open(this.dbconfig);
-    this.session = driver.session();
+    this.session = driver.session(AccessMode.WRITE);
   }
 
   @Override
