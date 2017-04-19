@@ -83,8 +83,6 @@ You need to run *crimegraph-monitor check_kafka* twice, because the first time c
 
 If *crimegraph check_kafka* returns *true*, everything is ok, and you can proceed to start Crimegraph.
 
-    $crimegraph> vagrant ssh flink_master -c "sudo systemctl restart flink"
-
     $crimegraph> vagrant ssh flink_master -c "sudo flink run /vagrant/target/crimegraph-1.0.jar --config /vagrant/data/instance/crimegraph/config.yaml"
 
 Now you can monitor the running application, visiting `[EC2_FLINK_MASTER]:8081` and `[EC2_NEO4J_MASTER]:7474`.
