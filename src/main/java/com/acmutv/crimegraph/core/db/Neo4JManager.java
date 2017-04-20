@@ -265,6 +265,27 @@ public class Neo4JManager {
           "MATCH (n:Person) DETACH DELETE n";
 
   /**
+   * Query to count the common neighbours.
+   */
+  private static final String COUNT_COMMON_NEIGHBOURS =
+          "MATCH (u1:Person {id:{src}})-[:REAL]-(n:Person)-[:REAL]-(u2:Person {id:{dst}}) " +
+                  "RETURN COUNT(DISTINCT n.id) AS cn";
+
+  /**
+   * Query to find the union on the neighborhood between
+   */
+  private static final String COUNT_GAMMA_UNION=
+          "MATCH (u1:Person {id:{src})-[r1:REAL]-(n:Person) RETURN DISTINCT n as nodes";
+          /* TO DO */
+
+  /**
+   * Query to count the neighbors of node x
+   */
+  private static final String GAMMA_WITH_DEGREE=
+          "MATCH (u1:Person {id:{src})-[r:REAL]-(n:Person)"+
+          "RETURN n.id AS id, COUNT(DISTINCT r) as degree";
+
+  /**
    * Opens a NEO4J connection.
    * @param dbconf the configuration to connect to Neo4J.
    * @return a open NEO4J driver.
@@ -697,4 +718,225 @@ public class Neo4JManager {
     session.run(EMPYTING);
   }
 
+  /**
+   * Common Neighbours Metric
+   * @param session the NEO4J open session.
+   * @param x the id of the first node to update.
+   * @param y the id of the second node to update.
+   */
+  public static Long countCommonNeighbours(Session session, long x, long y) {
+    Value params = parameters("x", x, "y", y);
+    StatementResult result = session.run(COUNT_COMMON_NEIGHBOURS, params);
+    Record rec = result.next();
+    Long cn = rec.get("cn").asLong();
+    return cn;
+  }
+
+  /**
+   * Jaccard Metric
+   * @param session the NEO4J open session.
+   * @param x the id of the first node to update.
+   * @param y the id of the second node to update.
+   */
+  public static Double jaccard(Session session, long x, long y) {
+    Value params = parameters("x", x, "y", y);
+    StatementResult intersection = session.run(COUNT_COMMON_NEIGHBOURS, params);
+    Record recInt = intersection.next();
+    Long cn = recInt.get("cn").asLong();
+
+    StatementResult gamma = session.run(COUNT_GAMMA_UNION, params);
+    Record recGam = gamma.next();
+    Long gu = recGam.get("nodes").asLong();
+    return Double.valueOf(cn/gu);
+  }
+
+  /**
+   * Soresen Metric
+   * @param session the NEO4J open session.
+   * @param x the id of the first node to update.
+   * @param y the id of the second node to update.
+   */
+  public static Double soresen(Session session, long x, long y) {
+    Value params = parameters("x", x, "y", y);
+
+    StatementResult intersection = session.run(COUNT_COMMON_NEIGHBOURS, params);
+    Record recInt = intersection.next();
+    Long cn = recInt.get("cn").asLong();
+
+    params = parameters("x", x);
+    StatementResult degreeX = session.run(GAMMA_WITH_DEGREE, params);
+    Record recX = degreeX.next();
+    Long kx = recX.get("degree").asLong();
+
+    params = parameters("y", y);
+    StatementResult degreeY = session.run(GAMMA_WITH_DEGREE, params);
+    Record recY = degreeY.next();
+    Long ky = recY.get("degree").asLong();
+
+    return Double.valueOf((2*(cn))/(kx + ky));
+  }
+
+  /**
+   * Hub Promoted Index (HPI) Metric
+   * @param session the NEO4J open session.
+   * @param x the id of the first node to update.
+   * @param y the id of the second node to update.
+   */
+  public static Double HPI(Session session, long x, long y) {
+    Value params = parameters("x", x, "y", y);
+
+    StatementResult intersection = session.run(COUNT_COMMON_NEIGHBOURS, params);
+    Record recInt = intersection.next();
+    Long cn = recInt.get("cn").asLong();
+
+    params = parameters("x", x);
+    StatementResult degreeX = session.run(GAMMA_WITH_DEGREE, params);
+    Record recX = degreeX.next();
+    Long kx = recX.get("degree").asLong();
+
+    params = parameters("y", y);
+    StatementResult degreeY = session.run(GAMMA_WITH_DEGREE, params);
+    Record recY = degreeY.next();
+    Long ky = recY.get("degree").asLong();
+
+    return Double.valueOf(cn/Long.min(kx,ky));
+  }
+
+  /**
+   * Hub Depressed Index (HDI) Metric
+   * @param session the NEO4J open session.
+   * @param x the id of the first node to update.
+   * @param y the id of the second node to update.
+   */
+  public static Double HDI(Session session, long x, long y) {
+    Value params = parameters("x", x, "y", y);
+
+    StatementResult intersection = session.run(COUNT_COMMON_NEIGHBOURS, params);
+    Record recInt = intersection.next();
+    Long cn = recInt.get("cn").asLong();
+
+    params = parameters("x", x);
+    StatementResult degreeX = session.run(GAMMA_WITH_DEGREE, params);
+    Record recX = degreeX.next();
+    Long kx = recX.get("degree").asLong();
+
+    params = parameters("y", y);
+    StatementResult degreeY = session.run(GAMMA_WITH_DEGREE, params);
+    Record recY = degreeY.next();
+    Long ky = recY.get("degree").asLong();
+
+    return Double.valueOf(cn/Long.max(kx,ky));
+  }
+
+  /**
+   * Leicht-Holme-Newman Index (LHN1) Metric
+   * @param session the NEO4J open session.
+   * @param x the id of the first node to update.
+   * @param y the id of the second node to update.
+   */
+  public static Double LHN1(Session session, long x, long y) {
+    Value params = parameters("x", x, "y", y);
+
+    StatementResult intersection = session.run(COUNT_COMMON_NEIGHBOURS, params);
+    Record recInt = intersection.next();
+    Long cn = recInt.get("cn").asLong();
+
+    params = parameters("x", x);
+    StatementResult degreeX = session.run(GAMMA_WITH_DEGREE, params);
+    Record recX = degreeX.next();
+    Long kx = recX.get("degree").asLong();
+
+    params = parameters("y", y);
+    StatementResult degreeY = session.run(GAMMA_WITH_DEGREE, params);
+    Record recY = degreeY.next();
+    Long ky = recY.get("degree").asLong();
+
+    return Double.valueOf(cn/Long.max(kx,ky));
+  }
+
+
+  /**
+   * Preferential Attachment Index (PA) Metric
+   * @param session the NEO4J open session.
+   * @param x the id of the first node to update.
+   * @param y the id of the second node to update.
+   */
+  public static Double preferentialAttachment(Session session, long x, long y) {
+
+    Value params = parameters("x", x);
+    StatementResult degreeX = session.run(GAMMA_WITH_DEGREE, params);
+    Record recX = degreeX.next();
+    Long kx = recX.get("degree").asLong();
+
+    params = parameters("y", y);
+    StatementResult degreeY = session.run(GAMMA_WITH_DEGREE, params);
+    Record recY = degreeY.next();
+    Long ky = recY.get("degree").asLong();
+
+    return Double.valueOf(kx * ky);
+  }
+
+  /**
+   * Salton Index Metric
+   * @param session the NEO4J open session.
+   * @param x the id of the first node to update.
+   * @param y the id of the second node to update.
+   */
+  public static Double salton(Session session, long x, long y) {
+    Value params = parameters("x", x, "y", y);
+
+    StatementResult intersection = session.run(COUNT_COMMON_NEIGHBOURS, params);
+    Record recInt = intersection.next();
+    Long cn = recInt.get("cn").asLong();
+
+    params = parameters("x", x);
+    StatementResult degreeX = session.run(GAMMA_WITH_DEGREE, params);
+    Record recX = degreeX.next();
+    Long kx = recX.get("degree").asLong();
+
+    params = parameters("y", y);
+    StatementResult degreeY = session.run(GAMMA_WITH_DEGREE, params);
+    Record recY = degreeY.next();
+    Long ky = recY.get("degree").asLong();
+
+    return Double.valueOf(cn/Math.sqrt(kx * ky));
+  }
+
+  /**
+   * Adamic-Adar Index
+   * @param session the NEO4J open session.
+   * @param x the id of the first node to update.
+   * @param y the id of the second node to update.
+   */
+  public static Set<Tuple2<Long,Long>> adamicAdar(Session session, long x, long y) {
+    Value params = parameters("x", x, "y", y);
+    StatementResult result = session.run(GAMMA_INTERSECTION, params);
+    Set<Tuple2<Long,Long>> neighbours = new HashSet<>();
+    while (result.hasNext()) {
+      Record rec = result.next();
+      Long node = rec.get("id").asLong();
+      Long degree = rec.get("deg").asLong();
+      neighbours.add(new Tuple2<>(node, degree));
+    }
+    return neighbours;
+  }
+
+  /**
+   * Adamic-Adar Index
+   * @param session the NEO4J open session.
+   * @param x the id of the first node to update.
+   * @param y the id of the second node to update.
+   */
+  public static Set<Tuple2<Long,Long>> resourceAllocation(Session session, long x, long y) {
+    Value params = parameters("x", x, "y", y);
+    StatementResult result = session.run(GAMMA_INTERSECTION, params);
+    Set<Tuple2<Long,Long>> neighbours = new HashSet<>();
+    while (result.hasNext()) {
+      Record rec = result.next();
+      Long node = rec.get("id").asLong();
+      Long degree = rec.get("deg").asLong();
+      neighbours.add(new Tuple2<>(node, degree));
+    }
+    return neighbours;
+  }
 }
