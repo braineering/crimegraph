@@ -78,7 +78,7 @@ public class ScoreCalculator extends RichFlatMapFunction<NodePair, NodePairScore
   @Override
   public void open(Configuration parameters) throws Exception {
     this.driver = Neo4JManager.open(this.dbconfig);
-    this.session = driver.session(AccessMode.READ);
+    this.session = driver.session();
   }
 
   @Override

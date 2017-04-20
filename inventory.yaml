@@ -3,7 +3,7 @@
 - name: "kafka"
   instances:
     - name: "kafka_master"
-      type: "t2.large"
+      type: "t2.large" # 8gb, EBS, 0.101$/h
       ami: "ami-3291be54"
       user: "admin"
       security_groups: ["kafka-group"]
@@ -11,7 +11,7 @@
 - name: "neo4j"
   instances:
     - name: "neo4j_master"
-      type: "m4.4xlarge"
+      type: "r3.2xlarge" # 61gb, 160ssd, 0.741$/h
       ami: "ami-3291be54"
       user: "admin"
       security_groups: ["neo4j-group"]
@@ -19,7 +19,7 @@
 - name: "flink"
   instances:
     - name: "flink_master"
-      type: "m4.4xlarge"
+      type: "r3.xlarge" # 30.5gb, 80ssd, 0.371$/h
       ami: "ami-3291be54"
       user: "admin"
       security_groups: ["flink-group"]
