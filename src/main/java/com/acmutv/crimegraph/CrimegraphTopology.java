@@ -50,7 +50,7 @@ import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 import java.nio.file.FileSystems;
 
 /**
- * The app word-point for {@code CrimegraphToplogy} application.
+ * The app word-point for {@code CrimegraphTopology} application.
  * Before starting the application, it is necessary to open the socket, running
  * {@code $> ncat 127.0.0.1 9000 -l}
  * and start typing tuples.
@@ -60,7 +60,7 @@ import java.nio.file.FileSystems;
  * @see AppConfigurationService
  * @see RuntimeManager
  */
-public class CrimegraphToplogy {
+public class CrimegraphTopology {
 
   /**
    * The app main method, executed when the program is launched.

@@ -26,6 +26,7 @@
 
 package com.acmutv.crimegraph.core.tuple;
 
+import com.sun.javafx.scene.control.skin.VirtualFlow;
 import lombok.Getter;
 
 /**
@@ -39,7 +40,10 @@ public enum UpdateType {
 
   POTENTIAL ("POTENTIAL"),
   HIDDEN    ("HIDDEN"),
-  BOTH      ("BOTH");
+  BOTH      ("BOTH"),
+
+  /* FOR MULTI INDEX COMPUTING */
+  ALL       ("ALL");
 
   private final String name;
 

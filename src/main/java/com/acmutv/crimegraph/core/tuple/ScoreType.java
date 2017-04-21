@@ -38,7 +38,19 @@ import lombok.Getter;
 public enum ScoreType {
 
     POTENTIAL ("POTENTIAL"),
-    HIDDEN    ("HIDDEN");
+    HIDDEN    ("HIDDEN"),
+
+    /* FOR MULTI INDEX COMPUTING */
+    CN ("CN"),
+    JACCARD ("JACCARD"),
+    SALTON ("SALTON"),
+    SORENSEN ("SORENSEN"),
+    HPI ("HPI"),
+    HDI ("HDI"),
+    LHN1 ("LHN1"),
+    PA ("PA"),
+    AA ("AA"),
+    RA ("RA");
 
     private final String name;
 

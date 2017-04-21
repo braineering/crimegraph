@@ -115,12 +115,11 @@ public class Neo4JManagerTest {
    * Tests creation of real/potential and hidden links on NEO4J.
    * @throws IOException when operator cannot be managed.
    */
-  /*
   @Test
   public void test_save() throws Exception {
     Session session = DRIVER.session();
 
-    for (Link link : DATA) Neo4JManager.save(session, link, 0.5);
+    //for (Link link : DATA) Neo4JManager.save(session, link, 0.5);
 
     // Check
     for (Link link : DATA) {
@@ -134,10 +133,8 @@ public class Neo4JManagerTest {
       Assert.assertEquals(link.f0, src);
       Assert.assertEquals(link.f1, dst);
     }
-
     session.close();
   }
-  */
 
   /**
    * Tests matching of neighbours from NEO4J.
@@ -220,6 +217,23 @@ public class Neo4JManagerTest {
     expected.add(new Tuple2<>(6L,2L));
     Assert.assertEquals(expected, actual);
 
+    session.close();
+  }
+
+  /**
+   * Tests node degree
+   * @throws IOException when operator cannot be managed.
+   */
+  @Test
+  public void test_NodeDegree() throws Exception {
+    Session session = DRIVER.session();
+
+    //for (Link link : DATA) Neo4JManager.save(session, link, 0.5);
+
+    // Check
+    Long actual = 1L;
+    Tuple4<Long,Long,Long,Long> expected = Neo4JManager.multiIndexTool(session,2,7);
+    Assert.assertEquals(expected.f3, actual);
     session.close();
   }
 
