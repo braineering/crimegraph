@@ -944,4 +944,35 @@ public class Neo4JManager {
     }
     return neighbours;
   }
+
+  /**
+   * Multi Indices Tool for ScoreCalculatorMultiIndices
+   * @param session the NEO4J open session.
+   * @param x the id of the first node to update.
+   * @param y the id of the second node to update.
+   */
+  public static Tuple4<Long,Long,Long,Long> multiIndicesTool(Session session, long x, long y) {
+    Value params = parameters("x", x, "y", y);
+
+    StatementResult intersection = session.run(COUNT_COMMON_NEIGHBOURS, params);
+    Record recInt = intersection.next();
+    Long countintersection = recInt.get("cn").asLong();
+
+    StatementResult gamma = session.run(COUNT_GAMMA_UNION, params);
+    Record recGam = gamma.next();
+    Long countunion = recGam.get("cardinality").asLong();
+
+    params = parameters("src", x);
+    StatementResult degreeX = session.run(GAMMA_WITH_DEGREE, params);
+    Record recX = degreeX.next();
+    Long kx = recX.get("degree").asLong();
+
+    params = parameters("src", y);
+    StatementResult degreeY = session.run(GAMMA_WITH_DEGREE, params);
+    Record recY = degreeY.next();
+    Long ky = recY.get("degree").asLong();
+
+    return new Tuple4<>(countintersection,countunion,kx,ky);
+  }
+
 }
