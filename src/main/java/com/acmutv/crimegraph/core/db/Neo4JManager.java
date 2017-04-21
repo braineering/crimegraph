@@ -36,6 +36,7 @@ import org.neo4j.driver.v1.*;
 import java.util.HashSet;
 import java.util.Set;
 
+import static com.acmutv.crimegraph.core.tuple.LinkType.REAL;
 import static org.neo4j.driver.v1.Values.parameters;
 
 /**
@@ -57,7 +58,7 @@ public class Neo4JManager {
           "ON MATCH SET r.weight=(r.weight*r.num+{weight})/(r.num+1),r.num=r.num+1,r.updated=timestamp() " +
           "WITH u1,u2 " +
           "MATCH (u1)-[r2]-(u2) " +
-          "WHERE type(r2)='POTENTIAL' OR type(r2)='HIDDEN' " +
+          "WHERE NOT type(r2) = 'REAL' " +
           "DELETE r2";
 
   /**
@@ -68,31 +69,11 @@ public class Neo4JManager {
           "MERGE (u2:Person {id:{dst}}) " +
           "MERGE (u1)-[r:REAL]-(u2) " +
           "ON CREATE SET r.weight={weight},r.num=1,r.created=timestamp(),r.updated=r.created " +
-          "ON MATCH SET r.weight=({weight}*{ewma} + r.weight*(1-{ewma}),r.num=r.num+1,r.updated=timestamp() " +
+          "ON MATCH SET r.weight=({weight}*{ewma} + r.weight*(1-{ewma})),r.num=(r.num+1),r.updated=timestamp() " +
           "WITH u1,u2 " +
           "MATCH (u1)-[r2]-(u2) " +
-          "WHERE type(r2)='POTENTIAL' OR type(r2)='HIDDEN' " +
+          "WHERE NOT type(r2) = 'REAL' " +
           "DELETE r2";
-
-  /**
-   * Query to create a new potential link.
-   */
-  private static final String SAVE_LINK_POTENTIAL =
-      "MERGE (u1:Person {id:{src}}) " +
-          "MERGE (u2:Person {id:{dst}}) " +
-          "MERGE (u1)-[r:POTENTIAL]-(u2) " +
-          "ON CREATE SET r.weight={weight},r.created=timestamp(),r.updated=r.created " +
-          "ON MATCH SET r.weight={weight},r.updated=timestamp()";
-
-  /**
-   * Query to create a new hidden link.
-   */
-  private static final String SAVE_LINK_HIDDEN =
-      "MERGE (u1:Person {id:{src}}) " +
-          "MERGE (u2:Person {id:{dst}}) " +
-          "MERGE (u1)-[r:HIDDEN]-(u2) " +
-          "ON CREATE SET r.weight={weight},r.created=timestamp(),r.updated=r.created " +
-          "ON MATCH SET r.weight={weight},r.updated=timestamp()";
 
   /**
    * Query to remove a link.
@@ -262,33 +243,44 @@ public class Neo4JManager {
    * Query to remove all nodes on Neo4J
    */
   private static final String EMPYTING =
-          "MATCH (n:Person) DETACH DELETE n";
+          "MATCH (n:Person) DETACH DELETE n ";
 
   /**
    * Query to count the common neighbours.
    */
   private static final String COUNT_COMMON_NEIGHBOURS =
           "MATCH (u1:Person {id:{x}})-[:REAL]-(n:Person)-[:REAL]-(u2:Person {id:{y}}) " +
-                  "RETURN COUNT(DISTINCT n.id) AS cn";
+                  "RETURN COUNT(DISTINCT n.id) AS cn ";
 
   /**
    * Query to find the union on the neighborhood between
    */
   private static final String COUNT_GAMMA_UNION=
-          "MATCH (u1:Person {id:{x}})-[r1:REAL]-(n:Person)" +
-                  "WITH collect(DISTINCT n.id) as set1"   +
-                  "MATCH (u2:Person {id:{y}})-[r2:REAL]-(n2:Person)" +
-                  "WITH collect(DISTINCT n2.id) as set2, set1"     +
-                  "WITH set1 + set2 as BOTH"+
-                  "UNWIND BOTH as res"+
-                  "RETURN COUNT(DISTINCT res) as cardinality";
+          "MATCH (u1:Person {id:{x}})-[r1:REAL]-(n:Person) " +
+                  "WITH collect(DISTINCT n.id) as set1 "   +
+                  "MATCH (u2:Person {id:{y}})-[r2:REAL]-(n2:Person) " +
+                  "WITH collect(DISTINCT n2.id) as set2, set1 "     +
+                  "WITH set1 + set2 as BOTH "+
+                  "UNWIND BOTH as res "+
+                  "RETURN COUNT(DISTINCT res) as cardinality ";
 
   /**
    * Query to count the neighbors of node x
    */
   private static final String NODE_DEGREE=
-          "MATCH (u1:Person {id:{src})-[r:REAL]-(n:Person)"+
-          "RETURN COUNT(DISTINCT r) as degree";
+          "MATCH (u1:Person {id:{src}})-[r:REAL]-(n:Person) "+
+          "RETURN COUNT(DISTINCT r) as degree ";
+
+  /**
+   * Query to create a new general link.
+   */
+  public static final String SAVE_LINK_MINED_GENERAL =
+          "MERGE (u1:Person {id:{src}}) " +
+                  "MERGE (u2:Person {id:{dst}}) " +
+                  "MERGE (u1)-[r:%s]-(u2) " +
+                  "ON CREATE SET r.weight={weight},r.created=timestamp(),r.updated=r.created " +
+                  "ON MATCH SET r.weight={weight},r.updated=timestamp()";
+
 
   /**
    * Opens a NEO4J connection.
@@ -337,12 +329,13 @@ public class Neo4JManager {
 
     Value params = parameters("src", src, "dst", dst, "weight", weight);
 
-    switch (type) {
-      case REAL: session.run(SAVE_LINK_REAL_AVERAGE, params); break;
-      case POTENTIAL: session.run(SAVE_LINK_POTENTIAL, params); break;
-      case HIDDEN: session.run(SAVE_LINK_HIDDEN, params); break;
-      default: break;
+    if (REAL.equals(type)) {
+      session.run(SAVE_LINK_REAL_AVERAGE, params);
+    } else {
+      final String SAVE_LINK_MINED = String.format(SAVE_LINK_MINED_GENERAL, type);
+      session.run(SAVE_LINK_MINED, params);
     }
+
   }
 
   /**
@@ -359,11 +352,11 @@ public class Neo4JManager {
 
     Value params = parameters("src", src, "dst", dst, "weight", weight, "ewma", ewmaFactor);
 
-    switch (type) {
-      case REAL: session.run(SAVE_LINK_REAL_EWMA, params); break;
-      case POTENTIAL: session.run(SAVE_LINK_POTENTIAL, params); break;
-      case HIDDEN: session.run(SAVE_LINK_HIDDEN, params); break;
-      default: break;
+    if (REAL.equals(type)) {
+      session.run(SAVE_LINK_REAL_EWMA, params);
+    } else {
+      final String SAVE_LINK_MINED = String.format(SAVE_LINK_MINED_GENERAL, type);
+      session.run(SAVE_LINK_MINED, params);
     }
   }
 

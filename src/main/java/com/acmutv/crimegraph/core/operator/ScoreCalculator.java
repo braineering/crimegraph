@@ -133,40 +133,40 @@ public class ScoreCalculator extends RichFlatMapFunction<NodePair, NodePairScore
     if(type.equals(UpdateType.ALL)){
 
       /* multi indices: <cardinality intersection, cardinality union, x degree, y degree> */
-      Tuple4<Long, Long, Long, Long> multiIndices = Neo4JManager.multiIndexTool(this.session, x, y);
+      Tuple4<Long, Long, Long, Long> multiIndex = Neo4JManager.multiIndexTool(this.session, x, y);
 
       /* COMMON NEIGHBOURS INDEX */
-      NodePairScore cn = new NodePairScore(x, y, multiIndices.f0, ScoreType.CN);
+      NodePairScore cn = new NodePairScore(x, y, multiIndex.f0, ScoreType.CN);
       out.collect(cn);
 
       /* SALTON INDEX */
-      Double saltonScore = multiIndices.f0 / Math.sqrt(multiIndices.f2 * multiIndices.f3);
+      Double saltonScore = multiIndex.f0 / Math.sqrt(multiIndex.f2 * multiIndex.f3);
       NodePairScore salton = new NodePairScore(x, y, saltonScore, ScoreType.SALTON);
       out.collect(salton);
 
       /* JACCARD INDEX */
-      Double jaccardScore = Double.valueOf(multiIndices.f0 / multiIndices.f1);
+      Double jaccardScore =  (double)multiIndex.f0 / (double) multiIndex.f1;
       NodePairScore jaccard = new NodePairScore(x, y, jaccardScore, ScoreType.JACCARD);
       out.collect(jaccard);
 
       /* SORENSEN INDEX */
-      Double sorensenScore = Double.valueOf((2 * multiIndices.f0) / (multiIndices.f2 + multiIndices.f3));
+      Double sorensenScore = (2 * multiIndex.f0) / ((double)multiIndex.f2 + (double)multiIndex.f3);
       NodePairScore sorensen = new NodePairScore(x, y, sorensenScore, ScoreType.SORENSEN);
       out.collect(sorensen);
 
       /* HPI INDEX */
-      Double hpiScore = Double.valueOf(multiIndices.f0 / Long.min(multiIndices.f2, multiIndices.f3));
+      Double hpiScore = multiIndex.f0 / Double.min(multiIndex.f2, multiIndex.f3);
       NodePairScore hpi = new NodePairScore(x, y, hpiScore, ScoreType.HPI);
       out.collect(hpi);
 
       /* HDI INDEX */
-      Double hdiScore = Double.valueOf(multiIndices.f0 / Long.max(multiIndices.f2, multiIndices.f3));
-      NodePairScore hdi = new NodePairScore(x, y, hdiScore, ScoreType.HPI);
+      Double hdiScore = multiIndex.f0 / Double.max(multiIndex.f2, multiIndex.f3);
+      NodePairScore hdi = new NodePairScore(x, y, hdiScore, ScoreType.HDI);
       out.collect(hdi);
 
       /* LHN1 INDEX */
-      Double lhn1Score = Double.valueOf(multiIndices.f0 / (multiIndices.f2 * multiIndices.f3));
-      NodePairScore lhn1 = new NodePairScore(x, y, lhn1Score, ScoreType.HPI);
+      Double lhn1Score = multiIndex.f0 / ((double) multiIndex.f2 * (double) multiIndex.f3);
+      NodePairScore lhn1 = new NodePairScore(x, y, lhn1Score, ScoreType.LHN1);
       out.collect(lhn1);
 
       double potentialScore = 0.0;

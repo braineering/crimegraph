@@ -42,7 +42,6 @@ public enum LinkType {
   HIDDEN    ("HIDDEN"),
 
   /* FOR MULTI INDEX COMPUTING */
-  MPPOTENTIAL("MPPOTENTIAL"),
   CN ("CN"),
   JACCARD ("JACCARD"),
   SALTON ("SALTON"),
