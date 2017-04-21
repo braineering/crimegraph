@@ -32,10 +32,8 @@ import com.acmutv.crimegraph.config.serial.AppConfigurationYamlMapper;
 import com.acmutv.crimegraph.core.db.DbConfiguration;
 import com.acmutv.crimegraph.core.db.Neo4JManager;
 import com.acmutv.crimegraph.core.keyer.NodePairScoreKeyer;
-import com.acmutv.crimegraph.core.operator.GraphUpdate;
-import com.acmutv.crimegraph.core.operator.ScoreCalculator;
-import com.acmutv.crimegraph.core.operator.ScoreCalculatorMultiIndices;
-import com.acmutv.crimegraph.core.operator.ScoreSplitter;
+import com.acmutv.crimegraph.core.operator.*;
+import com.acmutv.crimegraph.core.sink.AllSink;
 import com.acmutv.crimegraph.core.sink.HiddenSink;
 import com.acmutv.crimegraph.core.sink.PotentialSink;
 import com.acmutv.crimegraph.core.source.KafkaProperties;
@@ -55,7 +53,7 @@ import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 import java.nio.file.FileSystems;
 
 /**
- * The app word-point for {@code CrimegraphToplogy} application.
+ * The app word-point for {@code CrimegraphTopology} application.
  * Before starting the application, it is necessary to open the socket, running
  * {@code $> ncat 127.0.0.1 9000 -l}
  * and start typing tuples.
@@ -65,7 +63,7 @@ import java.nio.file.FileSystems;
  * @see AppConfigurationService
  * @see RuntimeManager
  */
-public class CrimegraphToplogyMultiIndices {
+public class CrimegraphTopologyMultiIndex {
 
   /**
    * The app main method, executed when the program is launched.
@@ -102,20 +100,12 @@ public class CrimegraphToplogyMultiIndices {
       links = env.addSource(new LinkSource(datasetPath));
     }
 
-    DataStream<NodePair> updates = links.flatMap(new GraphUpdate(dbconf)).shuffle();
+    DataStream<NodePair> updates = links.flatMap(new GraphUpdateMultiIndex(dbconf)).shuffle();
 
-    DataStream<NodePairScore> scores = updates.flatMap(new ScoreCalculatorMultiIndices(dbconf,"CN"))
+    DataStream<NodePairScore> scores = updates.flatMap(new ScoreCalculator(dbconf))
         .keyBy(new NodePairScoreKeyer());
 
-    SplitStream<NodePairScore> split = scores.split(new ScoreSplitter());
-
-    DataStream<NodePairScore> hiddenScores = split.select(ScoreType.HIDDEN.name());
-
-    DataStream<NodePairScore> potentialScores = split.select(ScoreType.POTENTIAL.name());
-
-    hiddenScores.addSink(new HiddenSink(dbconf, config.getHiddenThreshold()));
-
-    potentialScores.addSink(new PotentialSink(dbconf, config.getPotentialThreshold()));
+    scores.addSink(new AllSink(dbconf, config.getPotentialThreshold()));
 
     /* EXECUTION */
     env.execute("Crimegraph");

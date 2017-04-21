@@ -286,9 +286,9 @@ public class Neo4JManager {
   /**
    * Query to count the neighbors of node x
    */
-  private static final String GAMMA_WITH_DEGREE=
+  private static final String NODE_DEGREE=
           "MATCH (u1:Person {id:{src})-[r:REAL]-(n:Person)"+
-          "RETURN n.id AS id, COUNT(DISTINCT r) as degree";
+          "RETURN COUNT(DISTINCT r) as degree";
 
   /**
    * Opens a NEO4J connection.
@@ -756,12 +756,12 @@ public class Neo4JManager {
   }
 
   /**
-   * Soresen Metric
+   * Sorensen Metric
    * @param session the NEO4J open session.
    * @param x the id of the first node to update.
    * @param y the id of the second node to update.
    */
-  public static Double soresen(Session session, long x, long y) {
+  public static Double sorensen(Session session, long x, long y) {
     Value params = parameters("x", x, "y", y);
 
     StatementResult intersection = session.run(COUNT_COMMON_NEIGHBOURS, params);
@@ -769,12 +769,12 @@ public class Neo4JManager {
     Long cn = recInt.get("cn").asLong();
 
     params = parameters("src", x);
-    StatementResult degreeX = session.run(GAMMA_WITH_DEGREE, params);
+    StatementResult degreeX = session.run(NODE_DEGREE, params);
     Record recX = degreeX.next();
     Long kx = recX.get("degree").asLong();
 
     params = parameters("src", y);
-    StatementResult degreeY = session.run(GAMMA_WITH_DEGREE, params);
+    StatementResult degreeY = session.run(NODE_DEGREE, params);
     Record recY = degreeY.next();
     Long ky = recY.get("degree").asLong();
 
@@ -795,12 +795,12 @@ public class Neo4JManager {
     Long cn = recInt.get("cn").asLong();
 
     params = parameters("src", x);
-    StatementResult degreeX = session.run(GAMMA_WITH_DEGREE, params);
+    StatementResult degreeX = session.run(NODE_DEGREE, params);
     Record recX = degreeX.next();
     Long kx = recX.get("degree").asLong();
 
     params = parameters("src", y);
-    StatementResult degreeY = session.run(GAMMA_WITH_DEGREE, params);
+    StatementResult degreeY = session.run(NODE_DEGREE, params);
     Record recY = degreeY.next();
     Long ky = recY.get("degree").asLong();
 
@@ -821,12 +821,12 @@ public class Neo4JManager {
     Long cn = recInt.get("cn").asLong();
 
     params = parameters("src", x);
-    StatementResult degreeX = session.run(GAMMA_WITH_DEGREE, params);
+    StatementResult degreeX = session.run(NODE_DEGREE, params);
     Record recX = degreeX.next();
     Long kx = recX.get("degree").asLong();
 
     params = parameters("src", y);
-    StatementResult degreeY = session.run(GAMMA_WITH_DEGREE, params);
+    StatementResult degreeY = session.run(NODE_DEGREE, params);
     Record recY = degreeY.next();
     Long ky = recY.get("degree").asLong();
 
@@ -847,12 +847,12 @@ public class Neo4JManager {
     Long cn = recInt.get("cn").asLong();
 
     params = parameters("src", x);
-    StatementResult degreeX = session.run(GAMMA_WITH_DEGREE, params);
+    StatementResult degreeX = session.run(NODE_DEGREE, params);
     Record recX = degreeX.next();
     Long kx = recX.get("degree").asLong();
 
     params = parameters("src", y);
-    StatementResult degreeY = session.run(GAMMA_WITH_DEGREE, params);
+    StatementResult degreeY = session.run(NODE_DEGREE, params);
     Record recY = degreeY.next();
     Long ky = recY.get("degree").asLong();
 
@@ -869,12 +869,12 @@ public class Neo4JManager {
   public static Double preferentialAttachment(Session session, long x, long y) {
 
     Value params = parameters("src", x);
-    StatementResult degreeX = session.run(GAMMA_WITH_DEGREE, params);
+    StatementResult degreeX = session.run(NODE_DEGREE, params);
     Record recX = degreeX.next();
     Long kx = recX.get("degree").asLong();
 
     params = parameters("src", y);
-    StatementResult degreeY = session.run(GAMMA_WITH_DEGREE, params);
+    StatementResult degreeY = session.run(NODE_DEGREE, params);
     Record recY = degreeY.next();
     Long ky = recY.get("degree").asLong();
 
@@ -895,12 +895,12 @@ public class Neo4JManager {
     Long cn = recInt.get("cn").asLong();
 
     params = parameters("src", x);
-    StatementResult degreeX = session.run(GAMMA_WITH_DEGREE, params);
+    StatementResult degreeX = session.run(NODE_DEGREE, params);
     Record recX = degreeX.next();
     Long kx = recX.get("degree").asLong();
 
     params = parameters("src", y);
-    StatementResult degreeY = session.run(GAMMA_WITH_DEGREE, params);
+    StatementResult degreeY = session.run(NODE_DEGREE, params);
     Record recY = degreeY.next();
     Long ky = recY.get("degree").asLong();
 
@@ -927,7 +927,7 @@ public class Neo4JManager {
   }
 
   /**
-   * Adamic-Adar Index
+   * RA Index
    * @param session the NEO4J open session.
    * @param x the id of the first node to update.
    * @param y the id of the second node to update.
@@ -951,7 +951,7 @@ public class Neo4JManager {
    * @param x the id of the first node to update.
    * @param y the id of the second node to update.
    */
-  public static Tuple4<Long,Long,Long,Long> multiIndicesTool(Session session, long x, long y) {
+  public static Tuple4<Long,Long,Long,Long> multiIndexTool(Session session, long x, long y) {
     Value params = parameters("x", x, "y", y);
 
     StatementResult intersection = session.run(COUNT_COMMON_NEIGHBOURS, params);
@@ -963,12 +963,12 @@ public class Neo4JManager {
     Long countunion = recGam.get("cardinality").asLong();
 
     params = parameters("src", x);
-    StatementResult degreeX = session.run(GAMMA_WITH_DEGREE, params);
+    StatementResult degreeX = session.run(NODE_DEGREE, params);
     Record recX = degreeX.next();
     Long kx = recX.get("degree").asLong();
 
     params = parameters("src", y);
-    StatementResult degreeY = session.run(GAMMA_WITH_DEGREE, params);
+    StatementResult degreeY = session.run(NODE_DEGREE, params);
     Record recY = degreeY.next();
     Long ky = recY.get("degree").asLong();
 

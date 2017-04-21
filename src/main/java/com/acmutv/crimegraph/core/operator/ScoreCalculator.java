@@ -129,5 +129,89 @@ public class ScoreCalculator extends RichFlatMapFunction<NodePair, NodePairScore
       out.collect(hidden);
     }
 
+    /* for Multi-Index Computing (include potential) */
+    if(type.equals(UpdateType.ALL)){
+
+      /* multi indices: <cardinality intersection, cardinality union, x degree, y degree> */
+      Tuple4<Long, Long, Long, Long> multiIndices = Neo4JManager.multiIndexTool(this.session, x, y);
+
+      /* COMMON NEIGHBOURS INDEX */
+      NodePairScore cn = new NodePairScore(x, y, multiIndices.f0, ScoreType.CN);
+      out.collect(cn);
+
+      /* SALTON INDEX */
+      Double saltonScore = multiIndices.f0 / Math.sqrt(multiIndices.f2 * multiIndices.f3);
+      NodePairScore salton = new NodePairScore(x, y, saltonScore, ScoreType.SALTON);
+      out.collect(salton);
+
+      /* JACCARD INDEX */
+      Double jaccardScore = Double.valueOf(multiIndices.f0 / multiIndices.f1);
+      NodePairScore jaccard = new NodePairScore(x, y, jaccardScore, ScoreType.JACCARD);
+      out.collect(jaccard);
+
+      /* SORENSEN INDEX */
+      Double sorensenScore = Double.valueOf((2 * multiIndices.f0) / (multiIndices.f2 + multiIndices.f3));
+      NodePairScore sorensen = new NodePairScore(x, y, sorensenScore, ScoreType.SORENSEN);
+      out.collect(sorensen);
+
+      /* HPI INDEX */
+      Double hpiScore = Double.valueOf(multiIndices.f0 / Long.min(multiIndices.f2, multiIndices.f3));
+      NodePairScore hpi = new NodePairScore(x, y, hpiScore, ScoreType.HPI);
+      out.collect(hpi);
+
+      /* HDI INDEX */
+      Double hdiScore = Double.valueOf(multiIndices.f0 / Long.max(multiIndices.f2, multiIndices.f3));
+      NodePairScore hdi = new NodePairScore(x, y, hdiScore, ScoreType.HPI);
+      out.collect(hdi);
+
+      /* LHN1 INDEX */
+      Double lhn1Score = Double.valueOf(multiIndices.f0 / (multiIndices.f2 * multiIndices.f3));
+      NodePairScore lhn1 = new NodePairScore(x, y, lhn1Score, ScoreType.HPI);
+      out.collect(lhn1);
+
+      double potentialScore = 0.0;
+      double adamicAdarScore = 0.0;
+      double resourceAllocationScore = 0.0;
+
+      long totalDegree = 0;
+
+      for (Tuple4<Long, Long, Double, Double> z : neighbours) {
+        long zDegree = z.f1;
+        assert zDegree > 0;
+        potentialScore += (1.0 / zDegree);
+        resourceAllocationScore += (1.0 / zDegree);
+        adamicAdarScore += (1.0 / Math.log10(zDegree));
+        totalDegree += zDegree;
+      }
+
+      /* ADAMIC ADAR INDEX */
+      NodePairScore aa = new NodePairScore(x, y, adamicAdarScore, ScoreType.AA);
+      out.collect(aa);
+
+      /* RESOURCE ALLOCATION INDEX */
+      NodePairScore ra = new NodePairScore(x, y, resourceAllocationScore, ScoreType.RA);
+      out.collect(ra);
+
+      /* POTENTIAL */
+      potentialScore /= totalDegree;
+      NodePairScore potential = new NodePairScore(x, y, potentialScore, ScoreType.POTENTIAL);
+      out.collect(potential);
+
+      /* HIDDEN */
+      double hiddenScore = 0.0;
+      double totalWeight = 0.0;
+
+      for (Tuple4<Long,Long,Double,Double> z : neighbours) {
+        double pathWeight = z.f2;
+        double nodeWeight = z.f3;
+        assert nodeWeight != 0.0;
+        hiddenScore += (pathWeight / nodeWeight);
+        totalWeight += nodeWeight;
+      }
+      hiddenScore /= totalWeight;
+      NodePairScore hidden = new NodePairScore(x, y, hiddenScore, ScoreType.HIDDEN);
+      out.collect(hidden);
+    }
+
   }
 }
