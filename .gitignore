@@ -10,6 +10,7 @@
 #==============================================================================#
 _ignore
 .credentials.sh
+.credentials2.sh
 .vagrant
 ansible/playbook.retry
 site/node_modules/
