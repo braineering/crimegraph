@@ -42,6 +42,9 @@ public enum LinkType {
   HIDDEN    ("HIDDEN"),
 
   /* FOR MULTI INDEX COMPUTING */
+  NTA ("NTA"),
+  NRA ("NRA"),
+  TA  ("TA"),
   CN ("CN"),
   JACCARD ("JACCARD"),
   SALTON ("SALTON"),

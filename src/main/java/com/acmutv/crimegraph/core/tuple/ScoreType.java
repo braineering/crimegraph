@@ -37,10 +37,13 @@ import lombok.Getter;
 @Getter
 public enum ScoreType {
 
-    POTENTIAL ("POTENTIAL"),
-    HIDDEN    ("HIDDEN"),
+    POTENTIAL   ("POTENTIAL"),
+    HIDDEN      ("HIDDEN"),
 
-    /* FOR MULTI INDEX COMPUTING */
+    /* FOR MULTI-INDEX COMPUTING */
+    NRA    ("NRA"),
+    NTA    ("NTA"),
+    TA     ("TA"),
     CN ("CN"),
     JACCARD ("JACCARD"),
     SALTON ("SALTON"),

@@ -44,7 +44,7 @@ import org.neo4j.driver.v1.Session;
  * @author Michele Porretta {@literal <mporretta@acm.org>}
  * @since 1.0
  */
-public class AllSink extends RichSinkFunction<NodePairScore> {
+public class MultiIndexSink extends RichSinkFunction<NodePairScore> {
 
   /**
    * The Neo4J configuration.
@@ -71,7 +71,7 @@ public class AllSink extends RichSinkFunction<NodePairScore> {
    * @param dbconfig the Neo4J configuration.
    * @param threshold the potential score threshold.
    */
-  public AllSink(DbConfiguration dbconfig, double threshold) {
+  public MultiIndexSink(DbConfiguration dbconfig, double threshold) {
     this.dbconfig = dbconfig;
     this.threshold = threshold;
   }
@@ -86,11 +86,14 @@ public class AllSink extends RichSinkFunction<NodePairScore> {
 
       Link link = null;
       switch(value.f3) {
-        case POTENTIAL:
-          link = new Link(x, y, score, LinkType.POTENTIAL);
+        case NRA:
+          link = new Link(x, y, score, LinkType.NRA);
           break;
-        case HIDDEN:
-          link = new Link(x, y, score, LinkType.HIDDEN);
+        case NTA:
+          link = new Link(x, y, score, LinkType.NTA);
+          break;
+        case TA:
+          link = new Link(x, y, score, LinkType.TA);
           break;
         case CN:
           link = new Link(x, y, score, LinkType.CN);
@@ -128,11 +131,14 @@ public class AllSink extends RichSinkFunction<NodePairScore> {
     }
     else {
       switch(value.f3) {
-        case POTENTIAL:
-          Neo4JManager.remove(this.session, x, y, LinkType.POTENTIAL);
+        case NRA:
+          Neo4JManager.remove(this.session, x, y, LinkType.NRA);
           break;
-        case HIDDEN:
-          Neo4JManager.remove(this.session, x, y, LinkType.HIDDEN);
+        case NTA:
+          Neo4JManager.remove(this.session, x, y, LinkType.NTA);
+          break;
+        case TA:
+          Neo4JManager.remove(this.session, x, y, LinkType.TA);
           break;
         case CN:
           Neo4JManager.remove(this.session, x, y, LinkType.CN);

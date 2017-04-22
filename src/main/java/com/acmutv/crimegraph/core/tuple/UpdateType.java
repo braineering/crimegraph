@@ -43,7 +43,8 @@ public enum UpdateType {
   BOTH      ("BOTH"),
 
   /* FOR MULTI INDEX COMPUTING */
-  ALL       ("ALL");
+  ALL       ("ALL"), // ALL METRICS
+  TM        ("TM");  // ONLY TRAFFIC METRICS
 
   private final String name;
 
