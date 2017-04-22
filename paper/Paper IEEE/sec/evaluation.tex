@@ -9,21 +9,68 @@ NOTA: Grafica dei grafici da rendere conforme al paper nell'ultima versione.
 %ARGOMENTARE LE METRICHE AUC E PRECISION
 %ARGOMENTARE COME VENGONO GENERATI I TRAINING/TEST INTERVAL.
 
-\begin{figure}[!ht]
-	\centering
-	\includegraphics[width=0.48\textwidth]{graphs/graph_detection.png}
-	\caption{Precision of local metric for link detection}
-	\label{fig:graph-detection}
-\end{figure}
+%\begin{figure}[!ht]
+%	\centering
+%	\includegraphics[width=0.48\textwidth]{graphs/graph_detection.png}
+%	\caption{Precision of local metric for link detection}
+%	\label{fig:graph-detection}
+%\end{figure}
 
-\begin{figure}[!ht]
-	\centering
-	\includegraphics[width=0.48\textwidth]{graphs/graph_prediction.png}
-	\caption{Precision of local metric for link prediction}
-	\label{fig:graph-prediction}
-\end{figure}
+%\begin{figure}[!ht]
+%	\centering
+%	\includegraphics[width=0.48\textwidth]{graphs/graph_prediction.png}
+%	\caption{Precision of local metric for link prediction}
+%	\label{fig:graph-prediction}
+%\end{figure}
 
+    \begin{table}[h]
+		\centering
+		\begin{tabular}{l l l}
+		\toprule
+		%\textbf{Materiale} & \textbf{$2.4 GHz$} & \textbf{$5 GHz$}\\
+		\textbf{Indices} & \textbf{AUC} & \textbf{Precision}\\
+		\midrule
+			Common Neighbours & $3-4$ & $3-5$\\
+			Salton  & $2-5$ & $4-9$\\
+			Jaccard & $3-4$ & $6-7$\\
+			Sorensen  & $6-18$ & $10-30$\\
+			Hub Promoted  & $2-3$ & $6-8$\\
+			Hub Depressed & $12$ & $20$\\
+			Leicht-Holme-Newman & $10$ & $20$\\
+			Adamic-Adar & $13-19$ & $25-32$\\
+			Resource Allocation (RA) & $13-19$ & $25-32$\\
+			Normalized RA & $13-19$ & $25-32$\\
+		\bottomrule
+		\end{tabular}
+		\label{tab:attenuazione}
+		\caption{Materiali comuni e corrispondente attenuazione in \textit{dB}. Fonte \cite{Attenuazione}.}
+	\end{table}	
 
+\lipsum[1]
+
+    \begin{table}[h]
+		\centering
+		\begin{tabular}{l l l}
+		\toprule
+		%\textbf{Materiale} & \textbf{$2.4 GHz$} & \textbf{$5 GHz$}\\
+		\textbf{Indices} & \textbf{AUC} & \textbf{Precision}\\
+		\midrule
+			Common Neighbours & $3-4$ & $3-5$\\
+			Salton  & $2-5$ & $4-9$\\
+			Jaccard & $3-4$ & $6-7$\\
+			Sorensen  & $6-18$ & $10-30$\\
+			Hub Promoted  & $2-3$ & $6-8$\\
+			Hub Depressed & $12$ & $20$\\
+			Leicht-Holme-Newman & $10$ & $20$\\
+			Adamic-Adar & $13-19$ & $25-32$\\
+			Resource Allocation (RA) & $13-19$ & $25-32$\\
+			Normalized RA & $13-19$ & $25-32$\\
+		\bottomrule
+		\end{tabular}
+		\label{tab:attenuazione}
+		\caption{Materiali comuni e corrispondente attenuazione in \textit{dB}. Fonte \cite{Attenuazione}.}
+	\end{table}
+     
 %\begin{figure}
 %	\centering
 %	\includegraphics{./fig/fly}
