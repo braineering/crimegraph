@@ -92,7 +92,7 @@ public class HiddenSink extends RichSinkFunction<NodePairScore> {
   @Override
   public void open(Configuration parameters) throws Exception {
     this.driver = Neo4JManager.open(this.dbconfig);
-    this.session = driver.session(AccessMode.WRITE);
+    this.session = driver.session();
   }
 
   @Override
