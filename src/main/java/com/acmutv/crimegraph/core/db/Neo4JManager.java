@@ -281,6 +281,7 @@ public class Neo4JManager {
                   "ON CREATE SET r.weight={weight},r.created=timestamp(),r.updated=r.created " +
                   "ON MATCH SET r.weight={weight},r.updated=timestamp()";
 
+  private static final long SESSION_TIMEOUT = 200;
 
   /**
    * Opens a NEO4J connection.
@@ -302,7 +303,7 @@ public class Neo4JManager {
    */
   public static Driver open(String hostname, String username, String password) {
     AuthToken auth = AuthTokens.basic(username, password);
-    Config config = Config.build().withEncryptionLevel(Config.EncryptionLevel.NONE ).toConfig();
+    Config config = Config.build().withSessionLivenessCheckTimeout(SESSION_TIMEOUT).withEncryptionLevel(Config.EncryptionLevel.NONE ).toConfig();
     return GraphDatabase.driver(hostname, auth, config);
   }
 
