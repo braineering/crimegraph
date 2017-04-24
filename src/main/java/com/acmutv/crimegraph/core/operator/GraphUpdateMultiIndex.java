@@ -58,12 +58,7 @@ public class GraphUpdateMultiIndex extends RichFlatMapFunction<Link, NodePair> {
   /**
    * The NEO4J driver.
    */
-  private Driver driver;
-
-  /**
-   * The NEO4J session.
-   */
-  private Session session;
+  private transient Driver driver;
 
   /**
    * Constructs for load edge to write {@link Link} on a NEO4J instance.
@@ -76,32 +71,33 @@ public class GraphUpdateMultiIndex extends RichFlatMapFunction<Link, NodePair> {
   @Override
   public void open(Configuration parameters) throws Exception {
     this.driver = Neo4JManager.open(this.dbconfig);
-    this.session = driver.session();
   }
 
   @Override
   public void close() throws Exception {
-    Neo4JManager.close(this.session, this.driver);
+    this.driver.close();
   }
 
   @SuppressWarnings("unchecked")
   @Override
   public void flatMap(Link value, Collector<NodePair> out) {
+    Session session = this.driver.session();
+
     long x = value.f0;
     long y = value.f1;
 
     if (x == y) return;
 
-    Tuple3<Boolean,Boolean,Boolean> check = Neo4JManager.checkExtremes(this.session, x, y);
+    Tuple3<Boolean,Boolean,Boolean> check = Neo4JManager.checkExtremes(session, x, y);
     boolean xInG = check.f0;
     boolean yinG = check.f1;
     boolean edgeInG = check.f2;
 
-    Neo4JManager.save(this.session, value);
+    Neo4JManager.save(session, value);
 
     // if x in G, y in G, and (x,y) in G
     if (xInG && yinG && edgeInG) {
-      Set<Tuple2<Long,Long>> pairs = Neo4JManager.pairsToUpdateTwice(this.session, x, y);
+      Set<Tuple2<Long,Long>> pairs = Neo4JManager.pairsToUpdateTwice(session, x, y);
       for (Tuple2<Long,Long> pair : pairs) {
         NodePair update = new NodePair(pair.f0, pair.f1, UpdateType.TM);
         out.collect(update);
@@ -110,7 +106,7 @@ public class GraphUpdateMultiIndex extends RichFlatMapFunction<Link, NodePair> {
 
     // if x in G, y in G, and (x,y) NOT in G
     else if (xInG && yinG) {
-      Set<Tuple2<Long,Long>> pairs = Neo4JManager.pairsToUpdateTwice(this.session, x, y);
+      Set<Tuple2<Long,Long>> pairs = Neo4JManager.pairsToUpdateTwice(session, x, y);
       for (Tuple2<Long,Long> pair : pairs) {
         NodePair update = new NodePair(pair.f0, pair.f1, UpdateType.ALL);
         out.collect(update);
@@ -119,7 +115,7 @@ public class GraphUpdateMultiIndex extends RichFlatMapFunction<Link, NodePair> {
 
     // if x NOT in G and y in G
     else if (!xInG && yinG) {
-      Set<Tuple2<Long,Long>> pairs = Neo4JManager.pairsToUpdate(this.session, x);
+      Set<Tuple2<Long,Long>> pairs = Neo4JManager.pairsToUpdate(session, x);
       for (Tuple2<Long,Long> pair : pairs ) {
         NodePair update = new NodePair(pair.f0, pair.f1, UpdateType.ALL);
         out.collect(update);
@@ -128,11 +124,13 @@ public class GraphUpdateMultiIndex extends RichFlatMapFunction<Link, NodePair> {
 
     // if x in G and y NOT in G
     else if (xInG && !yinG) {
-      Set<Tuple2<Long,Long>> pairs = Neo4JManager.pairsToUpdate(this.session, y);
+      Set<Tuple2<Long,Long>> pairs = Neo4JManager.pairsToUpdate(session, y);
       for (Tuple2<Long,Long> pair : pairs) {
         NodePair update = new NodePair(pair.f0, pair.f1, UpdateType.ALL);
         out.collect(update);
       }
     }
+
+    session.close();
   }
 }

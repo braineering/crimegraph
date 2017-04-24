@@ -57,12 +57,7 @@ public class ScoreCalculatorMultiIndex extends RichFlatMapFunction<NodePair, Nod
   /**
    * The NEO4J driver.
    */
-  private Driver driver;
-
-  /**
-   * The NEO4J session.
-   */
-  private Session session;
+  private transient Driver driver;
 
   /**
    * Constructs a new PotentialScoreOperator to compute the score
@@ -77,22 +72,23 @@ public class ScoreCalculatorMultiIndex extends RichFlatMapFunction<NodePair, Nod
   @Override
   public void open(Configuration parameters) throws Exception {
     this.driver = Neo4JManager.open(this.dbconfig);
-    this.session = driver.session();
   }
 
   @Override
   public void close() throws Exception {
-      Neo4JManager.close(this.session, this.driver);
+    this.driver.close();
   }
 
   @SuppressWarnings("unchecked")
   @Override
   public void flatMap(NodePair nodePair, Collector<NodePairScore> out) {
+    Session session = this.driver.session();
+
     long x = nodePair.f0;
     long y = nodePair.f1;
     UpdateType type = nodePair.f2;
 
-    Set<Tuple4<Long,Long,Double,Double>> neighbours = Neo4JManager.gammaIntersection(this.session, x, y);
+    Set<Tuple4<Long,Long,Double,Double>> neighbours = Neo4JManager.gammaIntersection(session, x, y);
 
     if(type.equals(UpdateType.TM)){
       /* TRAFFIC METRICS */
@@ -121,7 +117,7 @@ public class ScoreCalculatorMultiIndex extends RichFlatMapFunction<NodePair, Nod
     if(type.equals(UpdateType.ALL)){
 
       /* multi indices: <cardinality intersection, cardinality union, x degree, y degree> */
-      Tuple4<Long, Long, Long, Long> multiIndex = Neo4JManager.multiIndexTool(this.session, x, y);
+      Tuple4<Long, Long, Long, Long> multiIndex = Neo4JManager.multiIndexTool(session, x, y);
 
       /* COMMON NEIGHBOURS INDEX */
       NodePairScore cn = new NodePairScore(x, y, (double) multiIndex.f0, ScoreType.CN);
@@ -212,5 +208,6 @@ public class ScoreCalculatorMultiIndex extends RichFlatMapFunction<NodePair, Nod
       out.collect(nta);
     }
 
+    session.close();
   }
 }

@@ -59,12 +59,7 @@ public class MultiIndexSink extends RichSinkFunction<NodePairScore> {
   /**
    * The NEO4J driver.
    */
-  private Driver driver;
-
-  /**
-   * The NEO4J session.
-   */
-  private Session session;
+  private transient Driver driver;
 
   /**
    * Constructs a new sink.
@@ -142,46 +137,47 @@ public class MultiIndexSink extends RichSinkFunction<NodePairScore> {
       }
 
       Neo4JManager.save(session, link);
+
     } else {
       switch(value.f3) {
         case NRA:
-          Neo4JManager.remove(this.session, x, y, LinkType.NRA);
+          Neo4JManager.remove(session, x, y, LinkType.NRA);
           break;
         case NTA:
-          Neo4JManager.remove(this.session, x, y, LinkType.NTA);
+          Neo4JManager.remove(session, x, y, LinkType.NTA);
           break;
         case TA:
-          Neo4JManager.remove(this.session, x, y, LinkType.TA);
+          Neo4JManager.remove(session, x, y, LinkType.TA);
           break;
         case CN:
-          Neo4JManager.remove(this.session, x, y, LinkType.CN);
+          Neo4JManager.remove(session, x, y, LinkType.CN);
           break;
         case JACCARD:
-          Neo4JManager.remove(this.session, x, y, LinkType.JACCARD);
+          Neo4JManager.remove(session, x, y, LinkType.JACCARD);
           break;
         case SALTON:
-          Neo4JManager.remove(this.session, x, y, LinkType.SALTON);
+          Neo4JManager.remove(session, x, y, LinkType.SALTON);
           break;
         case SORENSEN:
-          Neo4JManager.remove(this.session, x, y, LinkType.SORENSEN);
+          Neo4JManager.remove(session, x, y, LinkType.SORENSEN);
           break;
         case HPI:
-          Neo4JManager.remove(this.session, x, y, LinkType.HPI);
+          Neo4JManager.remove(session, x, y, LinkType.HPI);
           break;
         case HDI:
-          Neo4JManager.remove(this.session, x, y, LinkType.HDI);
+          Neo4JManager.remove(session, x, y, LinkType.HDI);
           break;
         case LHN1:
-          Neo4JManager.remove(this.session, x, y, LinkType.LHN1);
+          Neo4JManager.remove(session, x, y, LinkType.LHN1);
           break;
         case PA:
-          Neo4JManager.remove(this.session, x, y, LinkType.PA);
+          Neo4JManager.remove(session, x, y, LinkType.PA);
           break;
         case AA:
-          Neo4JManager.remove(this.session, x, y, LinkType.AA);
+          Neo4JManager.remove(session, x, y, LinkType.AA);
           break;
         case RA:
-          Neo4JManager.remove(this.session, x, y, LinkType.RA);
+          Neo4JManager.remove(session, x, y, LinkType.RA);
           break;
       }
     }
