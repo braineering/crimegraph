@@ -159,7 +159,7 @@ public class ScoreCalculatorMultiIndex extends RichFlatMapFunction<NodePair, Nod
 
       /* PA INDEX */
       Double psScore = ((double) multiIndex.f2 * (double) multiIndex.f3);
-      NodePairScore pa = new NodePairScore(x, y, lhn1Score, ScoreType.PA);
+      NodePairScore pa = new NodePairScore(x, y, psScore, ScoreType.PA);
       out.collect(pa);
 
       double nraScore = 0.0;

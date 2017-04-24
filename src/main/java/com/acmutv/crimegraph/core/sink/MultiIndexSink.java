@@ -127,7 +127,6 @@ public class MultiIndexSink extends RichSinkFunction<NodePairScore> {
           break;
       }
       Neo4JManager.save(this.session, link);
-
     }
     else {
       switch(value.f3) {
