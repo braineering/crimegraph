@@ -77,6 +77,17 @@ public class MultiIndexSink extends RichSinkFunction<NodePairScore> {
   }
 
   @Override
+  public void open(Configuration parameters) throws Exception {
+    this.driver = Neo4JManager.open(this.dbconfig);
+    this.session = driver.session();
+  }
+
+  @Override
+  public void close() throws Exception {
+    Neo4JManager.close(this.session, this.driver);
+  }
+
+  @Override
   public void invoke(NodePairScore value) throws Exception {
     long x = value.f0;
     long y = value.f1;
@@ -172,16 +183,5 @@ public class MultiIndexSink extends RichSinkFunction<NodePairScore> {
           break;
       }
     }
-  }
-
-  @Override
-  public void open(Configuration parameters) throws Exception {
-    this.driver = Neo4JManager.open(this.dbconfig);
-    this.session = driver.session(AccessMode.WRITE);
-  }
-
-  @Override
-  public void close() throws Exception {
-    Neo4JManager.close(this.session, this.driver);
   }
 }

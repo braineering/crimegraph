@@ -73,6 +73,17 @@ public class GraphUpdate extends RichFlatMapFunction<Link, NodePair> {
     this.dbconfig = dbconfig;
   }
 
+  @Override
+  public void open(Configuration parameters) throws Exception {
+    this.driver = Neo4JManager.open(this.dbconfig);
+    this.session = driver.session();
+  }
+
+  @Override
+  public void close() throws Exception {
+    Neo4JManager.close(this.session, this.driver);
+  }
+
   @SuppressWarnings("unchecked")
   @Override
   public void flatMap(Link value, Collector<NodePair> out) {
@@ -123,16 +134,5 @@ public class GraphUpdate extends RichFlatMapFunction<Link, NodePair> {
         out.collect(update);
       }
     }
-  }
-
-  @Override
-  public void open(Configuration parameters) throws Exception {
-    this.driver = Neo4JManager.open(this.dbconfig);
-    this.session = driver.session();
-  }
-
-  @Override
-  public void close() throws Exception {
-    Neo4JManager.close(this.session, this.driver);
   }
 }
