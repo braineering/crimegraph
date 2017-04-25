@@ -28,15 +28,15 @@ package com.acmutv.crimegraph.core.sink;
 
 import com.acmutv.crimegraph.core.db.DbConfiguration;
 import com.acmutv.crimegraph.core.db.Neo4JManager;
-import com.acmutv.crimegraph.core.tuple.Link;
-import com.acmutv.crimegraph.core.tuple.LinkType;
-import com.acmutv.crimegraph.core.tuple.NodePairScore;
-import com.acmutv.crimegraph.core.tuple.ScoreType;
+import com.acmutv.crimegraph.core.tuple.*;
+import org.apache.commons.lang3.tuple.Pair;
 import org.apache.flink.configuration.Configuration;
 import org.apache.flink.streaming.api.functions.sink.RichSinkFunction;
-import org.neo4j.driver.v1.AccessMode;
 import org.neo4j.driver.v1.Driver;
 import org.neo4j.driver.v1.Session;
+
+import java.util.List;
+import java.util.Properties;
 
 /**
  * A sink that saves/removes potential links.
@@ -44,7 +44,7 @@ import org.neo4j.driver.v1.Session;
  * @author Michele Porretta {@literal <mporretta@acm.org>}
  * @since 1.0
  */
-public class MultiIndexSink extends RichSinkFunction<NodePairScore> {
+public class MultiIndexSink2 extends RichSinkFunction<NodePairScores> {
 
   /**
    * The Neo4J configuration.
@@ -66,7 +66,7 @@ public class MultiIndexSink extends RichSinkFunction<NodePairScore> {
    * @param dbconfig the Neo4J configuration.
    * @param threshold the potential score threshold.
    */
-  public MultiIndexSink(DbConfiguration dbconfig, double threshold) {
+  public MultiIndexSink2(DbConfiguration dbconfig, double threshold) {
     this.dbconfig = dbconfig;
     this.threshold = threshold;
   }
@@ -82,20 +82,23 @@ public class MultiIndexSink extends RichSinkFunction<NodePairScore> {
   }
 
   @Override
-  public void invoke(NodePairScore value) throws Exception {
+  public void invoke(NodePairScores value) throws Exception {
     Session session = this.driver.session();
 
     final long src = value.f0;
     final long dst = value.f1;
-    final double score = value.f2;
-    final LinkType type = LinkType.valueOf(value.f3.name());
+    final Properties scores = value.f2;
 
-    final Link link = new Link(src, dst, score, type);
+    for (String scoreType : scores.stringPropertyNames()) {
+      final LinkType type = LinkType.valueOf(scoreType);
+      final double val = Double.valueOf(scores.getProperty(scoreType));
+      final Link link = new Link(src, dst, val, type);
 
-    if (score >= this.threshold) {
-      Neo4JManager.save(session, link);
-    } else {
-      Neo4JManager.remove(session, link);
+      if (val >= this.threshold) {
+        Neo4JManager.save(session, link);
+      } else {
+        Neo4JManager.remove(session, link);
+      }
     }
 
     session.close();

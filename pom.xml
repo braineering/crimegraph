@@ -115,7 +115,7 @@
 
     <!-- Core  -->
     <flink.version>1.2.0</flink.version>
-    <neo4j.version>1.1.0</neo4j.version>
+    <neo4j.version>1.2.1</neo4j.version>
     <kafka.version>0.10.2.0</kafka.version>
 
     <!-- GUI/CLI -->

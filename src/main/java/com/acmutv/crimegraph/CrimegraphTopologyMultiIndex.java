@@ -32,8 +32,10 @@ import com.acmutv.crimegraph.config.serial.AppConfigurationYamlMapper;
 import com.acmutv.crimegraph.core.db.DbConfiguration;
 import com.acmutv.crimegraph.core.db.Neo4JManager;
 import com.acmutv.crimegraph.core.keyer.NodePairScoreKeyer;
+import com.acmutv.crimegraph.core.keyer.NodePairScoresKeyer;
 import com.acmutv.crimegraph.core.operator.*;
 import com.acmutv.crimegraph.core.sink.MultiIndexSink;
+import com.acmutv.crimegraph.core.sink.MultiIndexSink2;
 import com.acmutv.crimegraph.core.source.KafkaProperties;
 import com.acmutv.crimegraph.core.source.LinkKafkaSource;
 import com.acmutv.crimegraph.core.source.LinkSource;
@@ -41,6 +43,7 @@ import com.acmutv.crimegraph.core.source.SourceType;
 import com.acmutv.crimegraph.core.tuple.Link;
 import com.acmutv.crimegraph.core.tuple.NodePair;
 import com.acmutv.crimegraph.core.tuple.NodePairScore;
+import com.acmutv.crimegraph.core.tuple.NodePairScores;
 import com.acmutv.crimegraph.tool.runtime.RuntimeManager;
 import com.acmutv.crimegraph.ui.CliService;
 import org.apache.flink.streaming.api.datastream.DataStream;
@@ -98,10 +101,10 @@ public class CrimegraphTopologyMultiIndex {
 
     DataStream<NodePair> updates = links.flatMap(new GraphUpdateMultiIndex(dbconf)).shuffle();
 
-    DataStream<NodePairScore> scores = updates.flatMap(new ScoreCalculatorMultiIndex(dbconf))
-        .keyBy(new NodePairScoreKeyer());
+    DataStream<NodePairScores> scores = updates.flatMap(new ScoreCalculatorMultiIndex2(dbconf))
+        .keyBy(new NodePairScoresKeyer());
 
-    scores.addSink(new MultiIndexSink(dbconf, config.getPotentialThreshold()));
+    scores.addSink(new MultiIndexSink2(dbconf, config.getPotentialThreshold()));
 
     /* EXECUTION */
     env.execute("Crimegraph");

@@ -58,7 +58,7 @@ public class GraphUpdateMultiIndex extends RichFlatMapFunction<Link, NodePair> {
   /**
    * The NEO4J driver.
    */
-  private transient Driver driver;
+  private Driver driver;
 
   /**
    * Constructs for load edge to write {@link Link} on a NEO4J instance.

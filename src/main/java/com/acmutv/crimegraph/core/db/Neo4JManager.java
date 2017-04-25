@@ -35,7 +35,9 @@ import org.neo4j.driver.v1.*;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
+import static com.acmutv.crimegraph.core.db.Neo4JQueries.*;
 import static com.acmutv.crimegraph.core.tuple.LinkType.REAL;
 import static org.neo4j.driver.v1.Values.parameters;
 
@@ -47,241 +49,7 @@ import static org.neo4j.driver.v1.Values.parameters;
  */
 public class Neo4JManager {
 
-  /**
-   * Query to create a new real link (AVERAGE).
-   */
-  private static final String SAVE_LINK_REAL_AVERAGE =
-      "MERGE (u1:Person {id:{src}}) " +
-          "MERGE (u2:Person {id:{dst}}) " +
-          "MERGE (u1)-[r:REAL]-(u2) " +
-          "ON CREATE SET r.weight={weight},r.num=1,r.created=timestamp(),r.updated=r.created " +
-          "ON MATCH SET r.weight=(r.weight*r.num+{weight})/(r.num+1),r.num=r.num+1,r.updated=timestamp() " +
-          "WITH u1,u2 " +
-          "MATCH (u1)-[r2]-(u2) " +
-          "WHERE NOT type(r2) = 'REAL' " +
-          "DELETE r2";
-
-  /**
-   * Query to create a new real link (EWMA).
-   */
-  private static final String SAVE_LINK_REAL_EWMA =
-      "MERGE (u1:Person {id:{src}}) " +
-          "MERGE (u2:Person {id:{dst}}) " +
-          "MERGE (u1)-[r:REAL]-(u2) " +
-          "ON CREATE SET r.weight={weight},r.num=1,r.created=timestamp(),r.updated=r.created " +
-          "ON MATCH SET r.weight=({weight}*{ewma} + r.weight*(1-{ewma})),r.num=(r.num+1),r.updated=timestamp() " +
-          "WITH u1,u2 " +
-          "MATCH (u1)-[r2]-(u2) " +
-          "WHERE NOT type(r2) = 'REAL' " +
-          "DELETE r2";
-
-  /**
-   * Query to remove a link.
-   */
-  private static final String REMOVE_LINK =
-      "MATCH (x:Person {id:{x}})-[r]-(y:Person {id:{y}}) " +
-          "WHERE type(r) = '{type}' " +
-          "DELETE r";
-
-  /**
-   * Query to match neighbours.
-   */
-  private static final String MATCH_NEIGHBOURS =
-      "MATCH (u1:Person {id:{src}})-[:REAL]-(n:Person) " +
-          "RETURN DISTINCT n.id AS id";
-
-  /**
-   * Query to match neighbours and degree.
-   */
-  private static final String MATCH_NEIGHBOURS_WITH_DEGREE =
-      "MATCH (u1:Person {id:{src}})-[:REAL]-(n:Person) " +
-          "WITH DISTINCT n " +
-          "MATCH (n)-[r:REAL]-() " +
-          "RETURN n.id AS id,COUNT(r) AS deg";
-
-  /**
-   * Query to match neighbours within maximum distance.
-   */
-  private static final String MATCH_NEIGHBOURS_WITHIN_DISTANCE =
-      "MATCH (u1:Person {id:{src}})-[:REAL*1..%d]-(n:Person) " +
-          "RETURN DISTINCT n.id AS id";
-
-  /**
-   * Query to match neighbours with degree within maximum distance.
-   */
-  private static final String MATCH_NEIGHBOURS_WITH_DEGREE_WITHIN_DISTANCE =
-      "MATCH (u1:Person {id:{src}})-[:REAL*1..%d]-(n:Person) " +
-          "WITH DISTINCT n " +
-          "MATCH (n)-[r:REAL]-() " +
-          "RETURN n.id AS id,COUNT(r) AS deg";
-
-  /**
-   * Query to match common neighbours.
-   */
-  private static final String MATCH_COMMON_NEIGHBOURS =
-      "MATCH (u1:Person {id:{src}})-[:REAL]-(n:Person)-[:REAL]-(u2:Person {id:{dst}}) " +
-          "RETURN DISTINCT n.id AS id";
-
-  /**
-   * Query to match common neighbours with degree.
-   */
-  private static final String MATCH_COMMON_NEIGHBOURS_WITH_DEGREE =
-      "MATCH (u1:Person {id:{src}})-[:REAL]-(n:Person)-[:REAL]-(u2:Person {id:{dst}}) " +
-          "WITH DISTINCT n " +
-          "MATCH (n)-[r:REAL]-() " +
-          "RETURN n.id AS id,COUNT(r) AS deg";
-
-  /**
-   * Query to match common neighbours within distance.
-   */
-  private static final String MATCH_COMMON_NEIGHBOURS_WITHIN_DISTANCE =
-      "MATCH (u1:Person {id:{src}})-[:REAL*1..%d]-(n:Person)-[:REAL*1..%d]-(u2:Person {id:{dst}}) " +
-          "RETURN DISTINCT n.id AS id";
-
-  /**
-   * Query to match common neighbours with degree within distance.
-   */
-  private static final String MATCH_COMMON_NEIGHBOURS_WITH_DEGREE_WITHIN_DISTANCE =
-      "MATCH (u1:Person {id:{src}})-[:REAL*1..%d]-(n:Person)-[:REAL*1..%d]-(u2:Person {id:{dst}}) " +
-          "WITH DISTINCT n " +
-          "MATCH (n)-[r:REAL]-() " +
-          "RETURN n.id AS id,COUNT(r) AS deg";
-
-  /**
-   * Query to check the existence of the extremes.
-   */
-  private static final String CHECK_EXTREMES =
-      "OPTIONAL MATCH (u1:Person {id:{src}}) " +
-          "OPTIONAL MATCH (u2:Person {id:{dst}}) " +
-          "WITH u1,u2 " +
-          "OPTIONAL MATCH (u1)-[r:REAL]-(u2) " +
-          "RETURN u1 IS NOT NULL AS src,u2 IS NOT NULL AS dst,r IS NOT NULL AS arc";
-
-  /**
-   * Query to find pairs of unlinked nodes to update, with single node insertion.
-   */
-  private static final String PAIRS_TO_UPDATE =
-      "MATCH (x:Person {id:{x}})-[:REAL*2]-(n:Person) " +
-          "WHERE NOT (x)-[:REAL]-(n) " +
-          "RETURN DISTINCT [x.id,n.id] AS pair " +
-          "UNION ALL " +
-          "MATCH (n1:Person)-[:REAL*2]-(x:Person {id:{x}})-[:REAL*2]-(n2:Person) " +
-          "WHERE id(n1) > id(n2) AND NOT (x)-[:REAL]-(n1) AND NOT (x)-[:REAL]-(n2) " +
-          "RETURN DISTINCT [n1.id,n2.id] as pair";
-
-  /**
-   * Query to find pairs of unlinked nodes to update, with double node insertion.
-   */
-  private static final String PAIRS_TO_UPDATE_TWICE =
-      "MATCH (x:Person {id:{x}})-[:REAL*2]-(n:Person) " +
-          "WHERE NOT (x)-[:REAL]-(n) " +
-          "RETURN DISTINCT [x.id,n.id] AS pair " +
-          "UNION ALL " +
-          "MATCH (n1:Person)-[:REAL*2]-(x:Person {id:{x}})-[:REAL*2]-(n2:Person) " +
-          "WHERE id(n1) > id(n2) AND NOT (x)-[:REAL]-(n1) AND NOT (x)-[:REAL]-(n2) " +
-          "RETURN DISTINCT [n1.id,n2.id] as pair " +
-          "UNION ALL " +
-          "MATCH (y:Person {id:{y}})-[:REAL*2]-(n:Person) " +
-          "WHERE NOT (y)-[:REAL]-(n) " +
-          "RETURN DISTINCT [y.id,n.id] AS pair " +
-          "UNION ALL " +
-          "MATCH (n1:Person)-[:REAL*2]-(y:Person {id:{y}})-[:REAL*2]-(n2:Person) " +
-          "WHERE id(n1) > id(n2) AND NOT (y)-[:REAL]-(n1) AND NOT (y)-[:REAL]-(n2) " +
-          "RETURN DISTINCT [n1.id,n2.id] as pair";
-
-  /**
-   * Query to find pairs of unlinked nodes to update, with single node insertion.
-   */
-  private static final String PAIRS_TO_UPDATE_WITHIN_DISTANCE =
-      "MATCH (x:Person {id:{x}})-[:REAL*%d]-(n:Person) " +
-          "WHERE NOT (x)-[:REAL*%d]-(n) " +
-          "RETURN DISTINCT [x.id,n.id] AS pair " +
-          "UNION ALL " +
-          "MATCH (n1:Person)-[:REAL*%d]-(x:Person {id:{x}})-[:REAL*%d]-(n2:Person) " +
-          "WHERE id(n1) > id(n2) AND NOT (x)-[:REAL*%d]-(n1) AND NOT (x)-[:REAL*%d]-(n2) " +
-          "RETURN DISTINCT [n1.id,n2.id] as pair";
-
-  /**
-   * Query to find pairs of unlinked nodes to update, with double node insertion.
-   */
-  private static final String PAIRS_TO_UPDATE_TWICE_WITHIN_DISTANCE =
-      "MATCH (x:Person {id:{x}})-[:REAL*%d]-(n:Person) " +
-          "WHERE NOT (x)-[:REAL*%d]-(n) " +
-          "RETURN DISTINCT [x.id,n.id] AS pair " +
-          "UNION ALL " +
-          "MATCH (n1:Person)-[:REAL*%d]-(x:Person {id:{x}})-[:REAL*%d]-(n2:Person) " +
-          "WHERE id(n1) > id(n2) AND NOT (x)-[:REAL*%d]-(n1) AND NOT (x)-[:REAL*%d]-(n2) " +
-          "RETURN DISTINCT [n1.id,n2.id] as pair " +
-          "UNION ALL " +
-          "MATCH (y:Person {id:{y}})-[:REAL*%d]-(n:Person) " +
-          "WHERE NOT (y)-[:REAL*%d]-(n) " +
-          "RETURN DISTINCT [y.id,n.id] AS pair " +
-          "UNION ALL " +
-          "MATCH (n1:Person)-[:REAL*%d]-(y:Person {id:{y}})-[:REAL*%d]-(n2:Person) " +
-          "WHERE id(n1) > id(n2) AND NOT (y)-[:REAL*%d]-(n1) AND NOT (y)-[:REAL*%d]-(n2) " +
-          "RETURN DISTINCT [n1.id,n2.id] as pair";
-
-  /**
-   * Query to find common neighborhood and related details for score formulas.
-   */
-  private static final String GAMMA_INTERSECTION =
-      "MATCH (u1:Person {id:{x}})-[r1:REAL]-(n:Person)-[r2:REAL]-(u2:Person {id:{y}}) " +
-          "WITH DISTINCT n,r1,r2 " +
-          "MATCH (n)-[r:REAL]-() " +
-          "RETURN n.id AS id,COUNT(r) AS deg, (r1.weight+r2.weight) AS weight, SUM(r.weight) AS weightTot";
-
-  /**
-   * Query to find common nodes at fixed distance and related details for score formulas.
-   */
-  private static final String H_INTERSECTION =
-      "MATCH (u1:Person {id:{x}})-[:REAL*%d]-(n:Person)-[:REAL*%d]-(u2:Person {id:{y}}) " +
-          "WITH DISTINCT n " +
-          "MATCH (n)-[r:REAL]-() " +
-          "RETURN n.id AS id,COUNT(r) AS deg";
-
-  /**
-   * Query to remove all nodes on Neo4J
-   */
-  private static final String EMPYTING =
-          "MATCH (n:Person) DETACH DELETE n ";
-
-  /**
-   * Query to count the common neighbours.
-   */
-  private static final String COUNT_COMMON_NEIGHBOURS =
-          "MATCH (u1:Person {id:{x}})-[:REAL]-(n:Person)-[:REAL]-(u2:Person {id:{y}}) " +
-                  "RETURN COUNT(DISTINCT n.id) AS cn ";
-
-  /**
-   * Query to find the union on the neighborhood between
-   */
-  private static final String COUNT_GAMMA_UNION=
-          "MATCH (u1:Person {id:{x}})-[r1:REAL]-(n:Person) " +
-                  "WITH collect(DISTINCT n.id) as set1 "   +
-                  "MATCH (u2:Person {id:{y}})-[r2:REAL]-(n2:Person) " +
-                  "WITH collect(DISTINCT n2.id) as set2, set1 "     +
-                  "WITH set1 + set2 as BOTH "+
-                  "UNWIND BOTH as res "+
-                  "RETURN COUNT(DISTINCT res) as cardinality ";
-
-  /**
-   * Query to count the neighbors of node x
-   */
-  private static final String NODE_DEGREE=
-          "MATCH (u1:Person {id:{src}})-[r:REAL]-(n:Person) "+
-          "RETURN COUNT(DISTINCT r) as degree ";
-
-  /**
-   * Query to create a new general link.
-   */
-  public static final String SAVE_LINK_MINED_GENERAL =
-          "MERGE (u1:Person {id:{src}}) " +
-                  "MERGE (u2:Person {id:{dst}}) " +
-                  "MERGE (u1)-[r:%s]-(u2) " +
-                  "ON CREATE SET r.weight={weight},r.created=timestamp(),r.updated=r.created " +
-                  "ON MATCH SET r.weight={weight},r.updated=timestamp()";
-
-  private static final long SESSION_TIMEOUT = 200;
+  private static final long CONNECTION_LIVENESS_CHECK_TIMEOUT = 200;
 
   /**
    * Opens a NEO4J connection.
@@ -290,7 +58,10 @@ public class Neo4JManager {
    */
   public static Driver open(DbConfiguration dbconf) {
     AuthToken auth = AuthTokens.basic(dbconf.getUsername(), dbconf.getPassword());
-    Config config = Config.build().withEncryptionLevel(Config.EncryptionLevel.NONE ).toConfig();
+    Config config = Config.build()
+        .withConnectionLivenessCheckTimeout(CONNECTION_LIVENESS_CHECK_TIMEOUT, TimeUnit.MILLISECONDS)
+        .withEncryptionLevel(Config.EncryptionLevel.NONE )
+        .toConfig();
     return GraphDatabase.driver(dbconf.getHostname(), auth, config);
   }
 
@@ -303,7 +74,7 @@ public class Neo4JManager {
    */
   public static Driver open(String hostname, String username, String password) {
     AuthToken auth = AuthTokens.basic(username, password);
-    Config config = Config.build().withSessionLivenessCheckTimeout(SESSION_TIMEOUT).withEncryptionLevel(Config.EncryptionLevel.NONE ).toConfig();
+    Config config = Config.build().withEncryptionLevel(Config.EncryptionLevel.NONE).toConfig();
     return GraphDatabase.driver(hostname, auth, config);
   }
 
@@ -368,6 +139,19 @@ public class Neo4JManager {
    * @param type the type of link.
    */
   public static void remove(Session session, long x, long y, LinkType type) {
+    Value params = parameters("x", x, "y", y, "type", type.name());
+    session.run(REMOVE_LINK, params);
+  }
+
+  /**
+   * Removes a link.
+   * @param session the session.
+   * @param link the link.
+   */
+  public static void remove(Session session, Link link) {
+    final long x = link.f0;
+    final long y = link.f1;
+    final LinkType type = link.f3;
     Value params = parameters("x", x, "y", y, "type", type.name());
     session.run(REMOVE_LINK, params);
   }
