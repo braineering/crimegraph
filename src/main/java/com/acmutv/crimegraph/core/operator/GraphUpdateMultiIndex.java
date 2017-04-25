@@ -115,7 +115,7 @@ public class GraphUpdateMultiIndex extends RichFlatMapFunction<Link, NodePair> {
     if (xInG && yinG && edgeInG) {
       Set<Tuple2<Long,Long>> pairs = Neo4JManager.pairsToUpdateTwice(session, x, y);
       for (Tuple2<Long,Long> pair : pairs) {
-        NodePair update = new NodePair(pair.f0, pair.f1, UpdateType.TM);
+        NodePair update = new NodePair(pair.f0, pair.f1, UpdateType.ALL);
         LOGGER.trace("({},{}) -> UPDATE: {}", x, y, update);
         out.collect(update);
         this.numTm.add(1);
