@@ -35,6 +35,8 @@ import org.apache.flink.configuration.Configuration;
 import org.apache.flink.util.Collector;
 import org.neo4j.driver.v1.Driver;
 import org.neo4j.driver.v1.Session;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Set;
 
@@ -47,6 +49,8 @@ import static com.acmutv.crimegraph.core.tuple.ScoreType.*;
  * @since 1.0
  */
 public class ScoreCalculatorMultiIndex2 extends RichFlatMapFunction<NodePair, NodePairScores> {
+
+  private static final Logger LOGGER = LoggerFactory.getLogger(ScoreCalculatorMultiIndex2.class);
 
   /**
    * The Neo4J configuration.
@@ -197,6 +201,8 @@ public class ScoreCalculatorMultiIndex2 extends RichFlatMapFunction<NodePair, No
     }
 
     out.collect(scores);
+
+    LOGGER.info("SCORES: {}", scores);
 
     session.close();
   }

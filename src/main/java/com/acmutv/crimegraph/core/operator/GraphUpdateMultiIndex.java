@@ -39,6 +39,8 @@ import org.apache.flink.util.Collector;
 import org.neo4j.driver.v1.AccessMode;
 import org.neo4j.driver.v1.Driver;
 import org.neo4j.driver.v1.Session;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Set;
 
@@ -49,6 +51,8 @@ import java.util.Set;
  * @since 1.0
  */
 public class GraphUpdateMultiIndex extends RichFlatMapFunction<Link, NodePair> {
+
+  private static final Logger LOGGER = LoggerFactory.getLogger(GraphUpdateMultiIndex.class);
 
   /**
    * The Neo4J configuration.
@@ -100,6 +104,7 @@ public class GraphUpdateMultiIndex extends RichFlatMapFunction<Link, NodePair> {
       Set<Tuple2<Long,Long>> pairs = Neo4JManager.pairsToUpdateTwice(session, x, y);
       for (Tuple2<Long,Long> pair : pairs) {
         NodePair update = new NodePair(pair.f0, pair.f1, UpdateType.TM);
+        LOGGER.trace("({},{}) -> UPDATE: {}", x, y, update);
         out.collect(update);
       }
     }
@@ -109,6 +114,7 @@ public class GraphUpdateMultiIndex extends RichFlatMapFunction<Link, NodePair> {
       Set<Tuple2<Long,Long>> pairs = Neo4JManager.pairsToUpdateTwice(session, x, y);
       for (Tuple2<Long,Long> pair : pairs) {
         NodePair update = new NodePair(pair.f0, pair.f1, UpdateType.ALL);
+        LOGGER.trace("({},{}) -> UPDATE: {}", x, y, update);
         out.collect(update);
       }
     }
@@ -118,6 +124,7 @@ public class GraphUpdateMultiIndex extends RichFlatMapFunction<Link, NodePair> {
       Set<Tuple2<Long,Long>> pairs = Neo4JManager.pairsToUpdate(session, x);
       for (Tuple2<Long,Long> pair : pairs ) {
         NodePair update = new NodePair(pair.f0, pair.f1, UpdateType.ALL);
+        LOGGER.trace("({},{}) -> UPDATE: {}", x, y, update);
         out.collect(update);
       }
     }
@@ -127,6 +134,7 @@ public class GraphUpdateMultiIndex extends RichFlatMapFunction<Link, NodePair> {
       Set<Tuple2<Long,Long>> pairs = Neo4JManager.pairsToUpdate(session, y);
       for (Tuple2<Long,Long> pair : pairs) {
         NodePair update = new NodePair(pair.f0, pair.f1, UpdateType.ALL);
+        LOGGER.info("({},{}) -> UPDATE: {}", x, y, update);
         out.collect(update);
       }
     }
