@@ -31,6 +31,7 @@ import com.acmutv.crimegraph.core.db.Neo4JManager;
 import com.acmutv.crimegraph.core.tuple.Link;
 import com.acmutv.crimegraph.core.tuple.NodePair;
 import com.acmutv.crimegraph.core.tuple.UpdateType;
+import org.apache.flink.api.common.accumulators.IntCounter;
 import org.apache.flink.api.common.functions.RichFlatMapFunction;
 import org.apache.flink.api.java.tuple.Tuple2;
 import org.apache.flink.api.java.tuple.Tuple3;
@@ -64,6 +65,12 @@ public class GraphUpdateMultiIndex extends RichFlatMapFunction<Link, NodePair> {
    */
   private Driver driver;
 
+  private IntCounter numLinks = new IntCounter();
+
+  private IntCounter numAll = new IntCounter();
+
+  private IntCounter numTm = new IntCounter();
+
   /**
    * Constructs for load edge to write {@link Link} on a NEO4J instance.
    * @param dbconfig the Neo4J configuration.
@@ -75,6 +82,9 @@ public class GraphUpdateMultiIndex extends RichFlatMapFunction<Link, NodePair> {
   @Override
   public void open(Configuration parameters) throws Exception {
     this.driver = Neo4JManager.open(this.dbconfig);
+    super.getRuntimeContext().addAccumulator("numLinks", this.numLinks);
+    super.getRuntimeContext().addAccumulator("numAll", this.numAll);
+    super.getRuntimeContext().addAccumulator("numTm", this.numTm);
   }
 
   @Override
@@ -92,6 +102,8 @@ public class GraphUpdateMultiIndex extends RichFlatMapFunction<Link, NodePair> {
 
     if (x == y) return;
 
+    this.numLinks.add(1);
+
     Tuple3<Boolean,Boolean,Boolean> check = Neo4JManager.checkExtremes(session, x, y);
     boolean xInG = check.f0;
     boolean yinG = check.f1;
@@ -106,6 +118,7 @@ public class GraphUpdateMultiIndex extends RichFlatMapFunction<Link, NodePair> {
         NodePair update = new NodePair(pair.f0, pair.f1, UpdateType.TM);
         LOGGER.trace("({},{}) -> UPDATE: {}", x, y, update);
         out.collect(update);
+        this.numTm.add(1);
       }
     }
 
@@ -116,6 +129,7 @@ public class GraphUpdateMultiIndex extends RichFlatMapFunction<Link, NodePair> {
         NodePair update = new NodePair(pair.f0, pair.f1, UpdateType.ALL);
         LOGGER.trace("({},{}) -> UPDATE: {}", x, y, update);
         out.collect(update);
+        this.numAll.add(1);
       }
     }
 
@@ -126,6 +140,7 @@ public class GraphUpdateMultiIndex extends RichFlatMapFunction<Link, NodePair> {
         NodePair update = new NodePair(pair.f0, pair.f1, UpdateType.ALL);
         LOGGER.trace("({},{}) -> UPDATE: {}", x, y, update);
         out.collect(update);
+        this.numAll.add(1);
       }
     }
 
@@ -136,6 +151,7 @@ public class GraphUpdateMultiIndex extends RichFlatMapFunction<Link, NodePair> {
         NodePair update = new NodePair(pair.f0, pair.f1, UpdateType.ALL);
         LOGGER.info("({},{}) -> UPDATE: {}", x, y, update);
         out.collect(update);
+        this.numAll.add(1);
       }
     }
 

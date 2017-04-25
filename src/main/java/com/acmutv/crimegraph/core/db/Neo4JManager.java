@@ -102,10 +102,17 @@ public class Neo4JManager {
     Value params = parameters("src", src, "dst", dst, "weight", weight);
 
     if (REAL.equals(type)) {
-      session.run(SAVE_LINK_REAL_AVERAGE, params);
+      try (Transaction tx = session.beginTransaction()) {
+        tx.run(SAVE_LINK_REAL_AVERAGE, params);
+        tx.success();
+      }
     } else {
       final String SAVE_LINK_MINED = String.format(SAVE_LINK_MINED_GENERAL, type);
-      session.run(SAVE_LINK_MINED, params);
+      try (Transaction tx = session.beginTransaction()) {
+        tx.run(SAVE_LINK_MINED, params);
+        tx.success();
+      }
+
     }
 
   }
@@ -153,7 +160,10 @@ public class Neo4JManager {
     final long y = link.f1;
     final LinkType type = link.f3;
     Value params = parameters("x", x, "y", y, "type", type.name());
-    session.run(REMOVE_LINK, params);
+
+    try (Transaction tx = session.beginTransaction()) {
+      tx.run(REMOVE_LINK, params);
+    }
   }
 
   /**

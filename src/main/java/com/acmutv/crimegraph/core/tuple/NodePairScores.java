@@ -34,10 +34,7 @@ import org.apache.flink.api.java.tuple.Tuple4;
 
 import java.io.IOException;
 import java.io.StringReader;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
-import java.util.Properties;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -48,7 +45,7 @@ import java.util.stream.Stream;
  * @author Michele Porretta {@literal <mporretta@acm.org>}
  * @since 1.0
  */
-public class NodePairScores extends Tuple3<Long,Long,Properties> {
+public class NodePairScores extends Tuple3<Long,Long,Map<ScoreType,Double>> {
 
     /**
      * The regular expression
@@ -66,7 +63,7 @@ public class NodePairScores extends Tuple3<Long,Long,Properties> {
      * @param dst the id of the destination node.
      */
     public NodePairScores(long src, long dst) {
-      super(src, dst, new Properties());
+      super(src, dst, new HashMap<>());
     }
 
   /**
@@ -75,7 +72,7 @@ public class NodePairScores extends Tuple3<Long,Long,Properties> {
    * @param dst the id of the destination node.
    * @param values score values.
    */
-  public NodePairScores(long src, long dst, Properties values) {
+  public NodePairScores(long src, long dst, Map<ScoreType,Double> values) {
     super(src, dst, values);
   }
 
@@ -86,7 +83,7 @@ public class NodePairScores extends Tuple3<Long,Long,Properties> {
     public NodePairScores(){}
 
     public void addScore(ScoreType type, double score) {
-      this.f2.setProperty(type.name(), String.valueOf(score));
+      this.f2.put(type, score);
     }
 
     @Override
@@ -109,12 +106,8 @@ public class NodePairScores extends Tuple3<Long,Long,Properties> {
         NodePairScores value = new NodePairScores(src, dst);
         String strScores = matcher.group(3);
         if (strScores != null) {
-          Properties scores = new Properties();
-          try {
-            scores.load(new StringReader(matcher.group(3).replace(',','\n')));
-          } catch (IOException exc) {
-            throw new IllegalArgumentException(exc.getMessage());
-          }
+          Map<ScoreType,Double> scores = new HashMap<>();
+
           value.f2 = scores;
         }
         return  value;

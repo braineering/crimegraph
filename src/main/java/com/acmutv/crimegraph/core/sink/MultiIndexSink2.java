@@ -30,12 +30,16 @@ import com.acmutv.crimegraph.core.db.DbConfiguration;
 import com.acmutv.crimegraph.core.db.Neo4JManager;
 import com.acmutv.crimegraph.core.tuple.*;
 import org.apache.commons.lang3.tuple.Pair;
+import org.apache.flink.api.common.accumulators.IntCounter;
 import org.apache.flink.configuration.Configuration;
 import org.apache.flink.streaming.api.functions.sink.RichSinkFunction;
 import org.neo4j.driver.v1.Driver;
 import org.neo4j.driver.v1.Session;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 
 /**
@@ -46,34 +50,35 @@ import java.util.Properties;
  */
 public class MultiIndexSink2 extends RichSinkFunction<NodePairScores> {
 
+  private static final Logger LOGGER = LoggerFactory.getLogger(MultiIndexSink2.class);
+
   /**
    * The Neo4J configuration.
    */
   private DbConfiguration dbconfig;
 
   /**
-   * The potential score threshold.
-   */
-  private double threshold;
-
-  /**
    * The NEO4J driver.
    */
   private Driver driver;
 
+  private IntCounter overThreshold = new IntCounter();
+
+  private IntCounter underThreshold = new IntCounter();
+
   /**
    * Constructs a new sink.
    * @param dbconfig the Neo4J configuration.
-   * @param threshold the potential score threshold.
    */
-  public MultiIndexSink2(DbConfiguration dbconfig, double threshold) {
+  public MultiIndexSink2(DbConfiguration dbconfig) {
     this.dbconfig = dbconfig;
-    this.threshold = threshold;
   }
 
   @Override
   public void open(Configuration parameters) throws Exception {
     this.driver = Neo4JManager.open(this.dbconfig);
+    super.getRuntimeContext().addAccumulator("overThreshold", this.overThreshold);
+    super.getRuntimeContext().addAccumulator("underThreshold", this.underThreshold);
   }
 
   @Override
@@ -87,17 +92,20 @@ public class MultiIndexSink2 extends RichSinkFunction<NodePairScores> {
 
     final long src = value.f0;
     final long dst = value.f1;
-    final Properties scores = value.f2;
+    final Map<ScoreType,Double> scores = value.f2;
 
-    for (String scoreType : scores.stringPropertyNames()) {
-      final LinkType type = LinkType.valueOf(scoreType);
-      final double val = Double.valueOf(scores.getProperty(scoreType));
+    for (Map.Entry<ScoreType,Double> score : scores.entrySet()) {
+      final LinkType type = LinkType.valueOf(score.getKey().name());
+      final double val = score.getValue();
       final Link link = new Link(src, dst, val, type);
 
-      if (val >= this.threshold) {
-        Neo4JManager.save(session, link);
+      Neo4JManager.save(session, link);
+
+      if (val >= 0.0) {
+        this.overThreshold.add(1);
       } else {
-        Neo4JManager.remove(session, link);
+        this.underThreshold.add(1);
+        LOGGER.info("VALUE-ERROR: UNDER THRESHOLD {} with entry {}", link, score);
       }
     }
 

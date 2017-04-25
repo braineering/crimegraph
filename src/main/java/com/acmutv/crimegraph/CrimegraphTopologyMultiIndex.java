@@ -104,7 +104,7 @@ public class CrimegraphTopologyMultiIndex {
     DataStream<NodePairScores> scores = updates.flatMap(new ScoreCalculatorMultiIndex2(dbconf))
         .keyBy(new NodePairScoresKeyer());
 
-    scores.addSink(new MultiIndexSink2(dbconf, config.getPotentialThreshold()));
+    scores.addSink(new MultiIndexSink2(dbconf));
 
     /* EXECUTION */
     env.execute("Crimegraph");

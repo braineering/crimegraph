@@ -261,9 +261,10 @@ public class Neo4JQueries {
    * Query to create a new general link.
    */
   public static final String SAVE_LINK_MINED_GENERAL =
-      "MERGE (u1:Person {id:{src}}) " +
-          "MERGE (u2:Person {id:{dst}}) " +
-          "MERGE (u1)-[r:%s]-(u2) " +
+      "MATCH (u1:Person {id:{src}}),(u2:Person {id:{dst}}) " +
+          "WHERE NOT (u1)-[:REAL]->(u2) " +
+          "WITH u1,u2 " +
+          "MERGE (u1)-[r:%s]->(u2) " +
           "ON CREATE SET r.weight={weight},r.created=timestamp(),r.updated=r.created " +
           "ON MATCH SET r.weight={weight},r.updated=timestamp()";
 }
