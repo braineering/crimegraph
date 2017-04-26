@@ -32,6 +32,7 @@ import com.acmutv.crimegraph.core.metric.PotentialMetrics;
 import com.acmutv.crimegraph.core.source.KafkaProperties;
 import com.acmutv.crimegraph.core.source.SourceType;
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.*;

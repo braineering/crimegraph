@@ -33,6 +33,7 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.apache.flink.api.common.accumulators.IntCounter;
 import org.apache.flink.configuration.Configuration;
 import org.apache.flink.streaming.api.functions.sink.RichSinkFunction;
+import org.neo4j.driver.v1.AccessMode;
 import org.neo4j.driver.v1.Driver;
 import org.neo4j.driver.v1.Session;
 import org.slf4j.Logger;
@@ -88,7 +89,7 @@ public class MultiIndexSink2 extends RichSinkFunction<NodePairScores> {
 
   @Override
   public void invoke(NodePairScores value) throws Exception {
-    Session session = this.driver.session();
+    Session session = this.driver.session(AccessMode.WRITE);
 
     final long src = value.f0;
     final long dst = value.f1;

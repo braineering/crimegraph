@@ -113,7 +113,7 @@ public class AppConfiguration {
   /**
    * Default value for property {@code potentialThreshold}.
    */
-  public static final double POTENTIAL_THRESHOLD = 0.0;
+  public static final double POTENTIAL_THRESHOLD = 0.8;
 
   /**
    * Default value for property {@code ewmaFactor}.

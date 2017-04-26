@@ -1,13 +1,28 @@
 \section{Evaluation}
 \label{sec:evaluation}
 
-Not available. Waiting for the dataset.
+Two standard metrics are used to measure the accuracy of link mining algorithms: AUC and  \textit{Precision} \cite{Lu2011}. We focused here on AUC because it is stronger in revealing false positivity issues.
 
-NOTA: Grafica dei grafici da rendere conforme al paper nell'ultima versione.
-%Two standard metrics are used to measure the accuracy of prediction algorithms: \textit{area under the receiver operating characteristic curve} - AUC, and  \textit{Precision} \cite{Lu2011}.
+The original dataset is partitioned into a trainset and a testset, according to a test ratio. Both the dataset and the trainset are made of one single giant connected component.
 
-%ARGOMENTARE LE METRICHE AUC E PRECISION
-%ARGOMENTARE COME VENGONO GENERATI I TRAINING/TEST INTERVAL.
+We recall here the AUC definition:
+
+\begin{equation}
+\label{eqn:auc}
+AUC=\frac{n_{1}+0.5n_{2}}{n}
+\end{equation}
+
+where 
+$n_{1}$ is the number of times a missing link has a score greater than an inexistent link,
+$n_{2}$ is the number of times a missing link has a score equal to an inexistent link and
+$n$ is the total number of combination of missing links and inexistent links.
+
+Our experimental framework consists in measuring the AUC for all classical and novel metrics, applied to both criminal and not criminal datasets with test ratios at 10\% and 15\%.
+In particular, we analyze the giant component of
+(i) a criminal dataset (CRM) collecting wiretrap-records, judgement and arrest warrants \cite{berlusconi2016link}; and
+(ii) a business-related dataset (BSN) collecting face-to-face interactions between employees in a IT company \cite{olguin2009sensible}.
+
+In Table~\ref{tab:auc-detection} and \ref{tab:auc-prediction} we listed results for link detection and prediction, respectively, highlighting the most notable ones.
 
 %\begin{figure}[!ht]
 %	\centering
@@ -23,57 +38,60 @@ NOTA: Grafica dei grafici da rendere conforme al paper nell'ultima versione.
 %	\label{fig:graph-prediction}
 %\end{figure}
 
-    \begin{table}[h]
-		\centering
-		\begin{tabular}{l l l l l}
-		\toprule
-		\textbf{Metric} & \textbf{CRM-10} & \textbf{CRM-15} & \textbf{RND-10} & \textbf{RND-15}\\\\
-		\midrule
-			Common Neighbours & $0.99$ & $0.99$ & $0.99$ & $0.99$ \\
-			Salton  & $0.99$ & $0.99$ & $0.99$ & $0.99$ \\
-			Jaccard  & $0.99$ & $0.99$ & $0.99$ & $0.99$ \\
-			Sorensen   & $0.99$ & $0.99$ & $0.99$ & $0.99$ \\
-			Hub Promoted  & $0.99$ & $0.99$ & $0.99$ & $0.99$ \\
-			Hub Depressed  & $0.99$ & $0.99$ & $0.99$ & $0.99$ \\
-			Leicht-Holme-Newman  & $0.99$ & $0.99$ & $0.99$ & $0.99$ \\
-			Preferential Attachment  & $0.99$ & $0.99$ & $0.99$ & $0.99$ \\
-			Adamic-Adar  & $0.99$ & $0.99$ & $0.99$ & $0.99$ \\
-			Resource Allocation (RA)  & $0.99$ & $0.99$ & $0.99$ & $0.99$ \\
-			Normalized RA  & $0.99$ & $0.99$ & $0.99$ & $0.99$ \\
-			Traffic Allocation  & $0.99$ & $0.99$ & $0.99$ & $0.99$ \\
-			Normalized TA  & $0.99$ & $0.99$ & $0.99$ & $0.99$ \\
-		\bottomrule
-		\end{tabular}
-		\label{tab:attenuazione}
-		\caption{AUC for Detection.}
-	\end{table}	
+\begin{table}[h]
+	\centering
+	\begin{tabular}{l l l l l}
+	\toprule
+	\textbf{Metric} & \textbf{CRM-10} & \textbf{CRM-15} & \textbf{RND-10} & \textbf{RND-15}\\\\
+	\midrule
+		Common Neighbours & $0.99$ & $0.99$ & $0.99$ & $0.99$ \\
+		Salton  & $0.99$ & $0.99$ & $0.99$ & $0.99$ \\
+		Jaccard  & $0.99$ & $0.99$ & $0.99$ & $0.99$ \\
+		Sorensen   & $0.99$ & $0.99$ & $0.99$ & $0.99$ \\
+		Hub Promoted  & $0.99$ & $0.99$ & $0.99$ & $0.99$ \\
+		Hub Depressed  & $0.99$ & $0.99$ & $0.99$ & $0.99$ \\
+		Leicht-Holme-Newman  & $0.99$ & $0.99$ & $0.99$ & $0.99$ \\
+		Preferential Attachment  & $0.99$ & $0.99$ & $0.99$ & $0.99$ \\
+		Adamic-Adar  & $0.99$ & $0.99$ & $0.99$ & $0.99$ \\
+		Resource Allocation (RA)  & $0.99$ & $0.99$ & $0.99$ & $0.99$ \\
+		Normalized RA  & $0.99$ & $0.99$ & $0.99$ & $0.99$ \\
+		Traffic Allocation  & $0.99$ & $0.99$ & $0.99$ & $0.99$ \\
+		Normalized TA  & $0.99$ & $0.99$ & $0.99$ & $0.99$ \\
+	\bottomrule
+	\end{tabular}
+	\label{tab:auc-detection}
+	\caption{AUC for Detection.}
+\end{table}
 
-\lipsum[1]
+\begin{table}[h]
+	\centering
+	\begin{tabular}{l l l l l}
+	\toprule
+	\textbf{Metric} & \textbf{CRM-10} & \textbf{CRM-15} & \textbf{RND-10} & \textbf{RND-15}\\\\
+	\midrule
+		Common Neighbours & $0.99$ & $0.99$ & $0.99$ & $0.99$ \\
+		Salton  & $0.99$ & $0.99$ & $0.99$ & $0.99$ \\
+		Jaccard  & $0.99$ & $0.99$ & $0.99$ & $0.99$ \\
+		Sorensen   & $0.99$ & $0.99$ & $0.99$ & $0.99$ \\
+		Hub Promoted  & $0.99$ & $0.99$ & $0.99$ & $0.99$ \\
+		Hub Depressed  & $0.99$ & $0.99$ & $0.99$ & $0.99$ \\
+		Leicht-Holme-Newman  & $0.99$ & $0.99$ & $0.99$ & $0.99$ \\
+		Preferential Attachment  & $0.99$ & $0.99$ & $0.99$ & $0.99$ \\
+		Adamic-Adar  & $0.99$ & $0.99$ & $0.99$ & $0.99$ \\
+		Resource Allocation (RA)  & $0.99$ & $0.99$ & $0.99$ & $0.99$ \\
+		Normalized RA  & $0.99$ & $0.99$ & $0.99$ & $0.99$ \\
+		Traffic Allocation (TA)  & $0.99$ & $0.99$ & $0.99$ & $0.99$ \\
+		Normalized TA  & $0.99$ & $0.99$ & $0.99$ & $0.99$ \\
+	\bottomrule
+	\end{tabular}
+	\label{tab:auc-prediction}
+	\caption{AUC for Precision.}
+\end{table}	
 
-    \begin{table}[h]
-		\centering
-		\begin{tabular}{l l l l l}
-		\toprule
-		\textbf{Metric} & \textbf{CRM-10} & \textbf{CRM-15} & \textbf{RND-10} & \textbf{RND-15}\\\\
-		\midrule
-			Common Neighbours & $0.99$ & $0.99$ & $0.99$ & $0.99$ \\
-			Salton  & $0.99$ & $0.99$ & $0.99$ & $0.99$ \\
-			Jaccard  & $0.99$ & $0.99$ & $0.99$ & $0.99$ \\
-			Sorensen   & $0.99$ & $0.99$ & $0.99$ & $0.99$ \\
-			Hub Promoted  & $0.99$ & $0.99$ & $0.99$ & $0.99$ \\
-			Hub Depressed  & $0.99$ & $0.99$ & $0.99$ & $0.99$ \\
-			Leicht-Holme-Newman  & $0.99$ & $0.99$ & $0.99$ & $0.99$ \\
-			Preferential Attachment  & $0.99$ & $0.99$ & $0.99$ & $0.99$ \\
-			Adamic-Adar  & $0.99$ & $0.99$ & $0.99$ & $0.99$ \\
-			Resource Allocation (RA)  & $0.99$ & $0.99$ & $0.99$ & $0.99$ \\
-			Normalized RA  & $0.99$ & $0.99$ & $0.99$ & $0.99$ \\
-			Traffic Allocation (TA)  & $0.99$ & $0.99$ & $0.99$ & $0.99$ \\
-			Normalized TA  & $0.99$ & $0.99$ & $0.99$ & $0.99$ \\
-		\bottomrule
-		\end{tabular}
-		\label{tab:attenuazione}
-		\caption{AUC for Precision.}
-	\end{table}	
+The experimental results show that classic metrics achieve great performance in prediction tasks, while the novel metrics do it in detection.
+In particular, we notice that in prediction some metrics are clearly distinct from others froma performance point of view; while in detection they are all similar.
+
+
 
      
 %\begin{figure}

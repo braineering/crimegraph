@@ -74,7 +74,9 @@ public class Neo4JManager {
    */
   public static Driver open(String hostname, String username, String password) {
     AuthToken auth = AuthTokens.basic(username, password);
-    Config config = Config.build().withEncryptionLevel(Config.EncryptionLevel.NONE).toConfig();
+    Config config = Config.build()
+        .withConnectionLivenessCheckTimeout(CONNECTION_LIVENESS_CHECK_TIMEOUT, TimeUnit.MILLISECONDS)
+        .withEncryptionLevel(Config.EncryptionLevel.NONE).toConfig();
     return GraphDatabase.driver(hostname, auth, config);
   }
 

@@ -12,6 +12,7 @@
   instances:
     - name: "neo4j_master"
       #type: "r3.2xlarge"  61gb, 160ssd, 0.741$/h
+      #type: "r3.4xlarge"  122gb, 320ssd, 1.482$/h
       type: "r3.8xlarge" # 244gb, 640ssd, 2.66$/h
       ami: "ami-3291be54"
       user: "admin"

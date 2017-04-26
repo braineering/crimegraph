@@ -95,7 +95,7 @@ public class GraphUpdateMultiIndex extends RichFlatMapFunction<Link, NodePair> {
   @SuppressWarnings("unchecked")
   @Override
   public void flatMap(Link value, Collector<NodePair> out) {
-    Session session = this.driver.session();
+    Session session = this.driver.session(AccessMode.WRITE);
 
     long x = value.f0;
     long y = value.f1;
