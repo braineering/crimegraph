@@ -6,8 +6,10 @@ The following algorithm generates the set of metrics update required when adding
 Notice that the algorithm covers the updates of both metrics in Equations~\ref{eqn:detection-local} and \ref{eqn:prediction-local}. 
 Algorithm~\ref{alg:metrics-update} is executed by the operator \texttt{GraphUpdate} in Figure~\ref{fig:topology}, once every time it receives a new tuple $(x,y,w)$, representing the interaction between $x$ and $y$ of relevance $w$.
 
-\begin{algorithm}[t]
+\begin{algorithm}[h!]
   \SetKwProg{Fn}{Function}{}{}  
+  
+  \vspace{1em}
   
   \Fn{receive (x,y,w)} {
   	
@@ -15,7 +17,7 @@ Algorithm~\ref{alg:metrics-update} is executed by the operator \texttt{GraphUpda
 	  updateLink(x,y,w) \\
 	  $U \leftarrow update(x) \cup update(y)$ \\
 	  \For{$u\in U$}{
-	    emitHidden(u)\;
+	    emit(TM,u)\;
 	  }
 	}
 
@@ -23,8 +25,7 @@ Algorithm~\ref{alg:metrics-update} is executed by the operator \texttt{GraphUpda
 	  addLink(x,y,w) \\
 	  $U \leftarrow update(x) \cup update(y)$ \\
 	  \For{$u\in U$}{
-		emitHidden(u)\;
-		emitPotential(u)\;
+		emit(ALL,u)\;
 	  }
     }
 
@@ -32,8 +33,7 @@ Algorithm~\ref{alg:metrics-update} is executed by the operator \texttt{GraphUpda
       addLink(x,y,w) \\
 	  $U \leftarrow update(y)$ \\
 	  \For{$u\in U$}{
-	    emitHidden(u)\;
-		  emitPotential(u)\;
+	    emit(ALL,u)\;
 	  }
     }
 
@@ -41,8 +41,7 @@ Algorithm~\ref{alg:metrics-update} is executed by the operator \texttt{GraphUpda
 	  addLink(x,y,w) \\
 	  $U \leftarrow update(x)$ \\
 	  \For{$u\in U$}{
-		emitHidden(u)\;
-		emitPotential(u)\;
+		emit(ALL,u)\;
 	  }
     }  
 
@@ -50,9 +49,11 @@ Algorithm~\ref{alg:metrics-update} is executed by the operator \texttt{GraphUpda
 	  addLink(x,y,w)
     }
   }
-
+  
+  \vspace{1em}
+  
   \Fn{update (x)}{
-    $N \leftarrow Neighbors(x)$ \\
+    $N \leftarrow Neighbours(x)$ \\
     $U \leftarrow \emptyset$ \\
     \For{$y\in N$}{
       \If{$(x,y)\notin E(G)$}{
@@ -66,11 +67,12 @@ Algorithm~\ref{alg:metrics-update} is executed by the operator \texttt{GraphUpda
     }    
     \KwResult{$U$}
   }
-  \caption{Required metrics update when inserting a new interaction}
+  \vspace{1em}
+  \caption{Metrics update when inserting a new interaction}
   \label{alg:metrics-update}
 \end{algorithm}
 
-Some functions in Algorithm~\ref{alg:metrics-update} have not been formally defined because they are pretty self-explanatory. For reader's sake, we briefly describe them here. \texttt{emitHidden(u)} and \texttt{emitPotential(u)} let the operator emit tuples in the form \texttt{(x,y,HIDDEN)} and \texttt{(x,y,POTENTIAL)}, meaning that an hidden or potential score update is necessary for the edge $(x,y)$, respectively.
+Some functions in Algorithm~\ref{alg:metrics-update} have not been formally defined because they are pretty self-explanatory. For reader's sake, we briefly describe them here. \texttt{emit(TM,u)} lets the operator emit tuplesand \texttt{emit(ALL,u)} let the operator emit traffica related and all tuples in the form \texttt{(x,y,HIDDEN)} and \texttt{(x,y,POTENTIAL)}, meaning that an hidden or potential score update is necessary for the edge $(x,y)$, respectively.
 \texttt{updateLink(x,y,w)} updates the existent edge $(x,y)$ with the new EWMA weight value. 
 \texttt{addLink(x,y,w)} inserts the edge $(x,y)$ with weight $w$. 
-\texttt{Neighbors(x)} return the set of neighbors of $x$.
+\texttt{Neighbours(x)} return the set of neighbours of $x$.
