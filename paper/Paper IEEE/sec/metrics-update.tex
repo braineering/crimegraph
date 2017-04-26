@@ -1,9 +1,9 @@
 \section{Metrics update}
 \label{sec:metrics-update}
 
-When considering local metrics, a new interaction should fire only local updates, avoiding combinatorial explosion of analytic updates.
+When considering local metrics, a new interaction should fire only local updates, avoiding combinatorial explosion of updates.
 The following algorithm generates the set of metrics update required when adding a new interaction.
-Notice that the algorithm covers the updates of both metrics in Equations~\ref{eqn:detection-local} and \ref{eqn:prediction-local}. 
+Notice that Algorithm~\ref{alg:metrics-update} covers the updates of all metrics in Equations~\ref{eqn:ta-local}-\ref{eqn:resource-allocation}. 
 Algorithm~\ref{alg:metrics-update} is executed by the operator \texttt{GraphUpdate} in Figure~\ref{fig:topology}, once every time it receives a new tuple $(x,y,w)$, representing the interaction between $x$ and $y$ of relevance $w$.
 
 \begin{algorithm}[h!]

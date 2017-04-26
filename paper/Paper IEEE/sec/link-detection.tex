@@ -2,7 +2,7 @@
 \label{sec:link-detection}
 
 The link detection is the task of discovering \textit{hidden links} in a network. 
-A link $(x,y)$ is hidden if it exists in reality, but it is missing because, it has been neglected during investigations or it has been concealed by criminals.
+A link $(x,y)$ is hidden if it exists in reality, but it is missing within the available datasets, because it has been neglected during investigations or it has been concealed by criminals.
 
 We present here the \textit{Traffic Allocation (TA)} metric, that is a local metric specifically thought for link detection in criminal networks 
 The metric is based on the following criminological assumptions: 
@@ -10,13 +10,13 @@ The metric is based on the following criminological assumptions:
 \begin{enumerate}
 	\item two criminal nodes hide their direct relation interposing some nodes between them, namely \textit{mediator nodes}; formally, a direct link $(x,y)$ can be hidden by a path $\pi=(x,z_{1},\ldots,z_{h},y)$, where $z_{1},\ldots,z_{h}$ are mediator nodes;
 	
-	\item these nodes are mainly dedicated to let them interact; formally, the interaction weight $w_{z_{i}}$ involving a mediator node $z_{i}$ is mainly dedicated to convey the hidden interaction between $(x,y)$, that is $\frac{w_{x,z_{i}}+w_{z_{i},y}}{w_{z_{i}}} > 1- \frac{w_{x,z_{i}}+w_{z_{i},y}}{w_{z_{i}}}$;
+	\item the mediator nodes are mainly dedicated to let them interact; formally, the total interaction weight $w_{z_{i}}$ involving a mediator node $z_{i}$ is mainly dedicated to convey the hidden interaction between $(x,y)$;
 	
 	\item the greater the number of these nodes, the greater the likelihood of hidden linkage. 
 \end{enumerate}
 
-Let us consider an undirected weighted graph $G(V,E,w)$ with $w:E\rightarrow\mathbb{R}_{\geq1}^{+}$ and a pair of nodes $x,y\in V$.
-We can build the following local metric:
+Let us now consider an undirected weighted graph $G(V,E,w)$ with $w:E\rightarrow\mathbb{R}_{\geq1}^{+}$ and a pair of nodes $x,y\in V$.
+We can build the following local metric, leveraging the previous assumptions:
 
 \begin{equation}
 \label{eqn:ta-local}

@@ -16,8 +16,8 @@ Currently, the mainstream solutions in this field leverage algorithms based on \
 The structural approach classifies links according to metric scores that encapsulate relevant topological features. 
 These metrics can be \textit{local}, \textit{quasi-local} and \textit{global}, depending on the locality of the topological features examined with respect to the considered entities. 
 When tuning the locality degree, for a specific network, the  tradeoff between accuracy and computational complexity must be addressed.
-Quasi-local metrics are a good tradeoff of accuracy and computational complexity, because the global indices require considerable computational effort, while local indexes are limited. 
-Typically, link detection and prediction are based on the same metrics, mainly differing in the interpretation of experimental results.
+%Quasi-local metrics are a good tradeoff of accuracy and computational complexity, because the global indices require considerable computational effort, while local indexes are limited. 
+Typically, link detection and prediction tasks are based on the same metrics, mainly differing in the interpretation of experimental results.
 
 %Let us consider the link prediction, because the link detection is analogous, the metrics used for this task are the same adopted: the difference concerns how the results are interpreted. The similarity metrics are so many and they and differ because the size in which focus the analysis. 
 %In detail, let $s_{x,y}$ the likelihood, i.e. the \textit{score}, as \textit{proximity} or \textit{similarity}, that between the nodes $x$,$y$ there will be a link in the future, provided by the algorithm that implements the similarity considered metric, and let $\pi_{x,y}$ a path between them, we denote \textit{local indices} the metrics that can only compute the $s_{x,y}$ at distance $d_{\pi}(x,y) = 2$ (i.e it's applicable on only nodes that have a common neighbor $\in \Gamma(x,y)$).

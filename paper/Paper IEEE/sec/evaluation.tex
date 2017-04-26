@@ -5,7 +5,7 @@ Two standard metrics are used to measure the accuracy of link mining algorithms:
 
 To apply those metrics, the original dataset is partitioned into a trainset and a testset, according to some given test ratio $\alpha$. The trainset is obtained removing the $\alpha\%$ of links from the dataset (namely, missing links).
 
-We recall here the AUC definition:
+AUC is defined as follows:
 
 \begin{equation}
 \label{eqn:auc}
@@ -17,13 +17,13 @@ $n_{1}$ is the number of times a missing link has a score greater than an inexis
 $n_{2}$ is the number of times a missing link has a score equal to an inexistent link and
 $n$ is the total number of combination of missing links and inexistent links.
 
-Our experimental framework consists in measuring the AUC for all classical and novel metrics, applied to both criminal and not criminal datasets with test ratios $\alpha=10\%$ and $\alpha=15\%$.
+Our experimental framework consists in measuring the AUC for all metric in Equations~\ref{eqn:ta-local}-\ref{eqn:resource-allocation}, applied to both criminal and not criminal datasets with test ratios $\alpha=10\%$ and $\alpha=15\%$.
 In particular, we analyze 
 (i) a criminal dataset (CRM) collecting wiretrap-records, judgement and arrest warrants \cite{berlusconi2016link}; and
 (ii) a business-related dataset (BSN) collecting face-to-face interactions between employees in a IT company \cite{olguin2009sensible}.
-Notice that, since all the evaluated metrics are local, the considered datasets are all made of a single connected component, so to avoid the distortion of accuracy measurements.
+Notice that, since the evaluated metrics are all local, the considered datasets are all made of a single connected component, so to avoid the distortion in accuracy measurements.
 
-In Table~\ref{tab:auc-detection} and \ref{tab:auc-prediction} we listed results for link detection and prediction, respectively, highlighting the most notable ones.
+In Table~\ref{tab:auc-detection} and \ref{tab:auc-prediction} we list results for link detection and prediction, respectively, highlighting the most notable ones.
 The experimental results show that classical metrics achieve great performance in prediction tasks, while the novel metrics do it in detection.
 In particular, we notice that in prediction some metrics achieve performances clearly distinguishable from others, while in detection they tend to flatten.
 
@@ -45,7 +45,7 @@ In particular, we notice that in prediction some metrics achieve performances cl
 	\centering
 	\begin{tabular}{l l l l l}
 	\toprule
-	\textbf{Metric} & \textbf{CRM-10} & \textbf{CRM-15} & \textbf{RND-10} & \textbf{RND-15}\\
+	\textbf{Metric} & \textbf{CRM-10} & \textbf{CRM-15} & \textbf{BSN-10} & \textbf{BSN-15}\\
 	\midrule
 		CN & $0.99$ & $0.99$ & $0.99$ & $0.99$ \\
 		SLT  & $0.99$ & $0.99$ & $0.99$ & $0.99$ \\
@@ -63,14 +63,14 @@ In particular, we notice that in prediction some metrics achieve performances cl
 	\bottomrule
 	\end{tabular}
 	\label{tab:auc-detection}
-	\caption{AUC for Detection.}
+	\caption{AUC for link detection.}
 \end{table}
 
 \begin{table}[h]
 	\centering
 	\begin{tabular}{l l l l l}
 	\toprule
-	\textbf{Metric} & \textbf{CRM-10} & \textbf{CRM-15} & \textbf{RND-10} & \textbf{RND-15}\\
+	\textbf{Metric} & \textbf{CRM-10} & \textbf{CRM-15} & \textbf{BSN-10} & \textbf{BSN-15}\\
 	\midrule
 		CN & $0.99$ & $0.99$ & $0.99$ & $0.99$ \\
 		SLT  & $0.99$ & $0.99$ & $0.99$ & $0.99$ \\
@@ -88,7 +88,7 @@ In particular, we notice that in prediction some metrics achieve performances cl
 	\bottomrule
 	\end{tabular}
 	\label{tab:auc-prediction}
-	\caption{AUC for Precision.}
+	\caption{AUC for link prediction.}
 \end{table}	
      
 %\begin{figure}

@@ -3,9 +3,9 @@
 
 The link prediction is the problem of infer which new interactions in the near future in a graph. Formally, a link $(x,y)$ of a network is said to be potential when, given two times $t$ and $t'>t$, the link is not present in $G(t)$ but it will be in $G(t')$, where $G(t)$ denotes the graph at particular time $t$. 
 
-The follow metric is a normalized extension of \textit{Resource Allocation Index (RA)} \cite{berlusconi2016link, Lu2011,zhou2009predicting}. RA assigns a score to quantify similarity between vertices. Extensive tests in many complex networks have shown that RA is as one the best indicators on a large set of benchmark tests  \cite{berlusconi2016link,Lu2011}.
+The following metric is a normalized extension of \textit{Resource Allocation Index (RA)} \cite{berlusconi2016link, Lu2011,zhou2009predicting}. RA assigns a score to quantify similarity between vertices. Extensive tests in many complex networks have shown that RA is as one the best indicators on a large set of benchmark tests  \cite{berlusconi2016link,Lu2011}.
 
-Now a local and quasi-local metrics for link prediction.
+%Now a local and quasi-local metrics for link prediction.
 
 Let us consider an undirected graph $G(V,E)$ and a pair of nodes $x$,$y\in V$. We can build the following local metric:
 
@@ -18,7 +18,7 @@ Let us consider an undirected graph $G(V,E)$ and a pair of nodes $x$,$y\in V$. W
 
 where $k_{z}$ is the degree of node $z$ and $\Gamma(x) \cap \Gamma(y)$ is the set of common neighbours between $x$ and $y$. The role of the common neighbours $z$ in connecting $(x, y)$ is diluted if $z$ has many connections, since it will have less resources allocated to bridge $(x, y)$ \cite{berlusconi2016link}.
 
-Let us now consider an undirected graph $G$, a pair of nodes $x,y\in V$, a locality degree $t\in \mathbb{Z}$, $\geq 1$ and a vector $\vec{\mu}=(\mu_{1}\ldots\mu_{t})$ such that $\sum_{i=1}^{t}\mu_{i}=1$. 
+%Let us now consider an undirected graph $G$, a pair of nodes $x,y\in V$, a locality degree $t\in \mathbb{Z}$, $\geq 1$ and a vector $\vec{\mu}=(\mu_{1}\ldots\mu_{t})$ such that $\sum_{i=1}^{t}\mu_{i}=1$. 
 %We denote with $\Theta(x,t)$ the set of nodes at distance $t$ from $x$. In another words, given a nodes $v \in G$, and a path $\pi_{x,v}$ of length $t$, $\pi_{x,v} = u,v_{2},...,v_{t-1},v$, the set $\Theta(x,t) = \{v\}$.
 
 %Now, we can build the following quasi-local metric:
