@@ -26,9 +26,24 @@
 
 package com.acmutv.crimegraph;
 
+import com.acmutv.crimegraph.core.tuple.NodePairScores;
+import com.acmutv.crimegraph.core.tuple.ScoreType;
+import com.acmutv.crimegraph.core.tuple.UpdateType;
+import org.apache.flink.shaded.com.google.common.collect.Sets;
+import org.junit.Assert;
 import org.junit.Test;
 
 import java.io.*;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
+
+import static com.acmutv.crimegraph.core.tuple.ScoreType.CN;
+import static com.acmutv.crimegraph.core.tuple.ScoreType.NTA;
+import static com.acmutv.crimegraph.core.tuple.ScoreType.TA;
+import static com.acmutv.crimegraph.core.tuple.UpdateType.ALL;
+import static com.acmutv.crimegraph.core.tuple.UpdateType.TM;
 
 /**
  * Miscellanea JUnit tests (for personal use only)
@@ -39,6 +54,41 @@ public class Misc {
 
   @Test
   public void test() throws IOException {
+    NodePairScores scores = new NodePairScores(1, 2);
+    Assert.assertTrue(checkMalformed(ALL, scores));
+    Assert.assertTrue(checkMalformed(TM, scores));
     //
+    scores.addScore(NTA, 1.0);
+    Assert.assertTrue(checkMalformed(ALL, scores));
+    Assert.assertTrue(checkMalformed(TM, scores));
+
+    scores.addScore(TA, 1.0);
+    Assert.assertTrue(checkMalformed(ALL, scores));
+    Assert.assertFalse(checkMalformed(TM, scores));
+
+    scores.addScore(CN, 1.0);
+    Assert.assertTrue(checkMalformed(ALL, scores));
+    Assert.assertTrue(checkMalformed(TM, scores));
+
+    for (ScoreType scoreType : ScoreType.values()) {
+      scores.addScore(scoreType, 1.0);
+    }
+
+    Assert.assertFalse(checkMalformed(ALL, scores));
+    Assert.assertTrue(checkMalformed(TM, scores));
+  }
+
+
+  Set<ScoreType> tm = new HashSet<ScoreType>(){{add(TA);add(NTA);}};
+  Set<ScoreType> all = new HashSet<ScoreType>(){{addAll(Arrays.asList(ScoreType.values()));}};
+  private boolean checkMalformed(UpdateType updateType, NodePairScores scores) {
+    if (
+        (ALL.equals(updateType) && !scores.f2.keySet().equals(all))
+            ||
+            (TM.equals(updateType) && ! scores.f2.keySet().equals(tm))
+        ) {
+      return true;
+    }
+    return false;
   }
 }

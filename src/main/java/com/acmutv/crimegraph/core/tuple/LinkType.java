@@ -42,10 +42,11 @@ public enum LinkType {
   HIDDEN    ("HIDDEN"),
 
   /* FOR MULTI INDEX COMPUTING */
-  NTA ("NTA"),
+  CN ("CN"),
+  RA ("RA"),
   NRA ("NRA"),
   TA  ("TA"),
-  CN ("CN"),
+  NTA ("NTA"),
   JACCARD ("JACCARD"),
   SALTON ("SALTON"),
   SORENSEN ("SORENSEN"),
@@ -53,8 +54,7 @@ public enum LinkType {
   HDI ("HDI"),
   LHN1 ("LHN1"),
   PA ("PA"),
-  AA ("AA"),
-  RA ("RA");
+  AA ("AA");
 
   private final String name;
 

@@ -28,18 +28,24 @@ package com.acmutv.crimegraph.core.operator;
 
 import com.acmutv.crimegraph.core.db.DbConfiguration;
 import com.acmutv.crimegraph.core.db.Neo4JManager;
-import com.acmutv.crimegraph.core.tuple.NodePair;
-import com.acmutv.crimegraph.core.tuple.NodePairScore;
-import com.acmutv.crimegraph.core.tuple.ScoreType;
-import com.acmutv.crimegraph.core.tuple.UpdateType;
+import com.acmutv.crimegraph.core.tuple.*;
+import org.apache.flink.api.common.accumulators.IntCounter;
 import org.apache.flink.api.common.functions.RichFlatMapFunction;
 import org.apache.flink.api.java.tuple.Tuple4;
 import org.apache.flink.configuration.Configuration;
 import org.apache.flink.util.Collector;
 import org.neo4j.driver.v1.Driver;
 import org.neo4j.driver.v1.Session;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Set;
+
+import static com.acmutv.crimegraph.core.tuple.ScoreType.*;
+import static com.acmutv.crimegraph.core.tuple.UpdateType.ALL;
+import static com.acmutv.crimegraph.core.tuple.UpdateType.TM;
 
 /**
  * This operator parses interactions from input datastream.
@@ -47,7 +53,9 @@ import java.util.Set;
  * @author Michele Porretta {@literal <mporretta@acm.org>}
  * @since 1.0
  */
-public class ScoreCalculatorMultiIndex extends RichFlatMapFunction<NodePair, NodePairScore> {
+public class ScoreCalculatorMultiIndex2 extends RichFlatMapFunction<NodePair, NodePairScores> {
+
+  private static final Logger LOGGER = LoggerFactory.getLogger(ScoreCalculatorMultiIndex2.class);
 
   /**
    * The Neo4J configuration.
@@ -59,19 +67,25 @@ public class ScoreCalculatorMultiIndex extends RichFlatMapFunction<NodePair, Nod
    */
   private Driver driver;
 
+  private IntCounter malformedAll = new IntCounter();
+
+  private IntCounter malformedTm = new IntCounter();
+
   /**
    * Constructs a new PotentialScoreOperator to compute the score
    * for a node pair stored in NodePair.
    * This operator required access to the NEO4J instance.
    * @param dbconfig the Neo4J configuration.
    */
-  public ScoreCalculatorMultiIndex(DbConfiguration dbconfig) {
+  public ScoreCalculatorMultiIndex2(DbConfiguration dbconfig) {
     this.dbconfig = dbconfig;
   }
 
   @Override
   public void open(Configuration parameters) throws Exception {
     this.driver = Neo4JManager.open(this.dbconfig);
+    super.getRuntimeContext().addAccumulator("malformedAll", this.malformedAll);
+    super.getRuntimeContext().addAccumulator("malformedTm", this.malformedTm);
   }
 
   @Override
@@ -81,16 +95,18 @@ public class ScoreCalculatorMultiIndex extends RichFlatMapFunction<NodePair, Nod
 
   @SuppressWarnings("unchecked")
   @Override
-  public void flatMap(NodePair nodePair, Collector<NodePairScore> out) {
+  public void flatMap(NodePair nodePair, Collector<NodePairScores> out) {
     Session session = this.driver.session();
 
     long x = nodePair.f0;
     long y = nodePair.f1;
-    UpdateType type = nodePair.f2;
+    UpdateType updateType = nodePair.f2;
+
+    NodePairScores scores = new NodePairScores(x, y);
 
     Set<Tuple4<Long,Long,Double,Double>> neighbours = Neo4JManager.gammaIntersection(session, x, y);
 
-    if(type.equals(UpdateType.TM)){
+    if (TM.equals(updateType)) {
       /* TRAFFIC METRICS */
       double trafficScore = 0.0;
       double totalWeight = 0.0;
@@ -104,59 +120,48 @@ public class ScoreCalculatorMultiIndex extends RichFlatMapFunction<NodePair, Nod
       }
 
       /* TRAFFIC ALLOCATION */
-      NodePairScore ta = new NodePairScore(x, y, trafficScore, ScoreType.TA);
-      out.collect(ta);
+      scores.addScore(TA, trafficScore);
 
       /* NORMALIZED TRAFFIC ALLOCATION */
-      trafficScore /= totalWeight;
-      NodePairScore nta = new NodePairScore(x, y, trafficScore, ScoreType.NTA);
-      out.collect(nta);
+      scores.addScore(NTA, (totalWeight != 0.0) ? trafficScore / totalWeight : 0.0);
     }
 
     /* for Multi-Index Computing (include traffic metrics) */
-    if(type.equals(UpdateType.ALL)){
+    if (ALL.equals(updateType)){
 
       /* multi indices: <cardinality intersection, cardinality union, x degree, y degree> */
       Tuple4<Long, Long, Long, Long> multiIndex = Neo4JManager.multiIndexTool(session, x, y);
 
       /* COMMON NEIGHBOURS INDEX */
-      NodePairScore cn = new NodePairScore(x, y, (double) multiIndex.f0, ScoreType.CN);
-      out.collect(cn);
+      scores.addScore(CN, (double)multiIndex.f0);
 
       /* SALTON INDEX */
-      Double saltonScore = (double) multiIndex.f0 / Math.sqrt(multiIndex.f2 * multiIndex.f3);
-      NodePairScore salton = new NodePairScore(x, y, saltonScore, ScoreType.SALTON);
-      out.collect(salton);
+      double saltonScore = (double)multiIndex.f0 / Math.sqrt(multiIndex.f2 * multiIndex.f3);
+      scores.addScore(SALTON, saltonScore);
 
       /* JACCARD INDEX */
-      Double jaccardScore =  (double)multiIndex.f0 / (double) multiIndex.f1;
-      NodePairScore jaccard = new NodePairScore(x, y, jaccardScore, ScoreType.JACCARD);
-      out.collect(jaccard);
+      double jaccardScore =  (double)multiIndex.f0 / (double)multiIndex.f1;
+      scores.addScore(JACCARD, jaccardScore);
 
       /* SORENSEN INDEX */
-      Double sorensenScore = (double)  (2 * multiIndex.f0) / ((double)multiIndex.f2 + (double)multiIndex.f3);
-      NodePairScore sorensen = new NodePairScore(x, y, sorensenScore, ScoreType.SORENSEN);
-      out.collect(sorensen);
+      double sorensenScore = (double)(2 * multiIndex.f0) / ((double)multiIndex.f2 + (double)multiIndex.f3);
+      scores.addScore(SORENSEN, sorensenScore);
 
       /* HPI INDEX */
-      Double hpiScore = (double) multiIndex.f0 / Double.min(multiIndex.f2, multiIndex.f3);
-      NodePairScore hpi = new NodePairScore(x, y, hpiScore, ScoreType.HPI);
-      out.collect(hpi);
+      double hpiScore = (double)multiIndex.f0 / Double.min(multiIndex.f2, multiIndex.f3);
+      scores.addScore(HPI, hpiScore);
 
       /* HDI INDEX */
-      Double hdiScore = (double) multiIndex.f0 / Double.max(multiIndex.f2, multiIndex.f3);
-      NodePairScore hdi = new NodePairScore(x, y, hdiScore, ScoreType.HDI);
-      out.collect(hdi);
+      double hdiScore = (double)multiIndex.f0 / Double.max(multiIndex.f2, multiIndex.f3);
+      scores.addScore(HDI, hdiScore);
 
       /* LHN1 INDEX */
-      Double lhn1Score = multiIndex.f0 / ((double) multiIndex.f2 * (double) multiIndex.f3);
-      NodePairScore lhn1 = new NodePairScore(x, y, lhn1Score, ScoreType.LHN1);
-      out.collect(lhn1);
+      double lhn1Score = multiIndex.f0 / ((double) multiIndex.f2 * (double) multiIndex.f3);
+      scores.addScore(LHN1, lhn1Score);
 
       /* PA INDEX */
-      Double psScore = ((double) multiIndex.f2 * (double) multiIndex.f3);
-      NodePairScore pa = new NodePairScore(x, y, psScore, ScoreType.PA);
-      out.collect(pa);
+      double paScore = ((double) multiIndex.f2 * (double) multiIndex.f3);
+      scores.addScore(PA, paScore);
 
       double nraScore = 0.0;
       double adamicAdarScore = 0.0;
@@ -174,17 +179,13 @@ public class ScoreCalculatorMultiIndex extends RichFlatMapFunction<NodePair, Nod
       }
 
       /* ADAMIC ADAR INDEX */
-      NodePairScore aa = new NodePairScore(x, y, adamicAdarScore, ScoreType.AA);
-      out.collect(aa);
+      scores.addScore(AA, adamicAdarScore);
 
       /* RESOURCE ALLOCATION INDEX */
-      NodePairScore ra = new NodePairScore(x, y, resourceAllocationScore, ScoreType.RA);
-      out.collect(ra);
+      scores.addScore(RA, resourceAllocationScore);
 
       /* NORMALIZED RESOURCE ALLOCATION */
-      nraScore /= totalDegree;
-      NodePairScore nra = new NodePairScore(x, y, nraScore, ScoreType.NRA);
-      out.collect(nra);
+      scores.addScore(NRA, (totalDegree != 0.0) ? nraScore / totalDegree : 0.0);
 
       /* TRAFFIC METRICS */
       double trafficScore = 0.0;
@@ -199,15 +200,34 @@ public class ScoreCalculatorMultiIndex extends RichFlatMapFunction<NodePair, Nod
       }
 
       /* TRAFFIC ALLOCATION */
-      NodePairScore ta = new NodePairScore(x, y, trafficScore, ScoreType.TA);
-      out.collect(ta);
+      scores.addScore(TA, trafficScore);
 
       /* NORMALIZED TRAFFIC ALLOCATION */
-      trafficScore /= totalWeight;
-      NodePairScore nta = new NodePairScore(x, y, trafficScore, ScoreType.NTA);
-      out.collect(nta);
+      scores.addScore(NTA, (totalWeight != 0.0) ? trafficScore / totalWeight : 0.0);
     }
 
+    this.isMalformed(updateType, scores);
+
+    out.collect(scores);
+
+    LOGGER.info("SCORES: {}", scores);
+
     session.close();
+  }
+
+  private static final Set<ScoreType> TM_SET = new HashSet<ScoreType>(){{
+    add(TA);add(NTA);
+  }};
+  private static final Set<ScoreType> ALL_SET = new HashSet<ScoreType>(){{
+    addAll(Arrays.asList(ScoreType.values()));
+    removeAll(Arrays.asList(POTENTIAL, HIDDEN));
+  }};
+
+  private void isMalformed(UpdateType updateType, NodePairScores scores) {
+    if (ALL.equals(updateType) && !scores.f2.keySet().equals(ALL_SET)) {
+      this.malformedAll.add(1);
+    } else if (TM.equals(updateType) && !scores.f2.keySet().equals(TM_SET)) {
+      this.malformedTm.add(1);
+    }
   }
 }

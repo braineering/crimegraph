@@ -1,7 +1,7 @@
 /*
   The MIT License (MIT)
 
-  Copyright (c) 2017 Giacomo Marciani and Michele Porretta
+  Copyright (c) 2016 Giacomo Marciani and Michele Porretta
 
   Permission is hereby granted, free of charge, to any person obtaining a copy
   of this software and associated documentation files (the "Software"), to deal
@@ -24,40 +24,23 @@
   THE SOFTWARE.
  */
 
-package com.acmutv.crimegraph.core.tuple;
+package com.acmutv.crimegraph.core.keyer;
 
-import lombok.Getter;
+import com.acmutv.crimegraph.core.tuple.NodePairScore;
+import com.acmutv.crimegraph.core.tuple.NodePairScores;
+import org.apache.flink.api.java.functions.KeySelector;
+import org.apache.flink.api.java.tuple.Tuple2;
 
 /**
- * All types of links.
+ * This operator parses interactions from input datastream.
  * @author Giacomo Marciani {@literal <gmarciani@acm.org>}
  * @author Michele Porretta {@literal <mporretta@acm.org>}
  * @since 1.0
  */
-@Getter
-public enum ScoreType {
+public class NodePairScoresKeyer implements KeySelector<NodePairScores, Tuple2<Long,Long>> {
 
-    POTENTIAL   ("POTENTIAL"),
-    HIDDEN      ("HIDDEN"),
-
-    /* FOR MULTI-INDEX COMPUTING */
-    CN          ("CN"),
-    RA          ("RA"),
-    NRA         ("NRA"),
-    TA          ("TA"),
-    NTA         ("NTA"),
-    JACCARD     ("JACCARD"),
-    SALTON      ("SALTON"),
-    SORENSEN    ("SORENSEN"),
-    HPI         ("HPI"),
-    HDI         ("HDI"),
-    LHN1        ("LHN1"),
-    PA          ("PA"),
-    AA          ("AA");
-
-    private final String name;
-
-    ScoreType(final String name) {
-      this.name = name;
-    }
+  @Override
+  public Tuple2<Long,Long> getKey(NodePairScores event) throws Exception {
+    return new Tuple2<>(event.f0,event.f1);
+  }
 }

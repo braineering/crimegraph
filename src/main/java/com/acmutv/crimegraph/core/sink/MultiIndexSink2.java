@@ -28,15 +28,19 @@ package com.acmutv.crimegraph.core.sink;
 
 import com.acmutv.crimegraph.core.db.DbConfiguration;
 import com.acmutv.crimegraph.core.db.Neo4JManager;
-import com.acmutv.crimegraph.core.tuple.Link;
-import com.acmutv.crimegraph.core.tuple.LinkType;
-import com.acmutv.crimegraph.core.tuple.NodePairScore;
-import com.acmutv.crimegraph.core.tuple.ScoreType;
+import com.acmutv.crimegraph.core.tuple.*;
+import org.apache.commons.lang3.tuple.Pair;
+import org.apache.flink.api.common.accumulators.IntCounter;
 import org.apache.flink.configuration.Configuration;
 import org.apache.flink.streaming.api.functions.sink.RichSinkFunction;
-import org.neo4j.driver.v1.AccessMode;
 import org.neo4j.driver.v1.Driver;
 import org.neo4j.driver.v1.Session;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
 
 /**
  * A sink that saves/removes potential links.
@@ -44,7 +48,9 @@ import org.neo4j.driver.v1.Session;
  * @author Michele Porretta {@literal <mporretta@acm.org>}
  * @since 1.0
  */
-public class MultiIndexSink extends RichSinkFunction<NodePairScore> {
+public class MultiIndexSink2 extends RichSinkFunction<NodePairScores> {
+
+  private static final Logger LOGGER = LoggerFactory.getLogger(MultiIndexSink2.class);
 
   /**
    * The Neo4J configuration.
@@ -52,28 +58,27 @@ public class MultiIndexSink extends RichSinkFunction<NodePairScore> {
   private DbConfiguration dbconfig;
 
   /**
-   * The potential score threshold.
-   */
-  private double threshold;
-
-  /**
    * The NEO4J driver.
    */
   private Driver driver;
 
+  private IntCounter overThreshold = new IntCounter();
+
+  private IntCounter underThreshold = new IntCounter();
+
   /**
    * Constructs a new sink.
    * @param dbconfig the Neo4J configuration.
-   * @param threshold the potential score threshold.
    */
-  public MultiIndexSink(DbConfiguration dbconfig, double threshold) {
+  public MultiIndexSink2(DbConfiguration dbconfig) {
     this.dbconfig = dbconfig;
-    this.threshold = threshold;
   }
 
   @Override
   public void open(Configuration parameters) throws Exception {
     this.driver = Neo4JManager.open(this.dbconfig);
+    super.getRuntimeContext().addAccumulator("overThreshold", this.overThreshold);
+    super.getRuntimeContext().addAccumulator("underThreshold", this.underThreshold);
   }
 
   @Override
@@ -82,21 +87,26 @@ public class MultiIndexSink extends RichSinkFunction<NodePairScore> {
   }
 
   @Override
-  public void invoke(NodePairScore value) throws Exception {
+  public void invoke(NodePairScores value) throws Exception {
     Session session = this.driver.session();
 
     final long src = value.f0;
     final long dst = value.f1;
-    final double score = value.f2;
-    final LinkType type = LinkType.valueOf(value.f3.name());
+    final Map<ScoreType,Double> scores = value.f2;
 
-    final Link link = new Link(src, dst, score, type);
+    for (Map.Entry<ScoreType,Double> score : scores.entrySet()) {
+      final LinkType type = LinkType.valueOf(score.getKey().name());
+      final double val = score.getValue();
+      final Link link = new Link(src, dst, val, type);
 
-    if (score >= this.threshold) {
       Neo4JManager.save(session, link);
-      
-    } else {
-      Neo4JManager.remove(session, link);
+
+      if (val >= 0.0) {
+        this.overThreshold.add(1);
+      } else {
+        this.underThreshold.add(1);
+        LOGGER.info("VALUE-ERROR: UNDER THRESHOLD {} with entry {}", link, score);
+      }
     }
 
     session.close();
