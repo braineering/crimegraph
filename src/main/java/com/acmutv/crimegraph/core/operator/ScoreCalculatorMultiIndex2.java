@@ -34,6 +34,7 @@ import org.apache.flink.api.common.functions.RichFlatMapFunction;
 import org.apache.flink.api.java.tuple.Tuple4;
 import org.apache.flink.configuration.Configuration;
 import org.apache.flink.util.Collector;
+import org.neo4j.driver.v1.AccessMode;
 import org.neo4j.driver.v1.Driver;
 import org.neo4j.driver.v1.Session;
 import org.slf4j.Logger;
@@ -96,7 +97,7 @@ public class ScoreCalculatorMultiIndex2 extends RichFlatMapFunction<NodePair, No
   @SuppressWarnings("unchecked")
   @Override
   public void flatMap(NodePair nodePair, Collector<NodePairScores> out) {
-    Session session = this.driver.session();
+    Session session = this.driver.session(AccessMode.READ);
 
     long x = nodePair.f0;
     long y = nodePair.f1;

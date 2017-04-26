@@ -58,12 +58,12 @@ Algorithm~\ref{alg:metrics-update} is executed by the operator \texttt{GraphUpda
       \If{$(x,y)\notin E(G)$}{
         $U \leftarrow U \cup \{(x,y)\}$
       }
-    }
-    \For{$z\in N$}{
-      \If{$(x,z)\notin E(G) \land z\neq y$}{
-        $U \leftarrow U \cup \{(y,z)\}$
-      }
-    }
+	  \For{$z\in N$}{
+	  	\If{$(x,z)\notin E(G) \land z\neq y$}{
+	  		$U \leftarrow U \cup \{(y,z)\}$
+	  	}
+	  }
+    }    
     \KwResult{$U$}
   }
   \caption{Required metrics update when inserting a new interaction}
