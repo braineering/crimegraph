@@ -1,9 +1,9 @@
 \section{Evaluation}
 \label{sec:evaluation}
 
-Two standard metrics are used to measure the accuracy of link mining algorithms: AUC and  \textit{Precision} \cite{Lu2011}. We focused here on AUC because it is stronger in revealing false positivity issues.
+Two standard metrics are used to measure the accuracy of link mining algorithms: \textit{AUC} and  \textit{Precision} \cite{Lu2011}. We focused here on AUC because it is stronger in revealing false positivity issues.
 
-The original dataset is partitioned into a trainset and a testset, according to a test ratio. Both the dataset and the trainset are made of one single giant connected component.
+The original dataset is partitioned into a trainset and a testset, according to some given test ratio $\alpha$. The trainset is then obtained removing the $\alpha\%$ of links from the dataset (namely, missing links)
 
 We recall here the AUC definition:
 
@@ -17,12 +17,15 @@ $n_{1}$ is the number of times a missing link has a score greater than an inexis
 $n_{2}$ is the number of times a missing link has a score equal to an inexistent link and
 $n$ is the total number of combination of missing links and inexistent links.
 
-Our experimental framework consists in measuring the AUC for all classical and novel metrics, applied to both criminal and not criminal datasets with test ratios at 10\% and 15\%.
-In particular, we analyze the giant component of
+Our experimental framework consists in measuring the AUC for all classical and novel metrics, applied to both criminal and not criminal datasets with test ratios $\alpha=10\%$ and $\alpha=15\%$.
+In particular, we analyze 
 (i) a criminal dataset (CRM) collecting wiretrap-records, judgement and arrest warrants \cite{berlusconi2016link}; and
 (ii) a business-related dataset (BSN) collecting face-to-face interactions between employees in a IT company \cite{olguin2009sensible}.
+Notice that, since all the evaluated metrics are local, the considered datasets are all made of a single connected component, so to avoid the distortion of accuracy measurements.
 
 In Table~\ref{tab:auc-detection} and \ref{tab:auc-prediction} we listed results for link detection and prediction, respectively, highlighting the most notable ones.
+The experimental results show that classical metrics achieve great performance in prediction tasks, while the novel metrics do it in detection.
+In particular, we notice that in prediction some metrics achieve performances clearly distinguishable from others, while in detection they tend to flatten.
 
 %\begin{figure}[!ht]
 %	\centering
@@ -87,12 +90,6 @@ In Table~\ref{tab:auc-detection} and \ref{tab:auc-prediction} we listed results 
 	\label{tab:auc-prediction}
 	\caption{AUC for Precision.}
 \end{table}	
-
-The experimental results show that classic metrics achieve great performance in prediction tasks, while the novel metrics do it in detection.
-In particular, we notice that in prediction some metrics are clearly distinct from others froma performance point of view; while in detection they are all similar.
-
-
-
      
 %\begin{figure}
 %	\centering
