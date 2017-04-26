@@ -19,12 +19,12 @@ We can build the following local metric:
 \begin{equation}
 \label{eqn:detection-local}
 \Phi(x,y)=
-\frac{\sum\limits_{z\in\Gamma_{x,y}}(w_{x,z}+w_{z,y})w_{z}^{-1}}
-{\sum\limits_{z\in\Gamma_{x,y}}w_{z}}
+\frac{\sum\limits_{z\in\Gamma(x,y)}(w_{x,z}+w_{z,y})w_{z}^{-1}}
+{\sum\limits_{z\in\Gamma(x,y)}w_{z}}
 \end{equation}
 
 where 
-$\Gamma_{x,y}$ is the set of common neighbors between $x$ and $y$,
+$\Gamma(x,y)$ is the set of common neighbours between $x$ and $y$,
 $w_{x,z}$ is the weight of the edge $(x,z)$ and
 $w_{z}$ is the total weight of the edges incident to $z$.
 
