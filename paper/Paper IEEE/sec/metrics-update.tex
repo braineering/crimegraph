@@ -72,7 +72,7 @@ Algorithm~\ref{alg:metrics-update} is executed by the operator \texttt{GraphUpda
   \label{alg:metrics-update}
 \end{algorithm}
 
-Some functions in Algorithm~\ref{alg:metrics-update} have not been formally defined because they are pretty self-explanatory. For reader's sake, we briefly describe them here. \texttt{emit(TM,u)} lets the operator emit tuplesand \texttt{emit(ALL,u)} let the operator emit traffica related and all tuples in the form \texttt{(x,y,HIDDEN)} and \texttt{(x,y,POTENTIAL)}, meaning that an hidden or potential score update is necessary for the edge $(x,y)$, respectively.
+Some functions in Algorithm~\ref{alg:metrics-update} have not been formally defined because they are pretty self-explanatory. For reader's sake, we briefly describe them here. \texttt{emit(TM,u)} lets the operator emit tuples and \texttt{emit(ALL,u)} let the operator emit traffica related and all tuples in the form \texttt{(x,y,HIDDEN)} and \texttt{(x,y,POTENTIAL)}, meaning that an hidden or potential score update is necessary for the edge $(x,y)$, respectively.
 \texttt{updateLink(x,y,w)} updates the existent edge $(x,y)$ with the new EWMA weight value. 
 \texttt{addLink(x,y,w)} inserts the edge $(x,y)$ with weight $w$. 
 \texttt{Neighbours(x)} return the set of neighbours of $x$.
