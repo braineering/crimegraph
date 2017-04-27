@@ -12,9 +12,9 @@ Considering these requirements, we propose an application that follows the \text
 
 Our application provides an extremely flexible architecture, making it really easy to deploy and compare performances of any metric.
 
-The data stream processing architecture is developed leveraging the \textit{Apache Flink} \cite{flink} as a DSP framework.
-Data acquisition is provided by \textit{Apache Kafka} \cite{kafka}, an high-throughput message queuing system, designed for making streaming data available to consumer. Kafka implements a \textit{publish/subscribe} mechanism for \textit{asynchronous communication} of data.
-Criminal network graph is stored in \textit{Neo4j} \cite{neo4j}, that is a highly scalable, native graph database. Neo4j optimizes the storage of large graphs and provides a web-based interactive exploration tool.
+The data stream processing architecture is implemented with \textit{Apache Flink}\cite{flink}, a highly scalable DSP framework notable for its throughput maximization.
+Data injection is provided by \textit{Apache Kafka} \cite{kafka}, a widley adopted pub/sub system natively thought to implement asychronous communication in big data analytics applications.
+Criminal network graph is stored in \textit{Neo4j} \cite{neo4j}, a highly scalable graph database that optimizes the storage of large graphs and provides a convenient web-based data exploration tool.
 
 In Figure~\ref{fig:topology} we represent the architecture of the proposed system, with a focus on the topology of stream operators. All link mining metrics are computed in parallel, scores are then filtered with a custom thresholding process and the output is the set of mined links.
 
