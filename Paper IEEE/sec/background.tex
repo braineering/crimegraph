@@ -1,0 +1,84 @@
+\section{Background}
+\label{sec:background}
+
+% THEORETICAL BACKGROUND
+
+In this section we briefly introduce the notation and concepts to support the formal definition of our algorithms and metrics.
+
+Let $G(V,E)$ be an undirected weighted graph, where $V$ is the set of vertices, $E$ is the set of edges and $w:E\rightarrow\mathbb{R}$ is the weight function. 
+%
+A \textit{path} $\pi_{x,y}$ between two vertices $x$,$y$ of \textit{length} $k$ in $G$ is a sequence of vertices $v_{1},v_{2},\ldots,v_{k-1},v_{k}$, where $x = v_{1}$ and $y = v_{k}$, such that the edge $(v_{i},v_{i+1}) \in E$ for $i = 1, 2,\ldots,k-1$. 
+%
+The distance $d(x,y)$ between $x$ and $y$, is the length of the shortest path from $x$ to $y$ (or vice versa).
+%
+A graph is \textit{connected} if there is a path between every pair of vertices. If not, the graph contains at least two \textit{connected components}, i.e. connected subgraphs.
+%
+Notice that, in this work we assume a graph made up of one connected component only, namely a \textit{giant component}.
+
+Given two vertices $x,y \in V$, we denote with $\Gamma(x)$ the set of neighbors of $x$ and with $\Gamma(x,y) = \Gamma(x) \bigcap \Gamma(y)$ the set of common neighbors between $x$ and $y$. Given a vertex $x \in V$, we denote with $k_{x}$ the degree of $x$.
+
+The \textit{link mining} refers to data mining techniques that consider links as first-class citizens when defining descriptive and predictive models~\cite{getoor2005link}. It comprises community detection, entity classification, link detection, link prediction and more. 
+
+%In this work we focus on link detection and prediction, namely the task of determining existent though invisible links, and the prediction of future interactions\cite{Hasan2011}.
+Currently, the mainly adopted approaches for link mining are based on \textit{structural metrics} \cite{berlusconi2016link,Liben-Nowell,Lu2011}.
+The structural approach classifies links according to metric scores that encapsulate relevant topological features. 
+These metrics can be \textit{local}, \textit{quasi-local} and \textit{global}, depending on the locality of the topological features examined with respect to the considered entities. 
+When tuning the locality degree, for a specific network, the  tradeoff between accuracy and computational complexity must be addressed.
+%Quasi-local metrics are a good tradeoff of accuracy and computational complexity, because the global indices require considerable computational effort, while local indexes are limited. 
+
+Link detection and prediction tasks are based on the same metrics, mainly differing in the setting up of the testing framework and the interpretation of experimental results.
+
+%Let us consider the link prediction, because the link detection is analogous, the metrics used for this task are the same adopted: the difference concerns how the results are interpreted. The similarity metrics are so many and they and differ because the size in which focus the analysis. 
+%In detail, let $s_{x,y}$ the likelihood, i.e. the \textit{score}, as \textit{proximity} or \textit{similarity}, that between the nodes $x$,$y$ there will be a link in the future, provided by the algorithm that implements the similarity considered metric, and let $\pi_{x,y}$ a path between them, we denote \textit{local indices} the metrics that can only compute the $s_{x,y}$ at distance $d_{\pi}(x,y) = 2$ (i.e it's applicable on only nodes that have a common neighbor $\in \Gamma(x,y)$).
+
+%Other types of metrics are \textit{quasi-local} indices, that consider $d(x,y) \geq t$, where $t\in \mathbb{Z}, t\geq 1 $, as \textit{locality degree}, identifies a neighborhood with a max length equal to $t$ steps, starting from the node $x$ to $y$. Quasi-local metrics are a good tradeoff of accuracy and computational complexity, because the global indices require considerable computational effort, while local indexes are limited. 
+
+%Other types of metrics are \textit{quasi-local} indices, that consider $d(x,y) \geq t$, where $t\in \mathbb{Z}, t\geq 1 $, as \textit{locality degree}, identifies a neighborhood with a max length equal to $t$ steps, starting from the node $x$ to $y$.
+%Another metrics are \textit{global indices}, that computes the score between any pairs of nodes in $G$ not directly connected\cite{Lu2011}. The metrics used in this work are presented in Section~\ref{sec:link-detection,sec:link-prediction}.
+
+% leverei la descrizione di RA e LP, lasciando solamente la citazione dell'articolo che ne parla.
+%, that we report for simplicity:
+%\begin{equation}
+%\label{eqn:resource-allocation}
+%s_{xy}\textsuperscript{RA} = 
+%\sum\limits_{z\in\Gamma(x,y)}\frac{1}{k_{z}}
+%\end{equation}
+%where $k_{z}$ is the degree of node $z$.
+%
+%\begin{equation}
+%\label{eqn:local-path}
+%s_{xy}\textsuperscript{LP(k)} = 
+%A^{2} + \epsilon A^{3} + \epsilon^{2}A^{4}+...+\epsilon^{k-2}A^{k}
+%\end{equation}
+%where $k\geq 1$ is a locality degree, $A$ is the adjacency matrix, and $\epsilon$ is a free parameter. For example, $A_{xy}^{2}$ is also the number of different paths with length $2$ connecting $x$ and $y$.
+
+%Both metrics for link prediction assigned to a pair $x$,$y$ a score, representing their possible future relationship. This score can be viewed as a measure of similarity between nodes $x$ and $y$. Notice that for each pair of nodes, $x$, $y \in V$, we have that $s_{xy} = s_{yx}$. Performing an ranking among the RA score on a graph $G$, can be get the top most likely link those still not present in G.
+
+% DATA MODEL
+
+A \textit{criminal network} represents the social structure of persons that are involved in some criminal intent and the related interactions~\cite{von2001organisierte}.
+%
+The criminological domain deals with a wide variety of entities and relations, collected by heterogeneous data sources. 
+When analyzing criminal networks leveraging SNA models, this variety must be addressed \cite{pramanik2016framework}.
+
+We model such a network with the weighted undirected graph $G(V,E)$, where  $ V$ represents the set of \textit{criminal nodes} (e.g. peoples, groups or places), and $E$ represents their \textit{criminal relations}, whose typology and relevance are encapsulated by the correspondent weight function $w:E\rightarrow~\mathbb{R}_{\geq1}^{+}$. 
+
+A generic node is labeled with an \textit{Internationalized Resource Identifier} (IRI), which points, so as to then exploit the power of inference.
+A generic undirected edge is weighted according to the \textit{Exponential Weighted Moving Average} (EWMA) applied to relevance of the observed interaction. 
+For example, a wiretap records datasets would induce a weight of edge $x,y$ proportional to the call length between $x$ and $y$.
+Such a model allows arbitrarily relevants of the recent observations with respect to past ones \cite{lucas1990exponentially}. 
+Such a general model makes the link mining tasks more flexible and adaptable to different criminal contexts and investigative practices.
+
+% LINK DETECTION
+
+The link detection is the task of discovering \textit{hidden links} in a network. 
+A link $(x,y)$ is hidden if it exists in reality, but it is missing within the available datasets, because it has been neglected during investigations or it has been concealed by criminals.
+%
+% LINK PREDICTION
+%
+The link prediction is about inferring the interactions that are likely to be created within the graph in the near future. 
+%Formally, given a graph $G(V,E,w)$, we define a view of the graph at time $ t $ as its snapshot in $ t $, $G(V^t,E^t,w^t)$, which comprises the set of verticies $ V^t $, edges $ E^t $, and the weight function $ w^t(\cdot) $ as observed in $ t $.
+%
+%Considering two points in time $t$ and $t'$, with $t'>t$, and the resulting view of the same graph $G(V^t,E^t,w^t)$ and $G(V^{t'},E^{t'},w^{t'})$, we define as \textit{potential link} a link $(x,y)$ that does not exist at time $ t $ \textit{and} exists at time $ t' $, i.e.,  $(x,y) \notin E^t \wedge (x,y) \in E^{t'} $. 
+
+
