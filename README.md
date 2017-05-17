@@ -1,14 +1,10 @@
 # CRIMEGRAPH
 
-*Crime network analysis leveraging data stream processing*
+*Criminal networks analysis leveraging data stream processing*
 
-Big data analytics is a disruptive technology that can reshape core tasks of security intelligence.
-The real-time discovery of hidden criminal patterns is an outstanding challenge for security and law enforcement agencies.
-In particular, predicting the evolution of criminal networks and uncovering concealed relationships can efficiently guide investigations for better decision-making.
-
-In this context, it is necessary to develop social network metrics that are both domain-aware and ready to be executed in a data stream environment.
-That is why we propose two structural local metrics for link detection and prediction, together with their data stream processing implementation.
-The experimental results show that the proposed metrics can reach up to ??\% accuracy with an average latency of ?? ms.
+The ability to discover patterns of interest in criminal networks can support and ease the investigation tasks by security and law enforcement agencies. Being the criminal network a special case of social network, we can properly reuse most of the state-of-the-art techniques to discover patterns of interests, i.e., hidden and potential links. Nevertheless, in time-sensible scenarios, like the one involving criminal actions, the ability to discover patterns in a (near) real-time manner can be of primary importance.
+In this paper, we investigate the identification of patterns for link detection and prediction on an evolving criminal network. Being the criminal network a dynamic social graph, we exploit a stream processing approach to extract information of interest as soon as data is generated. To this end, we also propose three new similarity social network metrics, specifically tailored for criminal link detection and prediction. 
+Then, we develop a flexible data stream processing application, relying on the framework Apache Flink; this solution allows to deploy and evaluate the newly proposed metrics as well as the one existing in literature. The experimental results show that the new metrics we propose can reach up to 83% accuracy in detection and 82% accuracy in prediction, resulting competitive with the state of the art metrics. 
 
 ## Requirements
 To execute the app locally you need the following to be installed to your system:
