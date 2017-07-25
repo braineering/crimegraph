@@ -1,0 +1,18 @@
+\section{Related Works}
+\label{sec:related-works}
+
+The adoption of SNA in criminology began in the 90s \cite{berlusconi2017social}, providing evidence of positive experience as investigative tool in recent years \cite{van2009introduction}. 
+%
+Since then, SNA models and techniques have been strongly improved.
+%
+Nevertheless, SNA solutions are designed for a batch processing approach and cannot be easily adapted for the execution in a DSP application.
+%
+Moreover, although SNA metrics have been widely experimented in the criminology context~\cite{berlusconi2016link}, only recent works focused on their development as a Big Data analytics solution~\cite{pramanik2016framework}. Such a solution gives the possibility to extract in real-time valuable information from evolving dataset. 
+
+In this context, it is necessary to develop new SNA models that are aware of criminological assumptions and that are ready to work with data streams~\cite{xu2005criminal,xu2004analyzing}.
+%
+The traditionally adopted metrics presented in Section~\ref{sec:classical-metrics} are mainly focused on vertices degree and number of common neighbors as the only index of similarity between vertices.
+%
+On the other hand, our new metrics take into account also the distribution of the weight of edges, looking for evidence of criminological assumptions.
+%
+Furthermore, at the best of our knowledge, we present for the first time an algorithm Section~\ref{sec:metrics-update} which allows to compute the most diffused link detection and link prediction metrics within a data streaming application.

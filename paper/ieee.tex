@@ -1,0 +1,66 @@
+\documentclass[10pt,conference,compsoc]{IEEEtran}
+% \special{papersize=8.5in,11in}
+
+\usepackage[utf8]{inputenc}
+\usepackage{graphicx}
+\usepackage{epstopdf}
+\usepackage{subfig}
+\usepackage{bm}
+\usepackage{url}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{booktabs}
+\usepackage[ruled,noend,noline]{algorithm2e}
+\usepackage[pass]{geometry}
+
+
+\begin{document}
+
+%*******************************************************************************
+% Title and Authors
+%*******************************************************************************
+\title{A Data Streaming Approach to Link Mining in Criminal Networks}
+
+\author{\IEEEauthorblockN{Giacomo Marciani, Michele Porretta, Matteo Nardelli, Giuseppe F. Italiano}
+\IEEEauthorblockA{Department of Civil Engineering and Computer Science Engineering\\
+University of Rome Tor Vergata, Italy\\
+Email: gmarciani@ieee.org, micheleporretta@gmail.com, nardelli@ing.uniroma2.it, giuseppe.italiano@uniroma2.it}}
+
+% make the title area
+\maketitle
+
+% correct bad hyphenation here
+\hyphenation{op-tical net-works semi-conduc-tor}
+
+\IEEEpeerreviewmaketitle
+
+%*******************************************************************************
+% Content
+%*******************************************************************************
+\input{sec/abstract}
+
+% keywords
+\begin{IEEEkeywords}
+big data analytics,
+social networks analysis,
+data stream processing,
+criminal networks
+\end{IEEEkeywords}
+
+\input{sec/introduction}
+\input{sec/related-works}
+\input{sec/background}
+\input{sec/classical-metrics}
+\input{sec/new-metrics}
+\input{sec/architecture}
+\input{sec/metrics-update}
+\input{sec/evaluation}
+\input{sec/conclusions}
+
+%*******************************************************************************
+% Bibliography
+%*******************************************************************************
+\bibliographystyle{IEEEtran}
+\bibliography{./ref/biblio}
+
+\end{document}

@@ -1,0 +1,126 @@
+\section{New metrics for detection and prediction}
+\label{sec:new-metrics}
+
+The link detection is the task of discovering \textit{hidden links} in a network. 
+A link $(x,y)$ is hidden if it exists in reality, but it is missing within the available datasets, because it has been neglected during investigations or it has been concealed by criminals.
+
+We present here the \textit{Traffic Allocation (TA)} \hlr{perche' allocation? La metrica non e' una statistica sul peso del percorso tra due nodi relativo al peso del nodo attraversato?} metric, that is a local metric specifically designed for link detection in criminal networks.
+ 
+The metric is based on the following criminological assumptions: 
+
+\begin{enumerate}
+	\item two criminal nodes hide their direct relation interposing some nodes between them, namely \textit{mediator nodes}; formally, a direct link $(x,y)$ can be hidden by a path $\pi=(x,z_{1},\ldots,z_{h},y)$, where $z_{1},\ldots,z_{h}$ are broker nodes \hlr{ambiguita tra broker e mediator};
+	
+	\item the broker nodes are mainly dedicated to let them interact; formally, the total interaction weight $w_{z_{i}}$ involving a mediator node $z_{i}$ is mainly dedicated to convey the hidden interaction between $(x,y)$ \hlr{indicherei esplicitamente cosa si intende per ``mainly dedicated to convey the hidden interaction'' in termini piu' formali -- quindi in funzione del peso? Inoltre in precedenza formalizzerei la funzione peso che viene usata per gli edge e per i nodi; il peso dei nodi e' indipendente da quello degli edge o e' la somma dei pesi entranti/uscenti dal nodo? Quali sono esempi di funzioni peso?};
+	
+	\item the greater the number of these nodes, the greater the likelihood of hidden linkage. \hlr{questi nodi devono avere proprieta'? Si parla di nodi broker nel path tra due nodi x,y?}
+\end{enumerate}
+
+Let us now consider an undirected weighted graph $G(V,E,w)$ with $w:E\rightarrow\mathbb{R}_{\geq1}^{+}$ and a pair of nodes $x,y\in V$.
+Under the previous assumptions, we define the \hlr{Traffic Allocation}, a local metric, as follows:
+
+\begin{equation}
+\label{eqn:ta-local}
+\Phi(x,y)=
+\sum\limits_{z\in\Gamma(x)\cap\Gamma(y)}
+\frac{(w_{x,z}+w_{z,y})}{w_{z}}
+\end{equation}
+
+where 
+$\Gamma(x,y)$ is the set of common neighbors between $x$ and $y$,
+$w_{x,z}$ is the weight of the edge $(x,z)$ and
+$w_{z}$ is the total weight of the edges incident to $z$.
+
+\hlr{Se e' nuova rispetto alla letteratura, indicherei in cosa si differenzia con quella considerata allo stato dell'arte. Se non e' nuova, riscriverei questo paragrafo indicando il riferimento in cui questa metrica e' stata definita o riconosciuta come migliore rispetto alle altre esistenti.}
+
+The previous metric can be extended to its normalized version, namely \textit{Normalized Traffic Allocation (NTA)}:
+
+\begin{equation}
+\label{eqn:nta-local}
+\Phi(x,y)=
+\frac{\sum\limits_{z\in\Gamma(x)\cap\Gamma(y)}\frac{(w_{x,z}+w_{z,y})}{w_{z}}}
+{\sum\limits_{z\in\Gamma(x)\cap\Gamma(y)}w_{z}}
+\end{equation}
+
+The last metric produces a normalized score $\Phi(x,y)\in(0,1)$, hence it is suitable for thresholding.
+Given an arbitrary threshold $\tilde{\Phi}$, every edge $(x,y)$ such that $\Phi(x,y)\geq\tilde{\Phi}$ is considered an hidden link with a probability proportional to the score achieved.
+Since $\Phi$ is strictly related to the edge weights, the threshold must be chosen according to the maximum and minimum weights observed on the graph. 
+
+\hlr{non sono convinto questa metrica sia realmente normalizzata, perche' come denominatore c'e' $ 1 / w^2 $.}
+
+%The Equation~\ref{eqn:nta-local} can be extended to the following quasi-local metric. Let us now consider an undirected weighted graph $G$ with $w:E\rightarrow\mathbb{R}_{\geq1}^{+}$, a pair of nodes $x,y\in V$, a locality degree $t\in \mathbb{Z}$, $t\geq 1$, and a vector $\vec{\mu}=(\mu_{1}\ldots\mu_{t})$ such that $\sum_{i=1}^{t}\mu{i}=1$.
+%We can build the following quasi-local metric:
+
+%\begin{equation}
+%\label{eqn:detection-quasi-local-1}
+%\Phi_{QL}(x,y,t,\vec{\mu})=\vec{\mu}\cdot\vec{\Phi}_{QL}(x,y,t)
+%\end{equation}
+
+%where $\vec{\Phi}_{QL}(x,y,t)=(\Phi_{QL}(x,y,1)\ldots\Phi_{QL}(x,y,t))$ is a vector of scores with every element defined as follows:
+%\begin{equation}
+%\label{eqn:detection-quasi-local-2}
+%\Phi_{QL}(x,y,i)=
+%\frac{\sum\limits_{\pi\in\Pi_{x,y}^{(i+1)}}w_{\pi}}
+%{\sum\limits_{z\in\pi\in\Pi_{x,y}^{(i+1)}}w_{z}}
+%\end{equation}
+
+%where $\Pi_{x,y}^{(i)}$ is the set of paths between $x$ and $y$ of length $i$,
+%$w_{\pi}$ is the weight of path $\pi$ and
+%$w_{z}$ is the total weight of edges incident to $z$.
+
+%The metric produces a normalized score $\Phi_{QL}(x,y,t,\vec{\mu})\in(0,1)$, hence holds here he same considerations about thresholding stated for the local metric.
+
+
+\section{Link prediction}
+\label{sec:link-prediction}
+
+The link prediction is about inferring the interactions that are likely to be created within the graph in the near future. 
+Formally, given a graph $G(V,E,w)$, we define a view of the graph at time $ t $ as its snapshot in $ t $, $G(V^t,E^t,w^t)$, which comprises the set of verticies $ V^t $, edges $ E^t $, and the weight function $ w^t(\cdot) $ as observed in $ t $.
+%
+Considering two points in time $t$ and $t'$, with $t'>t$, and the resulting view of the same graph $G(V^t,E^t,w^t)$ and $G(V^{t'},E^{t'},w^{t'})$, 
+we define as \textit{potential link} a link $(x,y)$ that does not exist at time $ t $ \textit{and} exists at time $ t' $, i.e.,  $(x,y) \notin E^t \wedge (x,y) \in E^{t'} $. 
+
+\hlm{Ci sono molte idee su come poter inviduare un potential link, che sono poi alla base delle metriche indicate in sezione \ref{sec:metrics}. Ad esempio la cardinalita' dell'insieme dei common neighbors tra due nodi rappresenta un indice di futura interazione tra di essi. In questo lavoro prendiamo in considerazione la metrica \textit{Resource Allocation} (RA) indicata in Equazione \ref{eqn:resource-allocation}, \cite{berlusconi2016link, Lu2011,zhou2009predicting}. RA considera la similarità tra due nodi $x$ e $y$ come la quantità della risorsa unitaria che $x$ invia verso $y$ attraverso i suoi vicini. Pertanto, provvede ad assegnare un score per quantificare la similarità tra $x$ e $y$.
+	The following metric is a normalized extension of RA, con la differenza di considerare come similarità la $k_{z}$-esima parte dell'unità di risorsa allocata;}
+
+The following metric is a normalized extension of \textit{Resource Allocation Index (RA)} \cite{berlusconi2016link, Lu2011,zhou2009predicting}. RA assigns a score to quantify similarity between vertices. Extensive tests in many complex networks have shown that RA is as one the best indicators on a large set of benchmark tests  \cite{berlusconi2016link,Lu2011}.
+
+%Now a local and quasi-local metrics for link prediction.
+
+Let us consider an undirected graph $G(V,E)$ and a pair of nodes $x$,$y\in V$. We can build the following local metric:
+%
+\begin{equation}
+\label{eqn:prediction-local}
+\Psi(x,y)=
+\frac{\sum\limits_{z\in \Gamma(x) \cap \Gamma(y)}\frac{1}{k_{z}}}
+{\sum\limits_{z\in \Gamma(x) \cap \Gamma(y)}k_{z}}
+\end{equation}
+%
+where $k_{z}$ is the degree of node $z$ and $\Gamma(x) \cap \Gamma(y)$ is the set of common neighbors between $x$ and $y$. The role of the common neighbors $z$ in connecting $(x, y)$ is diluted if $z$ has many connections, since it will have less resources allocated to bridge $(x, y)$ \cite{berlusconi2016link}.
+
+%Let us now consider an undirected graph $G$, a pair of nodes $x,y\in V$, a locality degree $t\in \mathbb{Z}$, $\geq 1$ and a vector $\vec{\mu}=(\mu_{1}\ldots\mu_{t})$ such that $\sum_{i=1}^{t}\mu_{i}=1$. 
+%We denote with $\Theta(x,t)$ the set of nodes at distance $t$ from $x$. In another words, given a nodes $v \in G$, and a path $\pi_{x,v}$ of length $t$, $\pi_{x,v} = u,v_{2},...,v_{t-1},v$, the set $\Theta(x,t) = \{v\}$.
+
+%Now, we can build the following quasi-local metric:
+
+%\begin{equation}
+%\label{eqn:prediction-quasi-local-1}
+%\Psi_{QL}(x,y,t,\vec{\mu})=\vec{\mu}\cdot\vec{\Psi}_{QL}(x,y,t)
+%\end{equation}
+
+%where $\vec{\Psi}_{QL}(x,y,t)=(\Psi_{QL}(x,y,1)\ldots\Psi_{QL}(x,y,t))$ is a vector of scores with every element defined as follows:
+
+%\begin{equation}
+%\label{eqn:prediction-quasi-local-2}
+%\Psi_{QL}(x,y,i)=
+%\frac{\sum\limits_{z\in \Gamma(x,i) \cap \Gamma (y,i)}\frac{1}{k_{z}}}
+%{\sum\limits_{z\in \Gamma(x,i) \cap \Gamma (y,i)}k_{z}}
+%\end{equation}
+
+%where $\Gamma(x,i) \cap \Gamma(y,i)$ is the set of common neighbors between $x$ and $y$ distant $i$ steps from each.
+
+%The metrics in Equation~\ref{eqn:prediction-local} and  \ref{eqn:prediction-quasi-local-1}, produce a normalized score $\Psi(x,y) \in (0,1)$ and $\Psi_{QL}(x,y,t,\vec{\mu}) \in (0,1)$, respectively, so the same considerations about  threshold are still valid. 
+
+The metric in Equation~\ref{eqn:prediction-local} produce a normalized score $\Psi(x,y) \in (0,1)$, so the same considerations about  threshold are still valid.
+
+\hlr{anche in questo caso non sono convinto si possa parlare di normalizzazione, perche' la metrica viene scalata di un fattore non costante. Direi semplicemente che per definizione il valore e' sempre minore di $ 1 $.} 

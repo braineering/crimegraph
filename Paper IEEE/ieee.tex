@@ -1,0 +1,89 @@
+\documentclass[10pt,conference,compsoc]{IEEEtran}
+\special{papersize=8.5in,11in}
+
+\usepackage[utf8]{inputenc}
+\usepackage{graphicx}
+\usepackage{epstopdf}
+\usepackage{subfig}
+\usepackage{bm}
+\usepackage{url}
+\usepackage{lipsum}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{booktabs}
+\usepackage[ruled,noend,noline]{algorithm2e}
+\usepackage[pass]{geometry}
+
+
+%% XXX: --- cancellare questa sezione ---
+\usepackage[usenames,dvipsnames]{color}
+\newcommand{\hlr}[1] {\emph{{\color{red}#1}}} 
+\newcommand{\hlb}[1] {\emph{{\color{blue}#1}}} 
+\newcommand{\hlm}[1] {\emph{{\color{magenta}#1}}} 
+\newcommand{\hlg}[1] {\emph{{\color{green}#1}}} 
+%% XXX: FINE --- cancellare questa sezione ---
+
+
+\begin{document}
+
+%*******************************************************************************
+% Title and Authors
+%*******************************************************************************
+\title{Real-time criminal link mining in data stream environment}
+
+%\author{\IEEEauthorblockN{Giacomo Marciani}
+%\IEEEauthorblockA{Department of Civil Engineering\\and Computer Science Engineering\\
+%University of Rome Tor Vergata\\ Rome, Italy\\
+%Email: gmarciani@ieee.org}
+%\and
+%\IEEEauthorblockN{Michele Porretta}
+%\IEEEauthorblockA{Department of Civil Engineering\\and Computer Science Engineering\\
+%University of Rome Tor Vergata\\ Rome, Italy\\
+%Email: mporretta@acm.org}
+%\and
+%\IEEEauthorblockN{Matteo Nardelli}
+%\IEEEauthorblockA{Department of Civil Engineering\\and Computer Science Engineering\\
+%University of Rome Tor Vergata\\ Rome, Italy\\
+%Email: nardelli@ing.uniroma2.it}
+%\and
+%\IEEEauthorblockN{Giuseppe F. Italiano}
+%\IEEEauthorblockA{Department of Civil Engineering\\and Computer Science Engineering\\
+%University of Rome Tor Vergata\\ Rome, Italy\\
+%Email: italiano@disp.uniroma2.it}}
+
+\author{\IEEEauthorblockN{Giacomo Marciani, Michele Porretta, Matteo Nardelli, Giuseppe F. Italiano}
+\IEEEauthorblockA{Department of Civil Engineering and Computer Science Engineering\\
+University of Rome Tor Vergata - Rome, Italy\\
+Email: gmarciani@ieee.org, mporretta@acm.org, nardelli@ing.uniroma2.it, italiano@disp.uniroma2.it}}
+
+% make the title area
+\maketitle
+
+% correct bad hyphenation here
+\hyphenation{op-tical net-works semi-conduc-tor}
+
+% no keywords
+
+\IEEEpeerreviewmaketitle
+
+%*******************************************************************************
+% Content
+%*******************************************************************************
+\input{sec/abstract}
+\input{sec/introduction}
+\input{sec/background}
+\input{sec/classical-metrics}
+\input{sec/new-metrics}
+\input{sec/architecture}
+\input{sec/metrics-update}
+\input{sec/evaluation}
+\input{sec/further-improvements}
+\input{sec/conclusions}
+
+%*******************************************************************************
+% Bibliography
+%*******************************************************************************
+\bibliographystyle{IEEEtran}
+\bibliography{./ref/biblio}
+
+\end{document}

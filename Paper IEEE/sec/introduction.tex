@@ -1,0 +1,93 @@
+\section{Introduction}
+\label{sec:introduction}
+
+% CRIMINAL CONTEXT
+
+The data that a criminal network can generate are massive and complex. Relations between suspected terrorists, wiretaps records, monetary transactions, arms and drugs trafficking are only some well-known examples of the overall criminal scenario daily monitored by investigative agencies.
+
+% SNA
+
+The social networks analysis (SNA) has a great potential to uncover complexities of criminal networks \cite{berlusconi2017social}, hence it is opening new research challenges and directions for the data-driven fight against organized crime.
+%
+In particular, the real-time discovery of hidden and potential criminal patterns is an outstanding challenge for security and law enforcement agencies \cite{berlusconi2016link}.
+
+% SNA IN BATCH
+%\hlr{L'analisi SNA generalmente funziona in modalita' batch, che presenta tempi alti per estrarre informazione di interesse dai dati a disposizione. Al giorno d'oggi la quantita' di dati aumenta considerevolmente ed gli approcci di data stream processing offrono nuove potenzialita per individuare in near real time la formazione reti criminali o relazioni complesso/nascoste al suo interno, anche in risposta ad eventi (e.g., la definizione di una relazione tra entita' della rete criminale). Nonostante i benefici dei nuovi strumenti, le attuali tecniche analitiche esistenti per la SNA sono pensate per un'esecuzione offline e non si adattano facilmente ad un'esecuzione in modalita' data stream processing. Pertanto vengono proposte delle nuove tecniche/metriche (introdurre metriche prima, se serve) per l'individuazione di link nascosti all'interno di un grafo sociale usando l'approccio data streaming.}
+
+%\hlm{Le attuali applicazioni di social network analysis riguardano prevalentemente analisi di tipo batch, ovvero il processamento di informazioni da un dataset finito e non in un continuo flusso di dati e in near real-time. Conseguentemente, non si tiene conto dell'evolversi della rete sociale, ma si applica uno studio a posteriori su alcuni eventi criminali al fine di scoprirne i relativi pattern nascosti per quel singolo specifico caso.}
+
+Current SNA applications mainly follow the batch approach, that is the offline extraction of information from a finite dataset.
+%
+Consequently, the evolution of the criminal network totally escapes this kind of approach.
+
+% SNA IN DATA STREAM
+
+Nowadays, the amount of data is continuously incresing, offering new opportunities for data-driven investigations. 
+%
+In this context, the data stream processing approaches can disruptively reshape the way criminal networks are analyzed. 
+%
+This allows the live monitoring of them and the unveiling of their evolution and hidden complexities, thus providing investigative agencies with more reactive territory control.
+
+%\hlr{Al giorno d'oggi la quantita' di dati aumenta considerevolmente ed gli approcci di data stream processing offrono nuove potenzialita per individuare in near real time la formazione reti criminali o relazioni complesso/nascoste al suo interno, anche in risposta ad eventi (e.g., la definizione di una relazione tra entita' della rete criminale).}
+
+%\hlm{Ispezionare in tempo reale una rete criminale consente, invece, la possibilità di avere maggiore controllo del territorio, facilitare le indagini, avere maggiore tracciabilità di quelle che sono gli aspetti intrisechi che la rete criminale nel complesso potrebbe nascondere.}
+
+% STATE OF ART
+
+Current SNA techniques are designed for offline execution and do not easily adapt to a data stream processing environment.
+%
+Although the SNA metrics and their application in criminology have been widely addressed in literature, only recent works focused on their development as a big data analytics solution \cite{pramanik2016framework}.
+%
+In this context, it is necessary to develop SNA models that are aware of criminological assumptions and ready to be executed in a data stream environment \cite{xu2005criminal,xu2004analyzing}.
+
+% OUR WORK
+
+In this paper, we present new social network metrics for criminal link detection and prediction using the data stream approach.
+%
+The main contributions of our work are
+(i) the definition of new stream-ready SNA metrics
+(ii) the design of an algorithm that makes traditional metrics suitable for the data stream environment and
+(iii) the implementation of a DSP application that can handle massive generation criminal data, providing real-time insights for criminologists and analysts.
+
+% REMAINDER
+
+The remainder of the paper is organized as follows:
+%
+Section~\ref{sec:background} gives the theoretical background, useful to better understand our work, and the data model adopted to describe criminal entities and interactions;
+%
+Section~\ref{sec:classical-metrics} recalls the definition of classical metrics that are widely adopted for link prediction in general social newtorks;
+%
+Section~\ref{sec:new-metrics} defines our new local metrics for link detection and prediction;
+%
+Section~\ref{sec:architecture} shows the data stream processing architecture to deploy these metrics;
+%
+Section~\ref{sec:metrics-update} shows the algorithm to detect the necessary metrics updates in a data stream processing environment.
+%
+Section~\ref{sec:evaluation} gives the experimental results about the performance achieved by the proposed metrics, comparing them with the classical ones;
+%
+Section~\ref{sec:further-improvements} outlines the possible improvements for the proposed metrics;
+%
+Section~\ref{sec:conclusions} concludes this article, summarizing our work and results.
+
+
+
+% OLD VERSION: START
+
+%The data-driven fight against organized crime is opening new research challenges and directions. Today, it is widely accepted that social network analysis (SNA) has a great potential to uncover complexities of criminal networks \cite{berlusconi2017social}. In particular, the real-time discovery of hidden criminal patterns is an outstanding challenge for security and law enforcement agencies \cite{berlusconi2016link}.
+%
+%In this context, it is necessary to develop big data analytics systems leveraging social network analysis models that are both aware of criminological assumptions and ready to be executed in a data stream environment \cite{xu2005criminal,xu2004analyzing}.
+%
+%In this work we focus on link detection and prediction, namely the task of determining existent though invisible interactions, and the prediction of future ones \cite{Hasan2011}.
+%Currently, these problems are a long-standing challenge in modern information science, and the mainstream solutions leverages algorithms based on \textit{structural metrics} and \textit{statistical models} \cite{berlusconi2016link,Liben-Nowell,Lu2011}.
+%Although the SNA metrics and their application in criminology have been widely addressed in literature, only recent works focused on their development as a big data analytics solution \cite{pramanik2016framework}.
+
+%The \textit{social network analysis (SNA)} is an interdisciplinary field from social sciences, statistics, graph theory and computer science. SNA has received considerable attention from the scientific community, in order to find algorithmic solutions to extract missing information, identify hidden interactions between individuals, and so on.
+
+%There are many domains that can be represented with a social network and to do that on network analysis, for example social interactions between people, biological interaction between proteins, systems informations. An additional field of application relates to criminal networks, to facilitate the authorities in the investigation of organized crime, such as terrorism, drug trafficking, fraud, armed gang crimes and others\cite{xu2005criminal}.
+
+%The analysis on large volumes of data produced by a criminal network, such as phone records, bank transitions, interceptions, sales of weapons or vehicles, and more, significantly reduces the raw data and provides the mechanisms to study the structural hidden properties of network\cite{xu2005criminal}.
+
+%In this paper, we focus on a criminal scenario and describe it on a graph where apply the link mining techniques. 
+%In particular, we want to predict the likelihood that a link, between two entities, is hidden or that may arise in the future. These problems are called respectively the \textit{link detection problem} and \textit{link prediction problem}.
+
+% OLD VERSION :END
